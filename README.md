@@ -2,13 +2,14 @@
 
 An open-source starting point for portable blockchain investigations: inspect a graph, follow its source transactions, and export evidence for other tools.
 
-**v0.3 prototype.** Assemble multiple receipt bundles into one investigation, open it locally, search addresses and transactions, filter the timeline, inspect each receipt and source checksum, and export a portable report. Includes two captured real Ethereum receipts and explicitly synthetic graph examples. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
+**v0.4 prototype: a real Ethereum → Optimism deposit link.** Derive the destination transaction from a supplied Ethereum Portal event, compare it with captured Optimism transaction/receipt fields, and inspect the cross-network evidence. Also supports bounded Ethereum receipt assembly, local imports, search, filters, and reports. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
 
 ![Investigation workspace showing a real Ethereum receipt and exact fee breakdown](docs/screenshots/workspace.png)
 
 ## Run locally
 
 Python 3.11+; no pip installs, wallet connection, or API key required.
+The cross-network builder/capture additionally requires Node 22+. Keccak uses pinned, attributed Noble modules already vendored in the repository; no npm install is needed.
 
 ```sh
 python -m http.server 8080 --directory web --bind 127.0.0.1
@@ -18,12 +19,15 @@ python kit.py eth examples/eth-snapshot.synthetic.json case.gs --gs
 python kit.py sol examples/launch-map.synthetic.json solana-case.json
 python kit.py rpc examples/eth-receipt.mainnet.json receipt-case.json
 python assemble.py combined-case.json examples/eth-receipt.mainnet.json examples/eth-receipt-second.mainnet.json
+node bridge.mjs build examples/op-deposit.mainnet.json cross-network-case.json
 python -m unittest discover -s tests -v
 # Optional developer check, using Node 22+ (no npm install):
-node --test tests/case.test.mjs
+node --test tests/case.test.mjs tests/bridge.test.mjs
 ```
 
 Output paths must be new. Keep private investigations in an untracked `private-cases/` folder. Use **Open local case** to inspect a CLI-produced case JSON. Files are validated and opened in browser memory; they are not uploaded, persisted, or sent to an RPC endpoint. Closing/reloading clears imported state. The static viewer makes no RPC calls and stores no credentials. Its bundled examples are fetched from its own site.
+
+Start with [the cross-network connector guide and reproducible mainnet case](docs/OP-DEPOSIT.md). The link uses protocol derivation, not a timing/amount heuristic. Supplied RPC evidence remains unauthenticated and no finality verification is claimed.
 
 ## Capture a real Ethereum receipt
 
@@ -53,7 +57,8 @@ Input order does not affect the output checksum. Synthetic and nonsynthetic bund
 - Portable JSON with source links, explicit coverage, and a deterministic SHA-256 digest. A digest detects content changes; it does not prove blockchain truth.
 - Native GraphSense `.gs` layout export through its pinned, attributed MIT codec. This format stores references/layout, not the underlying transaction database; opening it usefully requires a matching GraphSense backend.
 - Browser graph, selectable evidence, local case import, checksum verification, address/transaction search, relationship and UTC date filters, chronological timeline, and full-case text reports.
-- One real mainnet RPC capture with a reproducible fee calculation. No new third-party dependencies.
+- Two saved Ethereum receipt captures with reproducible fee calculations.
+- A real Ethereum → OP Mainnet Portal deposit: deterministic destination hash derivation, captured destination receipt, explicit chain IDs, local revalidation, and report export. The new connector adds four pinned Noble hash modules with MIT license and verified provenance; it performs no package installation.
 
 ## Reuse and boundaries
 
@@ -65,8 +70,8 @@ The example GitHub Actions configuration in `docs/github-actions.example.yml` is
 
 ## Roadmap
 
-1. Current: reproducible offline cases, multi-transaction receipt assembly, local imports, mainnet receipt capture, evidence viewer, native ETH value-transfer export.
-2. Read-only GraphSense API adapter, validated against a configured instance; explicit pagination and coverage.
+1. Current: reproducible offline cases, Ethereum → Optimism deposit derivation, receipt assembly/capture, local imports, evidence viewer, native ETH value-transfer export.
+2. Token-event and internal-call evidence, bounded history discovery, and additional protocol-specific bridge connectors. The current OP connector does not decode token flows or withdrawals.
 3. Solana decoded transfers and creation allocations with transaction-level provenance and labeled inference.
 4. Plugin contract for additional chains, case comparison, evidence export, and upstream contributions.
 

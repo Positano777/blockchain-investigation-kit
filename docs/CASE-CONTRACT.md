@@ -1,5 +1,7 @@
 # Portable case contract, v1
 
+v0.4 adds a separate `positano.bridge-case.v1` format; see [OP-DEPOSIT.md](OP-DEPOSIT.md). It uses transaction nodes with explicit chain-qualified IDs and a `derived_op_deposit` connection. It embeds a strictly projected `positano.op-deposit-bundle.v1` containing source/destination chain IDs, transaction/receipt/block fields, and one selected source Portal event. The browser reconstructs the expected case from that evidence and verifies the outer checksum; arbitrary derived metadata or explorer URLs cannot override the reconstruction. Limit: 2 MB input/output, one supported deposit, 10,000 transaction hashes per supplied block, bounded event/calldata lengths. This does not authenticate chain data. Existing v1 single-chain cases remain readable; old readers reject the bridge schema. GraphSense export and receipt assembly do not accept bridge cases.
+
 `positano.investigation.v1` is a small interchange format for bounded snapshots. It does not assert completeness or establish an identity behind an address.
 
 Root fields: `schema`, `network` (`eth` or `sol`), `synthetic` (boolean), `coverage` (fixed adapter disclosure), `nodes` (array), `edges` (array), `digest` (SHA-256).

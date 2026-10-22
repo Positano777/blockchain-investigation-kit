@@ -31,10 +31,21 @@ function inspect(e) {
         : `${e.amount} ${e.unit}`,
     ],
     [
-      current.network === "sol" ? "Mint observation anchor" : "From address",
+      current.bridge
+        ? "Ethereum transaction ID"
+        : current.network === "sol"
+          ? "Mint observation anchor"
+          : "From address",
       e.from,
     ],
-    [current.network === "sol" ? "Observed fee payer" : "To address", e.to],
+    [
+      current.bridge
+        ? "Optimism transaction ID"
+        : current.network === "sol"
+          ? "Observed fee payer"
+          : "To address",
+      e.to,
+    ],
     [
       "Time (UTC)",
       e.timestamp === null
@@ -42,7 +53,46 @@ function inspect(e) {
         : new Date(e.timestamp * 1000).toISOString(),
     ],
   ])
-    paragraph($("details"), label, value);
+    if (!current.bridge) paragraph($("details"), label, value);
+  if (current.bridge) {
+    const b = current.bridge;
+    for (const [label, value] of [
+      ["Protocol", "Ethereum → OP Mainnet Portal v0"],
+      ["ETH minted by deposit", formatEth(b.mintWei)],
+      ["Requested L2 call value", formatEth(b.valueWei)],
+      ["RPC L2 execution status", b.destinationStatus],
+      ["L2 call value after status", formatEth(b.transferredTopLevelWei)],
+      [
+        "Destination time (UTC)",
+        new Date(b.destinationTimestamp * 1000).toISOString(),
+      ],
+    ])
+      paragraph($("details"), label, value);
+    const advanced = document.createElement("details"),
+      title = document.createElement("summary");
+    title.textContent = "Derivation and transaction identifiers";
+    advanced.append(title);
+    for (const [label, value] of [
+      ["Source hash", b.sourceHash],
+      ["Ethereum transaction", b.sourceTransaction],
+      ["Optimism transaction", b.destinationTransaction],
+      ["Global L1 log index", b.logIndex],
+      ["L1 block hash", b.sourceBlock],
+      ["L2 block hash", b.destinationBlock],
+      ["L2 sender (may be an L1 alias)", b.from],
+      ["L2 target", b.to],
+      ["Gas limit", b.gasLimit],
+    ])
+      paragraph(advanced, label, value);
+    $("details").append(advanced);
+    const destination = document.createElement("a");
+    destination.textContent = "Open Optimism transaction";
+    destination.href =
+      "https://optimistic.etherscan.io/tx/" + b.destinationTransaction;
+    destination.target = "_blank";
+    destination.rel = "noopener noreferrer";
+    $("details").append(destination);
+  }
   if (current.receipt || current.receipts?.[e.id]) {
     const r = current.receipt || current.receipts[e.id];
     for (const [label, value] of [
@@ -98,16 +148,18 @@ function render() {
   const positions = new Map(
     nodes.map((n, i) => [
       n.id,
-      [
-        350 +
-          (nodes.length === 1
-            ? 0
-            : 255 * Math.cos((i * Math.PI * 2) / nodes.length)),
-        220 +
-          (nodes.length === 1
-            ? 0
-            : 155 * Math.sin((i * Math.PI * 2) / nodes.length)),
-      ],
+      current.bridge
+        ? [120 + i * 460, 220]
+        : [
+            350 +
+              (nodes.length === 1
+                ? 0
+                : 255 * Math.cos((i * Math.PI * 2) / nodes.length)),
+            220 +
+              (nodes.length === 1
+                ? 0
+                : 155 * Math.sin((i * Math.PI * 2) / nodes.length)),
+          ],
     ]),
   );
   const defs = element("defs", {}),
@@ -152,7 +204,8 @@ function render() {
         r: 16,
         tabindex: 0,
         role: "button",
-        "aria-label": "Filter address " + n.id,
+        "aria-label":
+          (current.bridge ? "Filter transaction " : "Filter address ") + n.id,
       });
     const focus = () => {
       $("search").value = n.id;
@@ -170,7 +223,11 @@ function render() {
       element(
         "text",
         { x, y: y + 32, "text-anchor": "middle" },
-        n.id.slice(0, 7) + "..." + n.id.slice(-4),
+        (current.bridge
+          ? n.network + " / " + n.id.split(":").at(-1).slice(0, 7)
+          : n.id.slice(0, 7)) +
+          "..." +
+          n.id.slice(-4),
       ),
     );
   }
@@ -178,6 +235,9 @@ function render() {
     `${edges.length} of ${current.edges.length} records / ${nodes.length} shown nodes`;
   $("graph-note").textContent =
     `Graph shows ${shown.length} matching records (maximum 24 nodes / 40 connections). Select any record below. Dashed lines are observations; arrows show top-level call/value direction, not ownership.`;
+  if (current.bridge)
+    $("graph-note").textContent =
+      "Ethereum deposit event → derived OP transaction hash → captured Optimism receipt. The link is computed from the protocol encoding, not guessed from timing or amount.";
   for (const e of edges) {
     const row = document.createElement("button");
     row.className = "row";
@@ -208,11 +268,11 @@ async function activate(d, token, example = "") {
   await verifyCase(d);
   if (token !== generation) return;
   current = d;
-  for (const key of ["eth", "sol", "real", "multi"])
+  for (const key of ["eth", "sol", "real", "multi", "bridge"])
     $(key).setAttribute("aria-pressed", String(key === example));
   $("case-status").textContent = d.synthetic
-    ? "SYNTHETIC CASE / v0.3"
-    : "IMPORTED EVIDENCE / v0.3";
+    ? "SYNTHETIC CASE / v0.4"
+    : "IMPORTED EVIDENCE / v0.4";
   const receipts = d.receipts
     ? Object.values(d.receipts)
     : d.receipt
@@ -223,6 +283,9 @@ async function activate(d, token, example = "") {
     (receipts.length
       ? `Total fees across unique supplied transactions: ${formatEth(receipts.reduce((sum, r) => sum + BigInt(r.totalFeeWei), 0n).toString())}. This is not a wallet balance or complete spending history.`
       : "Coverage is limited to the supplied observations.");
+  if (d.bridge)
+    $("summary").textContent =
+      `Ethereum (1) → OP Mainnet (10). Exact destination transaction hash derived from the supplied Portal event. Deposit mint: ${formatEth(d.bridge.mintWei)}. Destination receipt: ${d.bridge.destinationStatus}. This is a protocol deposit link, not proof of common ownership or complete asset movement.`;
   $("coverage").textContent =
     `${d.synthetic ? "SYNTHETIC EXAMPLE. " : "PROVIDER / IMPORTED DATA. "}${d.coverage} Checksum matched (not source authentication): ${d.digest}`;
   for (const id of ["search", "from", "until"]) $(id).value = "";
@@ -252,7 +315,7 @@ async function show(example) {
 function fail(error) {
   $("message").textContent = error.message || "Unable to load case.";
 }
-for (const example of ["eth", "sol", "real", "multi"])
+for (const example of ["eth", "sol", "real", "multi", "bridge"])
   $(example).addEventListener("click", () => show(example).catch(fail));
 $("import").addEventListener("change", async (event) => {
   const file = event.target.files[0],
@@ -301,6 +364,16 @@ $("report").addEventListener("click", () => {
       "Receipt summary:",
       JSON.stringify(current.receipt, null, 2),
     );
+  if (current.bridge)
+    lines.push(
+      "",
+      "Cross-network derivation:",
+      JSON.stringify(current.bridge, null, 2),
+      "Source: https://etherscan.io/tx/" + current.bridge.sourceTransaction,
+      "Destination: https://optimistic.etherscan.io/tx/" +
+        current.bridge.destinationTransaction,
+      "Download the full JSON case to retain the supplied RPC evidence.",
+    );
   if (current.receipts)
     lines.push(
       "",
@@ -319,4 +392,4 @@ $("report").addEventListener("click", () => {
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
-show("multi").catch(fail);
+show("bridge").catch(fail);

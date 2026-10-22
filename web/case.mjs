@@ -1,3 +1,4 @@
+import { buildBridgeCase } from "./bridge.mjs";
 const hex = (v, n) =>
   typeof v === "string" && new RegExp(`^0x[0-9a-f]{${n}}$`).test(v);
 function b58(v, size) {
@@ -27,6 +28,25 @@ function keys(v, required, optional = []) {
   );
 }
 export function validateCase(d) {
+  if (d?.schema === "positano.bridge-case.v1") {
+    keys(d, [
+      "schema",
+      "network",
+      "synthetic",
+      "coverage",
+      "nodes",
+      "edges",
+      "bridge",
+      "evidence",
+      "digest",
+    ]);
+    check(
+      typeof d.digest === "string" && /^sha256:[0-9a-f]{64}$/.test(d.digest),
+    );
+    const { digest, ...content } = d;
+    check(canonical(content) === canonical(buildBridgeCase(d.evidence)));
+    return d;
+  }
   keys(
     d,
     ["schema", "network", "synthetic", "coverage", "nodes", "edges", "digest"],

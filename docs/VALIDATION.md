@@ -1,4 +1,14 @@
-# v0.2 validation
+# Validation record
+
+## v0.4 additions
+
+- Python suite: 29 tests total, including read-only capture of each chain, chain-ID rejection, provider-field projection, and bounded source logs.
+- Node suite: 24 tests total, including Keccak/RLP vectors, deterministic real L2 hash derivation, field/inclusion consistency, wrong-chain/portal/version rejection, global log-index identity, malformed ABI, failed destination semantics, derived-metadata tampering, and Noble file provenance hashes.
+- Chrome: actual cross-network case rendered; destination search and explorer links; inspectable derivation identifiers; local import without network requests; source-hash mismatch rejected while retaining the prior case; text and full evidence JSON downloads; old multi-receipt and Solana cases; 390px layout without overflow; zero console errors.
+- Live read-only capture: one Ethereum Portal deposit and its exact derived Optimism transaction/receipt/block were fetched, then reproduced offline.
+- Four Noble 1.8.0 ESM modules were vendored with MIT license and one documented local import adjustment. Their upstream module hashes match the npm package archive, whose SHA-512 integrity matches the recorded package-lock entry. No npm install or lifecycle hooks were run. These checks are not an external security audit or malware-free guarantee.
+
+No receipt-trie/block consensus proof, finality check, wallet-history completeness, token-flow decoding, or ownership attribution is claimed. The connector is restricted to one supported Ethereum → OP Mainnet Portal deposit, rather than general cross-chain tracing.
 
 ## v0.3 additions
 
