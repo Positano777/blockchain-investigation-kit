@@ -79,3 +79,28 @@ test("receipt call cannot omit its summary", () => {
   delete d.receipt;
   assert.throws(() => validateCase(d));
 });
+test("assembled receipt cases verify and keep block order", async () => {
+  const d = fixture("multi");
+  await verifyCase(d, webcrypto);
+  assert.equal(d.edges.length, 2);
+  assert.equal(filterEdges(d)[0].id, fixture("real").edges[0].id);
+});
+test("assembled cases require matching receipt map and source references", () => {
+  const d = fixture("multi");
+  delete d.receipts[d.edges[0].id];
+  assert.throws(() => validateCase(d));
+  const e = fixture("multi");
+  e.sources.pop();
+  assert.throws(() => validateCase(e));
+  const f = fixture("multi");
+  f.sources.push(f.sources[0]);
+  assert.throws(() => validateCase(f));
+});
+test("assembled receipt summaries cannot misstate fee or execution", () => {
+  const d = fixture("multi");
+  d.receipts[d.edges[0].id].totalFeeWei = "1";
+  assert.throws(() => validateCase(d));
+  const e = fixture("multi");
+  e.receipt = fixture("real").receipt;
+  assert.throws(() => validateCase(e));
+});

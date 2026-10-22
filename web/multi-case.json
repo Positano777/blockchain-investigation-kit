@@ -1,0 +1,87 @@
+{
+  "schema": "positano.investigation.v1",
+  "network": "eth",
+  "synthetic": false,
+  "coverage": "Only supplied Ethereum RPC receipt bundles. Duplicate transactions counted once; conflicting transaction or receipt fields rejected. Sources identified by content checksums, not authenticated signatures. No complete wallet history, internal calls, token events, finality check, ownership inference, or cross-chain attribution.",
+  "nodes": [
+    {
+      "id": "0x11235534a66a33c366b84933d5202c841539d1c9",
+      "network": "eth",
+      "kind": "address"
+    },
+    {
+      "id": "0x22ce84a7f86662b78e49c6ec9e51d60fdde7b70a",
+      "network": "eth",
+      "kind": "address"
+    },
+    {
+      "id": "0x3f2b113d180ecb1457e450b9efcac3df1dd29ad3",
+      "network": "eth",
+      "kind": "address"
+    },
+    {
+      "id": "0xca112ee75e517fdbad2a7450c65cdaab8256d9a2",
+      "network": "eth",
+      "kind": "address"
+    }
+  ],
+  "edges": [
+    {
+      "id": "0x12f2db8aa47b9588a34807d282c939dd21ee4eab10e135817661a1f2b1f809c1",
+      "from": "0x11235534a66a33c366b84933d5202c841539d1c9",
+      "to": "0x22ce84a7f86662b78e49c6ec9e51d60fdde7b70a",
+      "kind": "rpc_call",
+      "amount": "0",
+      "unit": "wei",
+      "timestamp": 1729345547,
+      "source": "https://etherscan.io/tx/0x12f2db8aa47b9588a34807d282c939dd21ee4eab10e135817661a1f2b1f809c1"
+    },
+    {
+      "id": "0x20f83f863231a8e1c97f14d1b2e9379d389c57d3bb82d265cd6e5d806378ba9b",
+      "from": "0xca112ee75e517fdbad2a7450c65cdaab8256d9a2",
+      "to": "0x3f2b113d180ecb1457e450b9efcac3df1dd29ad3",
+      "kind": "rpc_call",
+      "amount": "0",
+      "unit": "wei",
+      "timestamp": 1729345547,
+      "source": "https://etherscan.io/tx/0x20f83f863231a8e1c97f14d1b2e9379d389c57d3bb82d265cd6e5d806378ba9b"
+    }
+  ],
+  "receipts": {
+    "0x12f2db8aa47b9588a34807d282c939dd21ee4eab10e135817661a1f2b1f809c1": {
+      "status": "success",
+      "requestedValueWei": "0",
+      "gasUsed": "398516",
+      "effectiveGasPriceWei": "27361301434",
+      "executionFeeWei": "10903916402271944",
+      "blobFeeWei": "0",
+      "totalFeeWei": "10903916402271944",
+      "blockNumber": "21000000",
+      "blockHash": "0xf5e1d15a3e380006bd271e73c8eeed75fafc3ae6942b16f63c21361079bba709",
+      "transactionIndex": 1
+    },
+    "0x20f83f863231a8e1c97f14d1b2e9379d389c57d3bb82d265cd6e5d806378ba9b": {
+      "status": "success",
+      "requestedValueWei": "0",
+      "gasUsed": "202746",
+      "effectiveGasPriceWei": "51769454205",
+      "executionFeeWei": "10496049762246930",
+      "blobFeeWei": "0",
+      "totalFeeWei": "10496049762246930",
+      "blockNumber": "21000000",
+      "blockHash": "0xf5e1d15a3e380006bd271e73c8eeed75fafc3ae6942b16f63c21361079bba709",
+      "transactionIndex": 0
+    }
+  },
+  "sources": [
+    {
+      "transaction": "0x12f2db8aa47b9588a34807d282c939dd21ee4eab10e135817661a1f2b1f809c1",
+      "bundleDigest": "sha256:7fbcde79d482b7dd892ac82b7fd5072fd616ee2d798fec4ab28669c997888dea"
+    },
+    {
+      "transaction": "0x20f83f863231a8e1c97f14d1b2e9379d389c57d3bb82d265cd6e5d806378ba9b",
+      "bundleDigest": "sha256:9c1a5db1ffe0af25ff27e730f3ebe45bf7a71c65a52bcc0b7f09e84e62e93e85"
+    }
+  ],
+  "digest": "sha256:f884242b9b534d44db22eee997c84acf23120f3122a42252218403294741c7ee"
+}

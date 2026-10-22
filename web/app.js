@@ -43,8 +43,8 @@ function inspect(e) {
     ],
   ])
     paragraph($("details"), label, value);
-  if (current.receipt) {
-    const r = current.receipt;
+  if (current.receipt || current.receipts?.[e.id]) {
+    const r = current.receipt || current.receipts[e.id];
     for (const [label, value] of [
       ["RPC receipt status", r.status],
       ["Execution fee", formatEth(r.executionFeeWei)],
@@ -55,6 +55,10 @@ function inspect(e) {
     ])
       paragraph($("details"), label, value);
   }
+  for (const source of current.sources?.filter(
+    (source) => source.transaction === e.id,
+  ) || [])
+    paragraph($("details"), "Source bundle checksum", source.bundleDigest);
   const warning = document.createElement("p");
   warning.textContent = current.synthetic
     ? "Synthetic identifier: explorer links are format examples, not evidence of existing transactions."
@@ -204,11 +208,21 @@ async function activate(d, token, example = "") {
   await verifyCase(d);
   if (token !== generation) return;
   current = d;
-  for (const key of ["eth", "sol", "real"])
+  for (const key of ["eth", "sol", "real", "multi"])
     $(key).setAttribute("aria-pressed", String(key === example));
   $("case-status").textContent = d.synthetic
-    ? "SYNTHETIC CASE / v0.2"
-    : "IMPORTED EVIDENCE / v0.2";
+    ? "SYNTHETIC CASE / v0.3"
+    : "IMPORTED EVIDENCE / v0.3";
+  const receipts = d.receipts
+    ? Object.values(d.receipts)
+    : d.receipt
+      ? [d.receipt]
+      : [];
+  $("summary").textContent =
+    `${d.nodes.length} addresses / ${d.edges.length} records / ${receipts.length} supplied receipts. ` +
+    (receipts.length
+      ? `Total fees across unique supplied transactions: ${formatEth(receipts.reduce((sum, r) => sum + BigInt(r.totalFeeWei), 0n).toString())}. This is not a wallet balance or complete spending history.`
+      : "Coverage is limited to the supplied observations.");
   $("coverage").textContent =
     `${d.synthetic ? "SYNTHETIC EXAMPLE. " : "PROVIDER / IMPORTED DATA. "}${d.coverage} Checksum matched (not source authentication): ${d.digest}`;
   for (const id of ["search", "from", "until"]) $(id).value = "";
@@ -238,7 +252,7 @@ async function show(example) {
 function fail(error) {
   $("message").textContent = error.message || "Unable to load case.";
 }
-for (const example of ["eth", "sol", "real"])
+for (const example of ["eth", "sol", "real", "multi"])
   $(example).addEventListener("click", () => show(example).catch(fail));
 $("import").addEventListener("change", async (event) => {
   const file = event.target.files[0],
@@ -287,6 +301,15 @@ $("report").addEventListener("click", () => {
       "Receipt summary:",
       JSON.stringify(current.receipt, null, 2),
     );
+  if (current.receipts)
+    lines.push(
+      "",
+      "Receipts by transaction:",
+      JSON.stringify(current.receipts, null, 2),
+      "",
+      "Source bundle checksums (not source authentication):",
+      JSON.stringify(current.sources, null, 2),
+    );
   const url = URL.createObjectURL(
       new Blob([lines.join("\n") + "\n"], { type: "text/plain" }),
     ),
@@ -296,4 +319,4 @@ $("report").addEventListener("click", () => {
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
-show("real").catch(fail);
+show("multi").catch(fail);

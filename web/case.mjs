@@ -30,7 +30,7 @@ export function validateCase(d) {
   keys(
     d,
     ["schema", "network", "synthetic", "coverage", "nodes", "edges", "digest"],
-    ["receipt"],
+    ["receipt", "receipts", "sources"],
   );
   check(
     d.schema === "positano.investigation.v1" &&
@@ -124,7 +124,8 @@ export function validateCase(d) {
     check(!seen.has(key));
     seen.add(key);
   }
-  if (d.receipt) {
+  check(!(Object.hasOwn(d, "receipt") && Object.hasOwn(d, "receipts")));
+  if (Object.hasOwn(d, "receipt")) {
     const r = d.receipt;
     keys(r, [
       "status",
@@ -176,7 +177,48 @@ export function validateCase(d) {
             : "rpc_value_transfer"),
     );
     check(e.amount === (r.status === "failed" ? "0" : r.requestedValueWei));
+  } else if (Object.hasOwn(d, "receipts")) {
+    check(d.network === "eth" && d.edges.length >= 1 && d.edges.length <= 50);
+    check(
+      d.receipts &&
+        typeof d.receipts === "object" &&
+        !Array.isArray(d.receipts),
+    );
+    check(Object.keys(d.receipts).length === d.edges.length);
+    for (const edge of d.edges) {
+      check(Object.hasOwn(d.receipts, edge.id));
+      validateCase({
+        schema: d.schema,
+        network: d.network,
+        synthetic: d.synthetic,
+        coverage: d.coverage,
+        nodes: d.nodes,
+        edges: [edge],
+        digest: d.digest,
+        receipt: d.receipts[edge.id],
+      });
+    }
+    check(
+      Array.isArray(d.sources) &&
+        d.sources.length >= 1 &&
+        d.sources.length <= 50,
+    );
+    const sources = new Set(),
+      referenced = new Set();
+    for (const source of d.sources) {
+      keys(source, ["transaction", "bundleDigest"]);
+      check(
+        Object.hasOwn(d.receipts, source.transaction) &&
+          /^sha256:[0-9a-f]{64}$/.test(source.bundleDigest),
+      );
+      const key = source.transaction + ":" + source.bundleDigest;
+      check(!sources.has(key));
+      sources.add(key);
+      referenced.add(source.transaction);
+    }
+    check(referenced.size === d.edges.length);
   } else check(d.edges.every((e) => !e.kind.startsWith("rpc_")));
+  check(!Object.hasOwn(d, "sources") || Object.hasOwn(d, "receipts"));
   return d;
 }
 export function canonical(v) {
@@ -236,6 +278,10 @@ export function filterEdges(
     .sort(
       (a, b) =>
         (a.timestamp ?? Infinity) - (b.timestamp ?? Infinity) ||
+        (d.receipts?.[a.id]?.blockHash === d.receipts?.[b.id]?.blockHash
+          ? (d.receipts?.[a.id]?.transactionIndex ?? 0) -
+            (d.receipts?.[b.id]?.transactionIndex ?? 0)
+          : 0) ||
         a.id.localeCompare(b.id),
     );
 }

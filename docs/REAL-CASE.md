@@ -29,3 +29,13 @@ The result matches `web/real-case.json`, including its deterministic checksum. T
 Recapture with your HTTPS mainnet provider using the README command and compare the actual fields. A different capture timestamp is expected and is excluded from the portable case; changed mined block/status fields warrant investigation. No automated multi-provider consensus is implemented.
 
 API semantics follow [Ethereum's JSON-RPC specification](https://ethereum.org/developers/docs/apis/json-rpc/).
+
+## Multi-transaction example
+
+The v0.3 example adds transaction [0x12f2db8aa47b9588a34807d282c939dd21ee4eab10e135817661a1f2b1f809c1](https://etherscan.io/tx/0x12f2db8aa47b9588a34807d282c939dd21ee4eab10e135817661a1f2b1f809c1), at index 1 of the same block. Its captured bundle is `examples/eth-receipt-second.mainnet.json`.
+
+```sh
+python assemble.py combined-case.json examples/eth-receipt.mainnet.json examples/eth-receipt-second.mainnet.json
+```
+
+This reproduces `web/multi-case.json` with two transactions, four distinct supplied addresses, individual receipt summaries, and input-bundle checksum references. The browser's default example displays it. No direct relationship, common owner, or flow of funds is asserted between these two transactions. They were selected by adjacent block index as an interoperability example, not as an investigation finding.

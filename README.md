@@ -2,7 +2,7 @@
 
 An open-source starting point for portable blockchain investigations: inspect a graph, follow its source transactions, and export evidence for other tools.
 
-**v0.2 prototype.** Open a local evidence case, search addresses and transactions, filter its timeline, inspect receipt fees, and export a portable report. Includes one captured real Ethereum receipt and two explicitly synthetic graph examples. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
+**v0.3 prototype.** Assemble multiple receipt bundles into one investigation, open it locally, search addresses and transactions, filter the timeline, inspect each receipt and source checksum, and export a portable report. Includes two captured real Ethereum receipts and explicitly synthetic graph examples. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
 
 ![Investigation workspace showing a real Ethereum receipt and exact fee breakdown](docs/screenshots/workspace.png)
 
@@ -17,6 +17,7 @@ python kit.py eth examples/eth-snapshot.synthetic.json case.json
 python kit.py eth examples/eth-snapshot.synthetic.json case.gs --gs
 python kit.py sol examples/launch-map.synthetic.json solana-case.json
 python kit.py rpc examples/eth-receipt.mainnet.json receipt-case.json
+python assemble.py combined-case.json examples/eth-receipt.mainnet.json examples/eth-receipt-second.mainnet.json
 python -m unittest discover -s tests -v
 # Optional developer check, using Node 22+ (no npm install):
 node --test tests/case.test.mjs
@@ -39,6 +40,12 @@ The adapter cross-checks hash, addresses, block height/hash, transaction index, 
 
 See [the reproducible case study](docs/REAL-CASE.md) and [Ethereum's RPC specification](https://ethereum.org/developers/docs/apis/json-rpc/).
 
+## Assemble an investigation
+
+`assemble.py OUTPUT INPUT...` accepts 1 to 50 Ethereum receipt-bundle files, each up to 2 MB. It validates every receipt, deduplicates matching transactions, rejects conflicts in projected transaction/receipt fields, and preserves canonical input-bundle checksums. Different capture timestamps can produce separate source checksums for the same consistent transaction. Source checksums are content references, not source authentication; retain the original bundles alongside the case for audit.
+
+Input order does not affect the output checksum. Synthetic and nonsynthetic bundles cannot be mixed. The browser displays each transaction's own receipt, total fees across unique supplied transactions, and source references. This is a bounded selection of evidence, not automatic address crawling or a complete wallet history. Two transactions sharing a case or block do not establish a connection or common owner.
+
 ## What works
 
 - Ethereum native account-transfer snapshot adapter using GraphSense's transaction response fields. Exact integer wei amounts remain strings.
@@ -58,8 +65,8 @@ The example GitHub Actions configuration in `docs/github-actions.example.yml` is
 
 ## Roadmap
 
-1. Current: reproducible offline cases, local imports, mainnet receipt capture, evidence viewer, native ETH value-transfer export.
-2. Multi-transaction case assembly and read-only GraphSense API adapter, validated against a configured instance; explicit pagination and coverage.
+1. Current: reproducible offline cases, multi-transaction receipt assembly, local imports, mainnet receipt capture, evidence viewer, native ETH value-transfer export.
+2. Read-only GraphSense API adapter, validated against a configured instance; explicit pagination and coverage.
 3. Solana decoded transfers and creation allocations with transaction-level provenance and labeled inference.
 4. Plugin contract for additional chains, case comparison, evidence export, and upstream contributions.
 
