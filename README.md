@@ -2,7 +2,7 @@
 
 An open-source starting point for portable blockchain investigations: inspect a graph, follow its source transactions, and export evidence for other tools.
 
-**v0.4 prototype: a real Ethereum → Optimism deposit link.** Derive the destination transaction from a supplied Ethereum Portal event, compare it with captured Optimism transaction/receipt fields, and inspect the cross-network evidence. Also supports bounded Ethereum receipt assembly, local imports, search, filters, and reports. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
+**v0.5 prototype: inspect asset evidence and prepare a bounded next hop.** Decode Transfer-shaped receipt logs and optional provider call traces, distinguish reverted attempts, and explain each connection by its evidence reference. Includes the real Ethereum → Optimism connector, bounded receipt assembly, local imports, filters, and reports. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
 
 ![Investigation workspace showing a real Ethereum receipt and exact fee breakdown](docs/screenshots/workspace.png)
 
@@ -22,12 +22,14 @@ python assemble.py combined-case.json examples/eth-receipt.mainnet.json examples
 node bridge.mjs build examples/op-deposit.mainnet.json cross-network-case.json
 python -m unittest discover -s tests -v
 # Optional developer check, using Node 22+ (no npm install):
-node --test tests/case.test.mjs tests/bridge.test.mjs
+node --test tests/case.test.mjs tests/bridge.test.mjs tests/movements.test.mjs
 ```
 
 Output paths must be new. Keep private investigations in an untracked `private-cases/` folder. Use **Open local case** to inspect a CLI-produced case JSON. Files are validated and opened in browser memory; they are not uploaded, persisted, or sent to an RPC endpoint. Closing/reloading clears imported state. The static viewer makes no RPC calls and stores no credentials. Its bundled examples are fetched from its own site.
 
 Start with [the cross-network connector guide and reproducible mainnet case](docs/OP-DEPOSIT.md). The link uses protocol derivation, not a timing/amount heuristic. Supplied RPC evidence remains unauthenticated and no finality verification is claimed.
+
+Then use [asset-movement decoding and bounded one-hop discovery](docs/ASSET-MOVEMENTS.md). The browser prepares a local capture command; it does not run live tracing or an automatic wallet crawler. Real examples disclose missing traces and a five-block zero-result scan. The trace lab is explicitly synthetic.
 
 ## Capture a real Ethereum receipt
 
@@ -38,7 +40,7 @@ python collect.py 0x20f83f863231a8e1c97f14d1b2e9379d389c57d3bb82d265cd6e5d806378
 python kit.py rpc my-receipt-bundle.json my-case.json
 ```
 
-Only four read methods are allowed: chain ID, transaction by hash, receipt, and block by hash. No signing, wallet connection, or transaction-submission methods exist. RPC redirects are rejected; timeouts and response sizes are bounded. Endpoint URLs and raw provider error messages are not saved or printed. Use an environment variable rather than putting a secret URL in command arguments. Contract-creation transactions, pending/unavailable receipts, other chains, and inconsistent bundles are rejected.
+The receipt collector uses four read methods: chain ID, transaction by hash, receipt, and block by hash. No signing, wallet connection, or transaction-submission methods exist. RPC redirects are rejected; timeouts and response sizes are bounded. Endpoint URLs and raw provider error messages are not saved or printed. Use an environment variable rather than putting a secret URL in command arguments. Contract-creation transactions, pending/unavailable receipts, other chains, and inconsistent bundles are rejected.
 
 The adapter cross-checks hash, addresses, block height/hash, transaction index, and block membership. It uses the receipt's status and exact integer fee fields. A failed call has zero transferred value while retaining its requested value and fee. Zero-value successful calls remain calls. This is **provider-reported evidence**, not independently authenticated chain data or a finality check. No internal calls or token logs are decoded.
 
@@ -71,7 +73,7 @@ The example GitHub Actions configuration in `docs/github-actions.example.yml` is
 ## Roadmap
 
 1. Current: reproducible offline cases, Ethereum → Optimism deposit derivation, receipt assembly/capture, local imports, evidence viewer, native ETH value-transfer export.
-2. Token-event and internal-call evidence, bounded history discovery, and additional protocol-specific bridge connectors. The current OP connector does not decode token flows or withdrawals.
+2. Broader indexed history coverage, additional protocol-specific bridge connectors, and protocol event decoding. Current asset decoding is limited to supplied Transfer-shaped logs/call traces and bounded direct-address scans.
 3. Solana decoded transfers and creation allocations with transaction-level provenance and labeled inference.
 4. Plugin contract for additional chains, case comparison, evidence export, and upstream contributions.
 

@@ -1,5 +1,13 @@
 # Validation record
 
+## v0.5 additions
+
+- Python suite: 36 tests total. New checks cover trace-field redaction, unavailable trace status, bounds/chain validation, fixed tracer configuration, ten-transaction scan cap, detected reorganization, and unsupported trace shapes.
+- Node suite: 34 tests total. New checks cover real Transfer-shaped logs, exact raw units, NFT IDs, reverted ancestors/receipts, root deduplication, inherited DELEGATECALL/CALLCODE exclusion, SELFDESTRUCT value, source association, malformed/duplicate/removed logs, trace gaps, scan-manifest constraints, and reconstructed-case tampering.
+- Chrome: bridge-target five-block command, six real supported logs and missing trace indication, two reverted internal attempts with distinct graph styling, honest zero-result scan, local import, evidence references in the exported report, and 390px layout without overflow; zero console errors.
+- Live capture: a real receipt with six supported token events; its trace request was rejected (HTTP 403), so no real trace coverage is claimed. A five-block OP direct-address scan captured zero matches. Positive-match/cap/reorganization behavior is checked with offline test transports.
+- No new dependencies installed. Existing pinned libraries remain unchanged. Reports and JSON retain coverage limits; no complete activity, net balance, owner identity, or exact deposited-fund attribution is inferred.
+
 ## v0.4 additions
 
 - Python suite: 29 tests total, including read-only capture of each chain, chain-ID rejection, provider-field projection, and bounded source logs.

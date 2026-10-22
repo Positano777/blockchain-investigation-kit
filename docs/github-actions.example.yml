@@ -14,4 +14,4 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '22'
-      - run: node --test tests/case.test.mjs tests/bridge.test.mjs
+      - run: node --test tests/case.test.mjs tests/bridge.test.mjs tests/movements.test.mjs

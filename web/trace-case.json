@@ -1,0 +1,307 @@
+{
+  "schema": "positano.asset-case.v1",
+  "network": "eth",
+  "synthetic": true,
+  "coverage": "Supplied RPC receipts and optional provider callTracer only. Transfer-shaped logs are emitted claims, not verified token balances or standard compliance. Reverted traces/attempts are not successful transfers; DELEGATECALL/CALLCODE values are excluded. Execution fees exclude blob, L1 data and operator fees. Discovery, when used, scans only direct from/to transactions in the recorded block range; token-only and internal-only address activity is not discovered. No complete history, net balances, exact fund attribution, ownership inference, or chain/finality proof.",
+  "nodes": [
+    {
+      "id": "eip155:1:0x1111111111111111111111111111111111111111",
+      "network": "eth",
+      "kind": "address"
+    },
+    {
+      "id": "eip155:1:0x2222222222222222222222222222222222222222",
+      "network": "eth",
+      "kind": "address"
+    },
+    {
+      "id": "eip155:1:0x0000000000000000000000000000000000000000",
+      "network": "eth",
+      "kind": "address"
+    },
+    {
+      "id": "eip155:1:0x3333333333333333333333333333333333333333",
+      "network": "eth",
+      "kind": "address"
+    },
+    {
+      "id": "eip155:1:0x5555555555555555555555555555555555555555",
+      "network": "eth",
+      "kind": "address"
+    },
+    {
+      "id": "eip155:1:0x4444444444444444444444444444444444444444",
+      "network": "eth",
+      "kind": "address"
+    }
+  ],
+  "edges": [
+    {
+      "id": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:transaction_value:root",
+      "from": "eip155:1:0x1111111111111111111111111111111111111111",
+      "to": "eip155:1:0x2222222222222222222222222222222222222222",
+      "kind": "native_value",
+      "amount": "100",
+      "unit": "wei",
+      "timestamp": 1700000000,
+      "source": "https://etherscan.io/tx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "transaction": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": {
+        "kind": "transaction_value",
+        "index": "root"
+      },
+      "outcome": "reported_success"
+    },
+    {
+      "id": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:receipt_log:0",
+      "from": "eip155:1:0x0000000000000000000000000000000000000000",
+      "to": "eip155:1:0x3333333333333333333333333333333333333333",
+      "kind": "token_mint_event",
+      "amount": "250",
+      "unit": "raw token units",
+      "timestamp": 1700000000,
+      "source": "https://etherscan.io/tx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "transaction": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": {
+        "kind": "receipt_log",
+        "index": "0"
+      },
+      "outcome": "emitted_event",
+      "assetContract": "0x4444444444444444444444444444444444444444"
+    },
+    {
+      "id": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:receipt_log:1",
+      "from": "eip155:1:0x3333333333333333333333333333333333333333",
+      "to": "eip155:1:0x5555555555555555555555555555555555555555",
+      "kind": "nft_transfer_event",
+      "amount": "1",
+      "unit": "NFT event count",
+      "timestamp": 1700000000,
+      "source": "https://etherscan.io/tx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "transaction": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": {
+        "kind": "receipt_log",
+        "index": "1"
+      },
+      "outcome": "emitted_event",
+      "assetContract": "0x6666666666666666666666666666666666666666",
+      "tokenId": "7"
+    },
+    {
+      "id": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:call_trace:root.0",
+      "from": "eip155:1:0x2222222222222222222222222222222222222222",
+      "to": "eip155:1:0x3333333333333333333333333333333333333333",
+      "kind": "internal_native_value",
+      "amount": "10",
+      "unit": "wei",
+      "timestamp": 1700000000,
+      "source": "https://etherscan.io/tx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "transaction": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": {
+        "kind": "call_trace",
+        "index": "root.0"
+      },
+      "outcome": "reported_success"
+    },
+    {
+      "id": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:call_trace:root.1",
+      "from": "eip155:1:0x2222222222222222222222222222222222222222",
+      "to": "eip155:1:0x4444444444444444444444444444444444444444",
+      "kind": "attempted_internal_value",
+      "amount": "5",
+      "unit": "wei",
+      "timestamp": 1700000000,
+      "source": "https://etherscan.io/tx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "transaction": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": {
+        "kind": "call_trace",
+        "index": "root.1"
+      },
+      "outcome": "reverted"
+    },
+    {
+      "id": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:call_trace:root.1.0",
+      "from": "eip155:1:0x4444444444444444444444444444444444444444",
+      "to": "eip155:1:0x5555555555555555555555555555555555555555",
+      "kind": "attempted_internal_value",
+      "amount": "3",
+      "unit": "wei",
+      "timestamp": 1700000000,
+      "source": "https://etherscan.io/tx/0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "transaction": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": {
+        "kind": "call_trace",
+        "index": "root.1.0"
+      },
+      "outcome": "reverted"
+    }
+  ],
+  "analysis": {
+    "transactions": 1,
+    "traceAvailable": 1,
+    "traceMissing": 0,
+    "unrecognizedLogs": 1,
+    "unsupportedTransferLogs": 1,
+    "executionFeesWei": "42000"
+  },
+  "assetEvidence": {
+    "schema": "positano.asset-evidence.v1",
+    "chainId": "0x1",
+    "synthetic": true,
+    "records": [
+      {
+        "transaction": {
+          "hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "value": "0x64",
+          "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "blockNumber": "0x64",
+          "transactionIndex": "0x0"
+        },
+        "receipt": {
+          "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "status": "0x1",
+          "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "blockNumber": "0x64",
+          "transactionIndex": "0x0",
+          "gasUsed": "0x5208",
+          "effectiveGasPrice": "0x2",
+          "logs": [
+            {
+              "address": "0x4444444444444444444444444444444444444444",
+              "topics": [
+                "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+                "0x0000000000000000000000000000000000000000000000000000000000000000",
+                "0x0000000000000000000000003333333333333333333333333333333333333333"
+              ],
+              "data": "0x00000000000000000000000000000000000000000000000000000000000000fa",
+              "blockNumber": "0x64",
+              "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "transactionIndex": "0x0",
+              "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "logIndex": "0x0",
+              "removed": false
+            },
+            {
+              "address": "0x6666666666666666666666666666666666666666",
+              "topics": [
+                "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+                "0x0000000000000000000000003333333333333333333333333333333333333333",
+                "0x0000000000000000000000005555555555555555555555555555555555555555",
+                "0x0000000000000000000000000000000000000000000000000000000000000007"
+              ],
+              "data": "0x",
+              "blockNumber": "0x64",
+              "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "transactionIndex": "0x0",
+              "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "logIndex": "0x1",
+              "removed": false
+            },
+            {
+              "address": "0x7777777777777777777777777777777777777777",
+              "topics": [
+                "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+              ],
+              "data": "0x",
+              "blockNumber": "0x64",
+              "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "transactionIndex": "0x0",
+              "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "logIndex": "0x2",
+              "removed": false
+            },
+            {
+              "address": "0x4444444444444444444444444444444444444444",
+              "topics": [
+                "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+                "0x0000000000000000000000001111111111111111111111111111111111111111",
+                "0x0000000000000000000000003333333333333333333333333333333333333333"
+              ],
+              "data": "0x",
+              "blockNumber": "0x64",
+              "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "transactionIndex": "0x0",
+              "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "logIndex": "0x3",
+              "removed": false
+            }
+          ]
+        },
+        "block": {
+          "hash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "number": "0x64",
+          "timestamp": "0x6553f100",
+          "transactions": [
+            "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          ]
+        },
+        "trace": {
+          "status": "available",
+          "root": {
+            "type": "CALL",
+            "from": "0x1111111111111111111111111111111111111111",
+            "to": "0x2222222222222222222222222222222222222222",
+            "value": "0x64",
+            "failed": false,
+            "calls": [
+              {
+                "type": "CALL",
+                "from": "0x2222222222222222222222222222222222222222",
+                "to": "0x3333333333333333333333333333333333333333",
+                "value": "0xa",
+                "failed": false,
+                "calls": []
+              },
+              {
+                "type": "CALL",
+                "from": "0x2222222222222222222222222222222222222222",
+                "to": "0x4444444444444444444444444444444444444444",
+                "value": "0x5",
+                "failed": true,
+                "calls": [
+                  {
+                    "type": "CALL",
+                    "from": "0x4444444444444444444444444444444444444444",
+                    "to": "0x5555555555555555555555555555555555555555",
+                    "value": "0x3",
+                    "failed": false,
+                    "calls": []
+                  }
+                ]
+              },
+              {
+                "type": "DELEGATECALL",
+                "from": "0x2222222222222222222222222222222222222222",
+                "to": "0x6666666666666666666666666666666666666666",
+                "value": "0x63",
+                "failed": false,
+                "calls": []
+              },
+              {
+                "type": "STATICCALL",
+                "from": "0x2222222222222222222222222222222222222222",
+                "to": "0x7777777777777777777777777777777777777777",
+                "value": "0x0",
+                "failed": false,
+                "calls": []
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "discovery": {
+      "mode": "supplied",
+      "address": null,
+      "fromBlock": null,
+      "toBlock": null,
+      "scannedBlocks": [],
+      "limitReached": false
+    }
+  },
+  "digest": "sha256:56b8a1db76745428c469cfce4e2af0eb65f06c316b69c3034986aa8d0e747f4c"
+}

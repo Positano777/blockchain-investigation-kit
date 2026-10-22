@@ -9,7 +9,7 @@ import urllib.parse
 import urllib.request
 from kit import MAX_BYTES, hex_id, load, seal
 
-METHODS = frozenset({'eth_chainId', 'eth_getTransactionByHash', 'eth_getTransactionReceipt', 'eth_getBlockByHash'})
+METHODS = frozenset({'eth_chainId', 'eth_getTransactionByHash', 'eth_getTransactionReceipt', 'eth_getBlockByHash', 'eth_getBlockByNumber', 'debug_traceTransaction'})
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -26,6 +26,14 @@ def quantity(value):
 def rpc(endpoint, method, params):
     if method not in METHODS:
         raise ValueError('RPC method not allowed')
+    if method == 'debug_traceTransaction':
+        if not isinstance(params, list) or len(params) != 2 or params[1] != {'tracer':'callTracer','timeout':'5s','tracerConfig':{'onlyTopCall':False}}:
+            raise ValueError('Only the bounded built-in callTracer is allowed')
+        hex_id(params[0],64)
+    if method == 'eth_getBlockByNumber':
+        if not isinstance(params,list) or len(params)!=2 or type(params[1]) is not bool:
+            raise ValueError('Explicit block number and transaction mode required')
+        quantity(params[0])
     parsed = urllib.parse.urlsplit(endpoint)
     if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password or parsed.fragment:
         raise ValueError('Use an HTTPS RPC URL without userinfo or fragment')

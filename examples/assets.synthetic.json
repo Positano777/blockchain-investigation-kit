@@ -1,0 +1,159 @@
+{
+  "schema": "positano.asset-evidence.v1",
+  "chainId": "0x1",
+  "synthetic": true,
+  "records": [
+    {
+      "transaction": {
+        "hash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "from": "0x1111111111111111111111111111111111111111",
+        "to": "0x2222222222222222222222222222222222222222",
+        "value": "0x64",
+        "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "blockNumber": "0x64",
+        "transactionIndex": "0x0"
+      },
+      "receipt": {
+        "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "from": "0x1111111111111111111111111111111111111111",
+        "to": "0x2222222222222222222222222222222222222222",
+        "status": "0x1",
+        "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "blockNumber": "0x64",
+        "transactionIndex": "0x0",
+        "gasUsed": "0x5208",
+        "effectiveGasPrice": "0x2",
+        "logs": [
+          {
+            "address": "0x4444444444444444444444444444444444444444",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x0000000000000000000000003333333333333333333333333333333333333333"
+            ],
+            "data": "0x00000000000000000000000000000000000000000000000000000000000000fa",
+            "blockNumber": "0x64",
+            "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "transactionIndex": "0x0",
+            "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "logIndex": "0x0",
+            "removed": false
+          },
+          {
+            "address": "0x6666666666666666666666666666666666666666",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x0000000000000000000000003333333333333333333333333333333333333333",
+              "0x0000000000000000000000005555555555555555555555555555555555555555",
+              "0x0000000000000000000000000000000000000000000000000000000000000007"
+            ],
+            "data": "0x",
+            "blockNumber": "0x64",
+            "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "transactionIndex": "0x0",
+            "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "logIndex": "0x1",
+            "removed": false
+          },
+          {
+            "address": "0x7777777777777777777777777777777777777777",
+            "topics": [
+              "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+            ],
+            "data": "0x",
+            "blockNumber": "0x64",
+            "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "transactionIndex": "0x0",
+            "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "logIndex": "0x2",
+            "removed": false
+          },
+          {
+            "address": "0x4444444444444444444444444444444444444444",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x0000000000000000000000001111111111111111111111111111111111111111",
+              "0x0000000000000000000000003333333333333333333333333333333333333333"
+            ],
+            "data": "0x",
+            "blockNumber": "0x64",
+            "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "transactionIndex": "0x0",
+            "blockHash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "logIndex": "0x3",
+            "removed": false
+          }
+        ]
+      },
+      "block": {
+        "hash": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "number": "0x64",
+        "timestamp": "0x6553f100",
+        "transactions": [
+          "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ]
+      },
+      "trace": {
+        "status": "available",
+        "root": {
+          "type": "CALL",
+          "from": "0x1111111111111111111111111111111111111111",
+          "to": "0x2222222222222222222222222222222222222222",
+          "value": "0x64",
+          "failed": false,
+          "calls": [
+            {
+              "type": "CALL",
+              "from": "0x2222222222222222222222222222222222222222",
+              "to": "0x3333333333333333333333333333333333333333",
+              "value": "0xa",
+              "failed": false,
+              "calls": []
+            },
+            {
+              "type": "CALL",
+              "from": "0x2222222222222222222222222222222222222222",
+              "to": "0x4444444444444444444444444444444444444444",
+              "value": "0x5",
+              "failed": true,
+              "calls": [
+                {
+                  "type": "CALL",
+                  "from": "0x4444444444444444444444444444444444444444",
+                  "to": "0x5555555555555555555555555555555555555555",
+                  "value": "0x3",
+                  "failed": false,
+                  "calls": []
+                }
+              ]
+            },
+            {
+              "type": "DELEGATECALL",
+              "from": "0x2222222222222222222222222222222222222222",
+              "to": "0x6666666666666666666666666666666666666666",
+              "value": "0x63",
+              "failed": false,
+              "calls": []
+            },
+            {
+              "type": "STATICCALL",
+              "from": "0x2222222222222222222222222222222222222222",
+              "to": "0x7777777777777777777777777777777777777777",
+              "value": "0x0",
+              "failed": false,
+              "calls": []
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "discovery": {
+    "mode": "supplied",
+    "address": null,
+    "fromBlock": null,
+    "toBlock": null,
+    "scannedBlocks": [],
+    "limitReached": false
+  }
+}

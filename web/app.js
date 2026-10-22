@@ -54,6 +54,30 @@ function inspect(e) {
     ],
   ])
     if (!current.bridge) paragraph($("details"), label, value);
+  if (current.analysis) {
+    paragraph(
+      $("details"),
+      "Evidence reference",
+      JSON.stringify(e.evidenceRef),
+    );
+    paragraph($("details"), "Outcome", e.outcome);
+    if (e.assetContract)
+      paragraph(
+        $("details"),
+        "Emitting token contract (not independently verified)",
+        e.assetContract,
+      );
+    if (e.tokenId) paragraph($("details"), "Token ID", e.tokenId);
+    paragraph(
+      $("details"),
+      "How this connection was obtained",
+      e.evidenceRef.kind === "receipt_log"
+        ? "Decoded from a supplied, successful receipt log. Events can be emitted by nonstandard or malicious contracts."
+        : e.evidenceRef.kind === "call_trace"
+          ? "Reported by provider callTracer. Reverted ancestors propagate failure; inherited DELEGATECALL/CALLCODE values are not counted."
+          : "Top-level value from the supplied transaction, paired with receipt status.",
+    );
+  }
   if (current.bridge) {
     const b = current.bridge;
     for (const [label, value] of [
@@ -186,7 +210,7 @@ function render() {
         : `M ${x1} ${y1} L ${x2} ${y2}`;
     const line = element("path", {
       d,
-      class: "edge",
+      class: e.outcome === "reverted" ? "edge reverted" : "edge",
       fill: "none",
       ...(e.kind === "token_gain_observation"
         ? { "stroke-dasharray": "6 5" }
@@ -223,7 +247,7 @@ function render() {
       element(
         "text",
         { x, y: y + 32, "text-anchor": "middle" },
-        (current.bridge
+        (current.bridge || current.analysis
           ? n.network + " / " + n.id.split(":").at(-1).slice(0, 7)
           : n.id.slice(0, 7)) +
           "..." +
@@ -238,9 +262,13 @@ function render() {
   if (current.bridge)
     $("graph-note").textContent =
       "Ethereum deposit event → derived OP transaction hash → captured Optimism receipt. The link is computed from the protocol encoding, not guessed from timing or amount.";
+  if (current.analysis)
+    $("graph-note").textContent =
+      `Graph shows ${shown.length} supplied movements/attempts, bounded to 24 nodes and 40 connections. Select a record to explain its source. Reverted attempts are not successful transfers; token event amounts use raw units.`;
   for (const e of edges) {
     const row = document.createElement("button");
     row.className = "row";
+    if (e.outcome) row.dataset.outcome = e.outcome;
     row.textContent =
       e.kind.replaceAll("_", " ") +
       " / " +
@@ -268,11 +296,22 @@ async function activate(d, token, example = "") {
   await verifyCase(d);
   if (token !== generation) return;
   current = d;
-  for (const key of ["eth", "sol", "real", "multi", "bridge"])
+  $("hop-command").textContent = "";
+  $("hop-command").closest("details").open = false;
+  for (const key of [
+    "eth",
+    "sol",
+    "real",
+    "multi",
+    "bridge",
+    "assets",
+    "hop",
+    "trace",
+  ])
     $(key).setAttribute("aria-pressed", String(key === example));
   $("case-status").textContent = d.synthetic
-    ? "SYNTHETIC CASE / v0.4"
-    : "IMPORTED EVIDENCE / v0.4";
+    ? "SYNTHETIC CASE / v0.5"
+    : "IMPORTED EVIDENCE / v0.5";
   const receipts = d.receipts
     ? Object.values(d.receipts)
     : d.receipt
@@ -286,6 +325,14 @@ async function activate(d, token, example = "") {
   if (d.bridge)
     $("summary").textContent =
       `Ethereum (1) → OP Mainnet (10). Exact destination transaction hash derived from the supplied Portal event. Deposit mint: ${formatEth(d.bridge.mintWei)}. Destination receipt: ${d.bridge.destinationStatus}. This is a protocol deposit link, not proof of common ownership or complete asset movement.`;
+  if (d.analysis)
+    $("summary").textContent =
+      `${d.analysis.transactions} supplied transactions / ${d.edges.length} movements or attempts. Trace coverage: ${d.analysis.traceAvailable} available, ${d.analysis.traceMissing} missing/not requested. ${d.analysis.unrecognizedLogs} other logs and ${d.analysis.unsupportedTransferLogs} unsupported Transfer-shaped logs not decoded. Execution fee portion: ${formatEth(d.analysis.executionFeesWei)} (other fee components excluded).`;
+  if (d.assetEvidence?.discovery.mode === "direct_address_blocks") {
+    const s = d.assetEvidence.discovery;
+    $("summary").textContent +=
+      ` Direct-address scan: ${s.scannedBlocks.length} blocks inspected in requested range ${s.fromBlock}–${s.toBlock}. Transaction cap reached: ${s.limitReached ? "yes" : "no"}. Zero results means no captured direct from/to transactions in this range, not no activity.`;
+  }
   $("coverage").textContent =
     `${d.synthetic ? "SYNTHETIC EXAMPLE. " : "PROVIDER / IMPORTED DATA. "}${d.coverage} Checksum matched (not source authentication): ${d.digest}`;
   for (const id of ["search", "from", "until"]) $(id).value = "";
@@ -315,7 +362,16 @@ async function show(example) {
 function fail(error) {
   $("message").textContent = error.message || "Unable to load case.";
 }
-for (const example of ["eth", "sol", "real", "multi", "bridge"])
+for (const example of [
+  "eth",
+  "sol",
+  "real",
+  "multi",
+  "bridge",
+  "assets",
+  "hop",
+  "trace",
+])
   $(example).addEventListener("click", () => show(example).catch(fail));
 $("import").addEventListener("change", async (event) => {
   const file = event.target.files[0],
@@ -364,6 +420,22 @@ $("report").addEventListener("click", () => {
       "Receipt summary:",
       JSON.stringify(current.receipt, null, 2),
     );
+  if (current.analysis)
+    lines.push(
+      "",
+      "Movement evidence references:",
+      JSON.stringify(
+        current.edges.map((e) => ({
+          record: e.id,
+          reference: e.evidenceRef,
+          outcome: e.outcome,
+          assetContract: e.assetContract ?? null,
+          tokenId: e.tokenId ?? null,
+        })),
+        null,
+        2,
+      ),
+    );
   if (current.bridge)
     lines.push(
       "",
@@ -373,6 +445,15 @@ $("report").addEventListener("click", () => {
       "Destination: https://optimistic.etherscan.io/tx/" +
         current.bridge.destinationTransaction,
       "Download the full JSON case to retain the supplied RPC evidence.",
+    );
+  if (current.analysis)
+    lines.push(
+      "",
+      "Asset coverage:",
+      JSON.stringify(current.analysis, null, 2),
+      "Discovery scope:",
+      JSON.stringify(current.assetEvidence.discovery, null, 2),
+      "Download full JSON to retain receipts, projected traces, and movement evidence references.",
     );
   if (current.receipts)
     lines.push(
@@ -391,5 +472,23 @@ $("report").addEventListener("click", () => {
   link.download = "investigation-report.txt";
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+$("expand").addEventListener("click", () => {
+  let chain, address, start;
+  if (current?.bridge) {
+    chain = 10;
+    address = current.bridge.to;
+    start = BigInt(current.evidence.destination.block.number) + 1n;
+  } else if (current?.assetEvidence && current.assetEvidence.records.length) {
+    chain = Number(BigInt(current.assetEvidence.chainId));
+    address = current.assetEvidence.records[0].transaction.to;
+    start = BigInt(current.assetEvidence.records[0].block.number) + 1n;
+  } else {
+    $("hop-command").textContent =
+      "Open a bridge case or an asset case with a transaction first.";
+    return;
+  }
+  $("hop-command").textContent =
+    `Set ${chain === 1 ? "ETH_RPC_URL" : "OP_RPC_URL"} to your HTTPS provider in your shell, then run locally:\npython capture_assets.py hop ${chain} ${address} ${start} ${start + 4n} next-hop-evidence.json\nnode assets.mjs next-hop-evidence.json next-hop-case.json\nOpen next-hop-case.json here. Scans five explicit blocks, captures at most ten direct from/to transactions, and excludes token-only/internal-only discovery. This follows the selected call target, not an attributed owner or specific deposited coins.`;
 });
 show("bridge").catch(fail);

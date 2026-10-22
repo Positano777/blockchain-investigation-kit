@@ -225,13 +225,23 @@
         width: 100%;
       }
     }
+    .edge.reverted {
+      stroke: #ad4c43;
+      stroke-dasharray: 4 5;
+    }
+    .edge.reverted.active {
+      stroke: #aa3322;
+    }
+    .row[data-outcome="reverted"] {
+      border-color: #ad4c43;
+    }
   </style>
   <header>
     <div>
       <h1>Positano Investigations</h1>
       <small>Open evidence. Reusable cases.</small>
     </div>
-    <span class="badge" id="case-status">LOADING / v0.4</span>
+    <span class="badge" id="case-status">LOADING / v0.5</span>
   </header>
   <main>
     <p class="intro">
@@ -240,6 +250,9 @@
     </p>
     <div class="toolbar">
       <button id="bridge" aria-pressed="false">Ethereum → Optimism</button>
+      <button id="assets" aria-pressed="false">Asset movements</button>
+      <button id="trace" aria-pressed="false">Synthetic trace lab</button>
+      <button id="hop" aria-pressed="false">After-bridge scan</button>
       <button id="multi" aria-pressed="false">Multi-transaction case</button>
       <button id="real" aria-pressed="false">Real Ethereum receipt</button
       ><button id="eth" aria-pressed="false">Synthetic ETH transfers</button
@@ -261,6 +274,18 @@
       Loading bundled evidence...
     </p>
     <div id="summary" class="coverage" aria-live="polite"></div>
+    <details class="coverage">
+      <summary>Expand one hop (local read-only capture)</summary>
+      <p>
+        This prepares a bounded CLI command. Your provider credentials stay in
+        your shell.
+      </p>
+      <button id="expand">Prepare one-hop command</button>
+      <pre
+        id="hop-command"
+        style="white-space: pre-wrap; overflow-wrap: anywhere"
+      ></pre>
+    </details>
     <div class="filters">
       <label
         >Address, transaction, or relationship<input

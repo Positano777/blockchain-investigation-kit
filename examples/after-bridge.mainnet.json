@@ -1,0 +1,35 @@
+{
+  "schema": "positano.asset-evidence.v1",
+  "chainId": "0xa",
+  "synthetic": false,
+  "records": [],
+  "discovery": {
+    "mode": "direct_address_blocks",
+    "address": "0x4ec1aabc0fb4241d582799e32b428bfabba8c13a",
+    "fromBlock": "150539535",
+    "toBlock": "150539539",
+    "scannedBlocks": [
+      {
+        "number": "150539535",
+        "hash": "0xecc0ed80feb9a46e8ed100bb4c730ab9a6636f1e67a65a47244e25cb2eae7faa"
+      },
+      {
+        "number": "150539536",
+        "hash": "0xaddbfa99774fa15c9486e83f9accea81e2dabcb453f6a448ceb37d4036f1246b"
+      },
+      {
+        "number": "150539537",
+        "hash": "0xc2ded91439ae87662c9dbadff99c37580f3e9398cc272eb6cef82f53148bf29f"
+      },
+      {
+        "number": "150539538",
+        "hash": "0x8b41c53cdcb19f975ae0ccf63813238476b37c28806040261e29fc2fa7fcc8e9"
+      },
+      {
+        "number": "150539539",
+        "hash": "0x5d8ff66bf040fdfad19bc5aea4f907c4b74cb1d2b42f764ad5b126cfec08d87b"
+      }
+    ],
+    "limitReached": false
+  }
+}
