@@ -1,0 +1,106 @@
+{
+  "schema": "positano.investigation.v1",
+  "network": "sol",
+  "synthetic": true,
+  "coverage": "Supplied positive fee-payer deltas only. Not verified buys, transfers, common ownership, bundles, or full history. Creation allocations excluded by source sampler.",
+  "nodes": [
+    {
+      "id": "5F4VhgiAaVN3yjZx6ZdXQU6Eo7Q6J3dVSBU8PsfQdBFc",
+      "network": "sol",
+      "kind": "mint"
+    },
+    {
+      "id": "AbkKsghMSeQHR3FcNqaMUtPyHy6PpjujjXpd55DSmmqU",
+      "network": "sol",
+      "kind": "fee_payer"
+    },
+    {
+      "id": "3jg7CNKrHasRCsWZfR7LiJkGCiQDLjRQFDC8kc8CApDA",
+      "network": "sol",
+      "kind": "fee_payer"
+    },
+    {
+      "id": "CXraXEPhdbaiH7deZvGeXtL2fUvYRKyxrPLG8WeN1HMw",
+      "network": "sol",
+      "kind": "fee_payer"
+    },
+    {
+      "id": "G1usS5D3nUcoWmhaJQGjdXez1kFKBbhgqo14qYK25ofe",
+      "network": "sol",
+      "kind": "fee_payer"
+    },
+    {
+      "id": "4ih8Rjy6di9tgFt1Jk4dL7ST8GJ3Ax8wGHPMXyQdJFAm",
+      "network": "sol",
+      "kind": "fee_payer"
+    },
+    {
+      "id": "3AVcujQ2qnnYAm5rThP93AEzMFAPYUW79aEKzyQCmCna",
+      "network": "sol",
+      "kind": "fee_payer"
+    }
+  ],
+  "edges": [
+    {
+      "id": "2x4VbFMy2Qp1WLXdkX8tyjYzgZWz5m97u1KcHgzRzBrFSMFKzmpcD2wNBMDZvV4nvwr1m2wjhfn4tKPbfnvj8ghA",
+      "from": "5F4VhgiAaVN3yjZx6ZdXQU6Eo7Q6J3dVSBU8PsfQdBFc",
+      "to": "AbkKsghMSeQHR3FcNqaMUtPyHy6PpjujjXpd55DSmmqU",
+      "kind": "token_gain_observation",
+      "amount": "12",
+      "unit": "approximate % of supply",
+      "timestamp": null,
+      "source": "https://solscan.io/tx/2x4VbFMy2Qp1WLXdkX8tyjYzgZWz5m97u1KcHgzRzBrFSMFKzmpcD2wNBMDZvV4nvwr1m2wjhfn4tKPbfnvj8ghA"
+    },
+    {
+      "id": "5xmZMUcXJzezhga9UC9LP1f61itfyDa9RWptFfpsQcEkb7QDZ8Roo5fgoR3PM9AJjTHHZXhhPsZ6nDatKxtk29D4",
+      "from": "5F4VhgiAaVN3yjZx6ZdXQU6Eo7Q6J3dVSBU8PsfQdBFc",
+      "to": "3jg7CNKrHasRCsWZfR7LiJkGCiQDLjRQFDC8kc8CApDA",
+      "kind": "token_gain_observation",
+      "amount": "7",
+      "unit": "approximate % of supply",
+      "timestamp": null,
+      "source": "https://solscan.io/tx/5xmZMUcXJzezhga9UC9LP1f61itfyDa9RWptFfpsQcEkb7QDZ8Roo5fgoR3PM9AJjTHHZXhhPsZ6nDatKxtk29D4"
+    },
+    {
+      "id": "5pAAVWNYKgTgwyBUuhx88KcUs1qeueKAguouQEM6fSvbyvHA5jjVyRfEBknJstLSK8B8wtsjnRkKkE4JuqquVp16",
+      "from": "5F4VhgiAaVN3yjZx6ZdXQU6Eo7Q6J3dVSBU8PsfQdBFc",
+      "to": "CXraXEPhdbaiH7deZvGeXtL2fUvYRKyxrPLG8WeN1HMw",
+      "kind": "token_gain_observation",
+      "amount": "4",
+      "unit": "approximate % of supply",
+      "timestamp": null,
+      "source": "https://solscan.io/tx/5pAAVWNYKgTgwyBUuhx88KcUs1qeueKAguouQEM6fSvbyvHA5jjVyRfEBknJstLSK8B8wtsjnRkKkE4JuqquVp16"
+    },
+    {
+      "id": "3hnhSymHbAfF7stt4QsuKTqBtS5aBDWwCDLsVU1AqDJLwWvr52v1Rkd53XRzKm7y71XZgsFfWumPU586sVw54mjX",
+      "from": "5F4VhgiAaVN3yjZx6ZdXQU6Eo7Q6J3dVSBU8PsfQdBFc",
+      "to": "G1usS5D3nUcoWmhaJQGjdXez1kFKBbhgqo14qYK25ofe",
+      "kind": "token_gain_observation",
+      "amount": "3",
+      "unit": "approximate % of supply",
+      "timestamp": null,
+      "source": "https://solscan.io/tx/3hnhSymHbAfF7stt4QsuKTqBtS5aBDWwCDLsVU1AqDJLwWvr52v1Rkd53XRzKm7y71XZgsFfWumPU586sVw54mjX"
+    },
+    {
+      "id": "2KMuBT73KVjirdzUvLFSRzX7jjHg9JVBq88NrRqusGBAQfXvbf2FkMmFw8SykD6nxmRt8j8xKJZ17mZbBJFqBVSZ",
+      "from": "5F4VhgiAaVN3yjZx6ZdXQU6Eo7Q6J3dVSBU8PsfQdBFc",
+      "to": "4ih8Rjy6di9tgFt1Jk4dL7ST8GJ3Ax8wGHPMXyQdJFAm",
+      "kind": "token_gain_observation",
+      "amount": "2",
+      "unit": "approximate % of supply",
+      "timestamp": null,
+      "source": "https://solscan.io/tx/2KMuBT73KVjirdzUvLFSRzX7jjHg9JVBq88NrRqusGBAQfXvbf2FkMmFw8SykD6nxmRt8j8xKJZ17mZbBJFqBVSZ"
+    },
+    {
+      "id": "YBafsH7D4x1WoDBjaXoYJ59XaJf8Nk2BTgMxRVRAHM9YdPmfaNk1h6EmWqDJAv1skne2uGJKuQd1gPp9AYRv6QA",
+      "from": "5F4VhgiAaVN3yjZx6ZdXQU6Eo7Q6J3dVSBU8PsfQdBFc",
+      "to": "3AVcujQ2qnnYAm5rThP93AEzMFAPYUW79aEKzyQCmCna",
+      "kind": "token_gain_observation",
+      "amount": "1",
+      "unit": "approximate % of supply",
+      "timestamp": null,
+      "source": "https://solscan.io/tx/YBafsH7D4x1WoDBjaXoYJ59XaJf8Nk2BTgMxRVRAHM9YdPmfaNk1h6EmWqDJAv1skne2uGJKuQd1gPp9AYRv6QA"
+    }
+  ],
+  "digest": "sha256:cdab636bb174dd76828ac0f34045230989df12c5d5115488f9a4e4823107a047"
+}

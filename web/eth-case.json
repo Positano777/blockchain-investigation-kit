@@ -1,0 +1,46 @@
+{
+  "schema": "positano.investigation.v1",
+  "network": "eth",
+  "synthetic": true,
+  "coverage": "Supplied GraphSense snapshots only; execution and completeness not independently verified.",
+  "nodes": [
+    {
+      "id": "0x1111111111111111111111111111111111111111",
+      "network": "eth",
+      "kind": "address"
+    },
+    {
+      "id": "0x2222222222222222222222222222222222222222",
+      "network": "eth",
+      "kind": "address"
+    },
+    {
+      "id": "0x3333333333333333333333333333333333333333",
+      "network": "eth",
+      "kind": "address"
+    }
+  ],
+  "edges": [
+    {
+      "id": "0x1111111111111111111111111111111111111111111111111111111111111111",
+      "from": "0x1111111111111111111111111111111111111111",
+      "to": "0x2222222222222222222222222222222222222222",
+      "kind": "reported_native_transfer",
+      "amount": "1000000000000000000",
+      "unit": "wei",
+      "timestamp": 1792627100,
+      "source": "https://etherscan.io/tx/0x1111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "id": "0x2222222222222222222222222222222222222222222222222222222222222222",
+      "from": "0x2222222222222222222222222222222222222222",
+      "to": "0x3333333333333333333333333333333333333333",
+      "kind": "reported_native_transfer",
+      "amount": "500000000000000000",
+      "unit": "wei",
+      "timestamp": 1792627160,
+      "source": "https://etherscan.io/tx/0x2222222222222222222222222222222222222222222222222222222222222222"
+    }
+  ],
+  "digest": "sha256:7c64dce9f9f67e6f2d2592b54cfdd3eed85b93788295cd21cd96bcd20f4f7849"
+}

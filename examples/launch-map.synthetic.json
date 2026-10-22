@@ -1,0 +1,125 @@
+{
+  "schema": "positano.launch-evidence.v1",
+  "mint": "5F4VhgiAaVN3yjZx6ZdXQU6Eo7Q6J3dVSBU8PsfQdBFc",
+  "scannedAt": 1792627200000,
+  "sourceEngine": "RugHawk community fork",
+  "syntheticExample": true,
+  "coverage": {
+    "creation": "located",
+    "launchBlock": "complete",
+    "launchBlockDetails": {
+      "slot": 100,
+      "source": "getBlock",
+      "relevantTransactions": 6,
+      "inspectedTransactions": 6,
+      "reasons": []
+    },
+    "warnings": []
+  },
+  "creation": {
+    "slot": 100,
+    "blockTime": 1792627100,
+    "source": {
+      "signature": "3KqZSgMUr9hsAcnzqnRzCGXXDeus4FUP3Nfn1xPdsLtZwFvr5hdBVQicGp794HWkrBCREW3XFETevgdheKCHPgaq",
+      "url": "https://solscan.io/tx/3KqZSgMUr9hsAcnzqnRzCGXXDeus4FUP3Nfn1xPdsLtZwFvr5hdBVQicGp794HWkrBCREW3XFETevgdheKCHPgaq"
+    },
+    "feePayer": "N9E5xNpZR4uJ4XZE1Td47aUWeMG9XVs4wMXbkzPXSyr",
+    "feePayerIsCreator": "unverified"
+  },
+  "launchSlotObservations": {
+    "netAcquiringFeePayers": [
+      "AbkKsghMSeQHR3FcNqaMUtPyHy6PpjujjXpd55DSmmqU",
+      "3jg7CNKrHasRCsWZfR7LiJkGCiQDLjRQFDC8kc8CApDA",
+      "CXraXEPhdbaiH7deZvGeXtL2fUvYRKyxrPLG8WeN1HMw",
+      "G1usS5D3nUcoWmhaJQGjdXez1kFKBbhgqo14qYK25ofe",
+      "4ih8Rjy6di9tgFt1Jk4dL7ST8GJ3Ax8wGHPMXyQdJFAm",
+      "3AVcujQ2qnnYAm5rThP93AEzMFAPYUW79aEKzyQCmCna"
+    ],
+    "summedPositiveDeltasPctOfSupply": 29,
+    "transactionCount": 6,
+    "transactions": [
+      {
+        "source": {
+          "signature": "2x4VbFMy2Qp1WLXdkX8tyjYzgZWz5m97u1KcHgzRzBrFSMFKzmpcD2wNBMDZvV4nvwr1m2wjhfn4tKPbfnvj8ghA",
+          "url": "https://solscan.io/tx/2x4VbFMy2Qp1WLXdkX8tyjYzgZWz5m97u1KcHgzRzBrFSMFKzmpcD2wNBMDZvV4nvwr1m2wjhfn4tKPbfnvj8ghA"
+        },
+        "wallet": "AbkKsghMSeQHR3FcNqaMUtPyHy6PpjujjXpd55DSmmqU",
+        "positiveDeltaPctOfSupply": 12
+      },
+      {
+        "source": {
+          "signature": "5xmZMUcXJzezhga9UC9LP1f61itfyDa9RWptFfpsQcEkb7QDZ8Roo5fgoR3PM9AJjTHHZXhhPsZ6nDatKxtk29D4",
+          "url": "https://solscan.io/tx/5xmZMUcXJzezhga9UC9LP1f61itfyDa9RWptFfpsQcEkb7QDZ8Roo5fgoR3PM9AJjTHHZXhhPsZ6nDatKxtk29D4"
+        },
+        "wallet": "3jg7CNKrHasRCsWZfR7LiJkGCiQDLjRQFDC8kc8CApDA",
+        "positiveDeltaPctOfSupply": 7
+      },
+      {
+        "source": {
+          "signature": "5pAAVWNYKgTgwyBUuhx88KcUs1qeueKAguouQEM6fSvbyvHA5jjVyRfEBknJstLSK8B8wtsjnRkKkE4JuqquVp16",
+          "url": "https://solscan.io/tx/5pAAVWNYKgTgwyBUuhx88KcUs1qeueKAguouQEM6fSvbyvHA5jjVyRfEBknJstLSK8B8wtsjnRkKkE4JuqquVp16"
+        },
+        "wallet": "CXraXEPhdbaiH7deZvGeXtL2fUvYRKyxrPLG8WeN1HMw",
+        "positiveDeltaPctOfSupply": 4
+      },
+      {
+        "source": {
+          "signature": "3hnhSymHbAfF7stt4QsuKTqBtS5aBDWwCDLsVU1AqDJLwWvr52v1Rkd53XRzKm7y71XZgsFfWumPU586sVw54mjX",
+          "url": "https://solscan.io/tx/3hnhSymHbAfF7stt4QsuKTqBtS5aBDWwCDLsVU1AqDJLwWvr52v1Rkd53XRzKm7y71XZgsFfWumPU586sVw54mjX"
+        },
+        "wallet": "G1usS5D3nUcoWmhaJQGjdXez1kFKBbhgqo14qYK25ofe",
+        "positiveDeltaPctOfSupply": 3
+      },
+      {
+        "source": {
+          "signature": "2KMuBT73KVjirdzUvLFSRzX7jjHg9JVBq88NrRqusGBAQfXvbf2FkMmFw8SykD6nxmRt8j8xKJZ17mZbBJFqBVSZ",
+          "url": "https://solscan.io/tx/2KMuBT73KVjirdzUvLFSRzX7jjHg9JVBq88NrRqusGBAQfXvbf2FkMmFw8SykD6nxmRt8j8xKJZ17mZbBJFqBVSZ"
+        },
+        "wallet": "4ih8Rjy6di9tgFt1Jk4dL7ST8GJ3Ax8wGHPMXyQdJFAm",
+        "positiveDeltaPctOfSupply": 2
+      },
+      {
+        "source": {
+          "signature": "YBafsH7D4x1WoDBjaXoYJ59XaJf8Nk2BTgMxRVRAHM9YdPmfaNk1h6EmWqDJAv1skne2uGJKuQd1gPp9AYRv6QA",
+          "url": "https://solscan.io/tx/YBafsH7D4x1WoDBjaXoYJ59XaJf8Nk2BTgMxRVRAHM9YdPmfaNk1h6EmWqDJAv1skne2uGJKuQd1gPp9AYRv6QA"
+        },
+        "wallet": "3AVcujQ2qnnYAm5rThP93AEzMFAPYUW79aEKzyQCmCna",
+        "positiveDeltaPctOfSupply": 1
+      }
+    ],
+    "purchasesVerified": false,
+    "coordination": "unverified",
+    "jitoBundleMembership": "unverified"
+  },
+  "feePayerOutflows": [
+    {
+      "signature": "EUvvnoDfEbCocKDC42jjChDuWTJWkNCGx978b4K7SKxW9FT8KC9q9JptBZNPuQSJDbycjBMGDfhVeXFCSWdURGy",
+      "source": {
+        "signature": "EUvvnoDfEbCocKDC42jjChDuWTJWkNCGx978b4K7SKxW9FT8KC9q9JptBZNPuQSJDbycjBMGDfhVeXFCSWdURGy",
+        "url": "https://solscan.io/tx/EUvvnoDfEbCocKDC42jjChDuWTJWkNCGx978b4K7SKxW9FT8KC9q9JptBZNPuQSJDbycjBMGDfhVeXFCSWdURGy"
+      },
+      "kind": "transfer",
+      "secondsAfterLaunch": 30,
+      "pctOfSupply": 2
+    },
+    {
+      "signature": "45cTBnEHCfXr1DhL9ej8LCNyaHGNFAsDLWykJHRAX8wCqGo15hdb5nhun4Akk3gZpxnREHbcWZEqCU9Az5o9s9wq",
+      "source": {
+        "signature": "45cTBnEHCfXr1DhL9ej8LCNyaHGNFAsDLWykJHRAX8wCqGo15hdb5nhun4Akk3gZpxnREHbcWZEqCU9Az5o9s9wq",
+        "url": "https://solscan.io/tx/45cTBnEHCfXr1DhL9ej8LCNyaHGNFAsDLWykJHRAX8wCqGo15hdb5nhun4Akk3gZpxnREHbcWZEqCU9Az5o9s9wq"
+      },
+      "kind": "sale",
+      "secondsAfterLaunch": 90,
+      "pctOfSupply": 1
+    }
+  ],
+  "limitations": [
+    "Imported evidence is not independently verified blockchain data.",
+    "Positive fee-payer deltas can include transfers and repeated circulation. They are not unique supply held, purchases or current whale holdings.",
+    "Dashed map lines associate a token with observations; they do not show wallet-to-wallet transfers or funding.",
+    "Same-slot activity does not prove common control, insider access or Jito bundle membership.",
+    "Creation fee payer and token creator are different roles; their identity relationship is unverified.",
+    "Reported fee-payer outflows use upstream heuristics. This viewer does not independently decode sales, transfers, locks or burns.",
+    "No complete wallet history, current balances, multi-hop trace, live monitoring or full launch-to-exit replay is established."
+  ]
+}

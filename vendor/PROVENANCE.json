@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/graphsense/graphsense-lib",
+  "revision": "b4a1a1299f2cde888187c92d572f8c30b932f602",
+  "path": "src/graphsenselib/convert/gs_files",
+  "changes": "None; UTF-8 LF normalization only",
+  "sha256": {
+    "__init__.py": "4c33052ffcd989631ebd1b895ea5286ab2702687aa0f70e929964ab1a681ef3f",
+    "encoder.py": "ca6c37eebe8e2babf516508efbbf8a12a894c53ac1fb2d209c3d743811e511f8",
+    "parser.py": "6d0338ad9c42f00a0a8cabe26a6f8aab18d1b934d43b7aadd3fd26b131b84d65",
+    "writer.py": "87c5f3618c8860043a71eea11fc7225048443166292072cc69b9117ff2807a95",
+    "layout.py": "9cb7dcf259d97fa88f9fa49be97184d1d8d713b57f8496021e1024ff739d742b",
+    "summary.py": "8b4f670f6d0ea640297d7423519e266ac716efdd9d672d1d76d7d6b00521dcbb"
+  }
+}
