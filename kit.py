@@ -105,6 +105,8 @@ def solana_case(data):
 def graphsense_export(case):
     if case['network'] != 'eth':
         raise ValueError('Native GraphSense export supports ETH only; keep Solana in portable JSON')
+    if any(edge['kind'] not in ('reported_native_transfer', 'rpc_value_transfer') for edge in case['edges']):
+        raise ValueError('GraphSense export requires value-transfer edges')
     spec = {'addresses': [dict(id=n['id'], network='eth', starting_point=i == 0,
                                 x=i * 10, y=0) for i, n in enumerate(case['nodes'])],
             'txs': [dict(id=e['id'], network='eth', x=i * 10 + 5, y=4)
@@ -116,13 +118,18 @@ def graphsense_export(case):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('adapter', choices=['eth', 'sol'])
+    parser.add_argument('adapter', choices=['eth', 'sol', 'rpc'])
     parser.add_argument('input')
     parser.add_argument('output', help='New output path; existing files are never overwritten')
     parser.add_argument('--gs', action='store_true', help='Export GraphSense native ETH layout instead of portable JSON')
     args = parser.parse_args()
     try:
-        case = (eth_case if args.adapter == 'eth' else solana_case)(load(args.input))
+        if args.adapter == 'rpc':
+            from collect import receipt_case
+            adapter = receipt_case
+        else:
+            adapter = eth_case if args.adapter == 'eth' else solana_case
+        case = adapter(load(args.input))
         result = graphsense_export(case) if args.gs else (json.dumps(case, indent=2) + '\n').encode()
         with open(args.output, 'xb') as target:
             target.write(result)

@@ -1,51 +1,299 @@
-'use strict';
-const $ = id => document.getElementById(id);
-const ns = 'http://www.w3.org/2000/svg';
-let current;
+import { verifyCase, filterEdges, formatEth } from "./case.mjs";
+const $ = (id) => document.getElementById(id),
+  ns = "http://www.w3.org/2000/svg";
+let current,
+  generation = 0,
+  downloadUrl;
 function element(tag, attrs, text) {
-  const node = document.createElementNS(ns, tag);
-  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
-  if (text) node.textContent = text;
-  return node;
+  const n = document.createElementNS(ns, tag);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  if (text) n.textContent = text;
+  return n;
 }
-function inspect(index) {
-  const edge = current.edges[index];
-  $('details').replaceChildren();
-  for (const [label, value] of [['Record', edge.id], ['Relationship', edge.kind], ['Amount', `${edge.amount} ${edge.unit}`], ['From / observation anchor', edge.from], ['To / observed fee payer', edge.to], ['Time', edge.timestamp === null ? 'Not supplied in observation export' : new Date(edge.timestamp * 1000).toISOString()]]) {
-    const p = document.createElement('p');
-    const title = document.createElement('strong'); title.textContent = label + ': ';
-    const content = document.createElement('code'); content.textContent = value;
-    p.append(title, content); $('details').append(p);
+function paragraph(parent, label, value) {
+  const p = document.createElement("p"),
+    s = document.createElement("strong"),
+    c = document.createElement("code");
+  s.textContent = label + ": ";
+  c.textContent = value;
+  p.append(s, c);
+  parent.append(p);
+}
+function inspect(e) {
+  $("details").replaceChildren();
+  for (const [label, value] of [
+    ["Record", e.id],
+    ["Relationship", e.kind.replaceAll("_", " ")],
+    [
+      "Amount",
+      e.unit === "wei"
+        ? formatEth(e.amount) + ` (${e.amount} wei)`
+        : `${e.amount} ${e.unit}`,
+    ],
+    [
+      current.network === "sol" ? "Mint observation anchor" : "From address",
+      e.from,
+    ],
+    [current.network === "sol" ? "Observed fee payer" : "To address", e.to],
+    [
+      "Time (UTC)",
+      e.timestamp === null
+        ? "Not supplied"
+        : new Date(e.timestamp * 1000).toISOString(),
+    ],
+  ])
+    paragraph($("details"), label, value);
+  if (current.receipt) {
+    const r = current.receipt;
+    for (const [label, value] of [
+      ["RPC receipt status", r.status],
+      ["Execution fee", formatEth(r.executionFeeWei)],
+      ["Blob fee", formatEth(r.blobFeeWei)],
+      ["Total fee", formatEth(r.totalFeeWei)],
+      ["Requested top-level value", formatEth(r.requestedValueWei)],
+      ["Block", r.blockNumber],
+    ])
+      paragraph($("details"), label, value);
   }
-  const warning = document.createElement('p'); warning.textContent = 'Synthetic identifier: this explorer link is a format example, not evidence of an existing transaction.';
-  const link = document.createElement('a'); link.textContent = 'Explorer reference'; link.href = edge.source; link.rel = 'noopener noreferrer'; link.target = '_blank';
-  $('details').append(warning, link);
-  document.querySelectorAll('.edge').forEach((line, i) => line.classList.toggle('active', i === index));
+  const warning = document.createElement("p");
+  warning.textContent = current.synthetic
+    ? "Synthetic identifier: explorer links are format examples, not evidence of existing transactions."
+    : "Imported/provider-reported evidence. A matching checksum does not authenticate its source or establish finality.";
+  const link = document.createElement("a");
+  link.textContent = "Explorer reference";
+  link.href = e.source;
+  link.rel = "noopener noreferrer";
+  link.target = "_blank";
+  $("details").append(warning, link);
+  document
+    .querySelectorAll(".edge")
+    .forEach((line) =>
+      line.classList.toggle("active", line.dataset.key === e.id + ":" + e.to),
+    );
 }
-async function show(network) {
-  const response = await fetch(`${network}-case.json`);
-  if (!response.ok) throw new Error('Case unavailable');
-  current = await response.json();
-  for (const key of ['eth', 'sol']) $(key).setAttribute('aria-pressed', String(key === network));
-  $('download').href = `${network}-case.json`;
-  $('coverage').textContent = `SYNTHETIC EXAMPLE. ${current.coverage} Case digest: ${current.digest}`;
-  $('graph-title').textContent = `${current.nodes.length} nodes / ${current.edges.length} ${network === 'eth' ? 'reported transfers' : 'observations'}`;
-  const positions = new Map(current.nodes.map((node, i) => [node.id, network === 'eth' ? [100 + i * 240, 175] : i === 0 ? [350, 175] : [350 + 240 * Math.cos((i - 1) * Math.PI / 3), 175 + 135 * Math.sin((i - 1) * Math.PI / 3)]]));
-  $('graph').replaceChildren(); $('records').replaceChildren();
-  current.edges.forEach((edge, i) => {
-    const a = positions.get(edge.from), b = positions.get(edge.to);
-    const line = element('line', {x1:a[0], y1:a[1], x2:b[0], y2:b[1], class:'edge'});
-    line.addEventListener('click', () => inspect(i)); $('graph').append(line);
-    const row = document.createElement('button'); row.className = 'row';
-    row.textContent = `${i + 1}. ${edge.kind.replaceAll('_', ' ')} / ${edge.amount} ${edge.unit}`;
-    const sub = document.createElement('span'); sub.textContent = edge.id.slice(0, 22) + '...'; row.append(sub);
-    row.addEventListener('click', () => inspect(i)); $('records').append(row);
+function render() {
+  if (!current) return;
+  const edges = filterEdges(current, {
+    query: $("search").value,
+    kind: $("kind").value,
+    from: $("from").value,
+    until: $("until").value,
   });
-  for (const node of current.nodes) {
-    const [x,y] = positions.get(node.id);
-    $('graph').append(element('circle', {cx:x,cy:y,r:17}), element('text', {x,y:y+35,'text-anchor':'middle'}, node.id.slice(0, 7)+'...'+node.id.slice(-4)));
+  $("graph").replaceChildren();
+  $("records").replaceChildren();
+  const shown = [],
+    ids = new Set();
+  for (const e of edges) {
+    const expanded = new Set([...ids, e.from, e.to]);
+    if (expanded.size <= 24 && shown.length < 40) {
+      shown.push(e);
+      expanded.forEach((id) => ids.add(id));
+    }
   }
-  if (current.edges.length) inspect(0);
+  const nodes = current.nodes.filter((n) => ids.has(n.id));
+  const positions = new Map(
+    nodes.map((n, i) => [
+      n.id,
+      [
+        350 +
+          (nodes.length === 1
+            ? 0
+            : 255 * Math.cos((i * Math.PI * 2) / nodes.length)),
+        220 +
+          (nodes.length === 1
+            ? 0
+            : 155 * Math.sin((i * Math.PI * 2) / nodes.length)),
+      ],
+    ]),
+  );
+  const defs = element("defs", {}),
+    marker = element("marker", {
+      id: "arrow",
+      viewBox: "0 0 10 10",
+      refX: 17,
+      refY: 5,
+      markerWidth: 5,
+      markerHeight: 5,
+      orient: "auto-start-reverse",
+    });
+  marker.append(
+    element("path", { d: "M 0 0 L 10 5 L 0 10 z", fill: "#718e7e" }),
+  );
+  defs.append(marker);
+  $("graph").append(defs);
+  for (const e of shown) {
+    const [x1, y1] = positions.get(e.from),
+      [x2, y2] = positions.get(e.to);
+    const d =
+      e.from === e.to
+        ? `M ${x1} ${y1} C ${x1 - 70} ${y1 - 85}, ${x1 + 70} ${y1 - 85}, ${x1} ${y1}`
+        : `M ${x1} ${y1} L ${x2} ${y2}`;
+    const line = element("path", {
+      d,
+      class: "edge",
+      fill: "none",
+      ...(e.kind === "token_gain_observation"
+        ? { "stroke-dasharray": "6 5" }
+        : { "marker-end": "url(#arrow)" }),
+    });
+    line.dataset.key = e.id + ":" + e.to;
+    line.addEventListener("click", () => inspect(e));
+    $("graph").append(line);
+  }
+  for (const n of nodes) {
+    const [x, y] = positions.get(n.id),
+      circle = element("circle", {
+        cx: x,
+        cy: y,
+        r: 16,
+        tabindex: 0,
+        role: "button",
+        "aria-label": "Filter address " + n.id,
+      });
+    const focus = () => {
+      $("search").value = n.id;
+      render();
+    };
+    circle.addEventListener("click", focus);
+    circle.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        focus();
+      }
+    });
+    $("graph").append(
+      circle,
+      element(
+        "text",
+        { x, y: y + 32, "text-anchor": "middle" },
+        n.id.slice(0, 7) + "..." + n.id.slice(-4),
+      ),
+    );
+  }
+  $("graph-title").textContent =
+    `${edges.length} of ${current.edges.length} records / ${nodes.length} shown nodes`;
+  $("graph-note").textContent =
+    `Graph shows ${shown.length} matching records (maximum 24 nodes / 40 connections). Select any record below. Dashed lines are observations; arrows show top-level call/value direction, not ownership.`;
+  for (const e of edges) {
+    const row = document.createElement("button");
+    row.className = "row";
+    row.textContent =
+      e.kind.replaceAll("_", " ") +
+      " / " +
+      (e.unit === "wei" ? formatEth(e.amount) : e.amount + " " + e.unit);
+    const sub = document.createElement("span");
+    sub.textContent =
+      (e.timestamp === null
+        ? "Time unavailable"
+        : new Date(e.timestamp * 1000).toISOString()) +
+      " / " +
+      e.id;
+    row.append(sub);
+    row.addEventListener("click", () => inspect(e));
+    $("records").append(row);
+  }
+  $("details").replaceChildren();
+  if (edges.length) inspect(edges[0]);
+  else {
+    $("details").textContent =
+      "No matching records. Clear the filters to see this case.";
+    $("records").textContent = "No records match these filters.";
+  }
 }
-for (const network of ['eth','sol']) $(network).addEventListener('click', () => show(network).catch(() => { $('details').textContent = 'Unable to load bundled case.'; }));
-show('eth').catch(() => { $('details').textContent = 'Serve this folder over localhost using the README command.'; });
+async function activate(d, token, example = "") {
+  await verifyCase(d);
+  if (token !== generation) return;
+  current = d;
+  for (const key of ["eth", "sol", "real"])
+    $(key).setAttribute("aria-pressed", String(key === example));
+  $("case-status").textContent = d.synthetic
+    ? "SYNTHETIC CASE / v0.2"
+    : "IMPORTED EVIDENCE / v0.2";
+  $("coverage").textContent =
+    `${d.synthetic ? "SYNTHETIC EXAMPLE. " : "PROVIDER / IMPORTED DATA. "}${d.coverage} Checksum matched (not source authentication): ${d.digest}`;
+  for (const id of ["search", "from", "until"]) $(id).value = "";
+  $("kind").replaceChildren(
+    new Option("All relationships", ""),
+    ...Array.from(new Set(d.edges.map((e) => e.kind))).map(
+      (k) => new Option(k.replaceAll("_", " "), k),
+    ),
+  );
+  if (downloadUrl) URL.revokeObjectURL(downloadUrl);
+  downloadUrl = URL.createObjectURL(
+    new Blob([JSON.stringify(d, null, 2) + "\n"], { type: "application/json" }),
+  );
+  $("download").href = downloadUrl;
+  $("download").download = d.network + "-case.json";
+  $("message").textContent = example
+    ? "Bundled example loaded. Your local files stay in this browser."
+    : "Local case opened in memory. Nothing uploaded or saved to a server.";
+  render();
+}
+async function show(example) {
+  const token = ++generation,
+    response = await fetch(example + "-case.json");
+  if (!response.ok) throw new Error("Case unavailable");
+  await activate(await response.json(), token, example);
+}
+function fail(error) {
+  $("message").textContent = error.message || "Unable to load case.";
+}
+for (const example of ["eth", "sol", "real"])
+  $(example).addEventListener("click", () => show(example).catch(fail));
+$("import").addEventListener("change", async (event) => {
+  const file = event.target.files[0],
+    token = ++generation;
+  if (!file) return;
+  try {
+    if (file.size > 2_000_000) throw new Error("Case exceeds 2 MB.");
+    await activate(JSON.parse(await file.text()), token);
+  } catch (error) {
+    fail(error);
+  }
+  event.target.value = "";
+});
+for (const id of ["search", "kind", "from", "until"])
+  $(id).addEventListener("input", render);
+$("reset").addEventListener("click", () => {
+  for (const id of ["search", "kind", "from", "until"]) $(id).value = "";
+  render();
+});
+$("report").addEventListener("click", () => {
+  if (!current) return;
+  const lines = [
+    "Positano Investigations / case report",
+    current.synthetic
+      ? "SYNTHETIC EXAMPLE"
+      : "IMPORTED / PROVIDER-REPORTED EVIDENCE",
+    current.coverage,
+    "Content checksum (not authenticity): " + current.digest,
+    "",
+    "Full case records (filters do not limit this report):",
+  ];
+  for (const e of current.edges)
+    lines.push(
+      "",
+      e.kind,
+      e.from + " -> " + e.to,
+      e.amount + " " + e.unit,
+      e.timestamp === null
+        ? "Time not supplied"
+        : new Date(e.timestamp * 1000).toISOString(),
+      e.source,
+    );
+  if (current.receipt)
+    lines.push(
+      "",
+      "Receipt summary:",
+      JSON.stringify(current.receipt, null, 2),
+    );
+  const url = URL.createObjectURL(
+      new Blob([lines.join("\n") + "\n"], { type: "text/plain" }),
+    ),
+    link = document.createElement("a");
+  link.href = url;
+  link.download = "investigation-report.txt";
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+show("real").catch(fail);

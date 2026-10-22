@@ -1,0 +1,43 @@
+{
+  "schema": "positano.investigation.v1",
+  "network": "eth",
+  "synthetic": false,
+  "coverage": "One supplied RPC transaction, receipt, and block; fields cross-checked for consistency. Provider-reported execution, not cryptographic verification or a finality check. Top-level ETH value only; internal calls, token events, and wallet history excluded.",
+  "nodes": [
+    {
+      "id": "0xca112ee75e517fdbad2a7450c65cdaab8256d9a2",
+      "network": "eth",
+      "kind": "address"
+    },
+    {
+      "id": "0x3f2b113d180ecb1457e450b9efcac3df1dd29ad3",
+      "network": "eth",
+      "kind": "address"
+    }
+  ],
+  "edges": [
+    {
+      "id": "0x20f83f863231a8e1c97f14d1b2e9379d389c57d3bb82d265cd6e5d806378ba9b",
+      "from": "0xca112ee75e517fdbad2a7450c65cdaab8256d9a2",
+      "to": "0x3f2b113d180ecb1457e450b9efcac3df1dd29ad3",
+      "kind": "rpc_call",
+      "amount": "0",
+      "unit": "wei",
+      "timestamp": 1729345547,
+      "source": "https://etherscan.io/tx/0x20f83f863231a8e1c97f14d1b2e9379d389c57d3bb82d265cd6e5d806378ba9b"
+    }
+  ],
+  "receipt": {
+    "status": "success",
+    "requestedValueWei": "0",
+    "gasUsed": "202746",
+    "effectiveGasPriceWei": "51769454205",
+    "executionFeeWei": "10496049762246930",
+    "blobFeeWei": "0",
+    "totalFeeWei": "10496049762246930",
+    "blockNumber": "21000000",
+    "blockHash": "0xf5e1d15a3e380006bd271e73c8eeed75fafc3ae6942b16f63c21361079bba709",
+    "transactionIndex": 0
+  },
+  "digest": "sha256:8ce6c65d2b116c21823f097948dc7855f4e7305f2a102d1f88c684c737c64ff7"
+}
