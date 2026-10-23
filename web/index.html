@@ -280,6 +280,7 @@
         max-width: 100%;
       }
     </style>
+    <link rel="stylesheet" href="workspace.css" />
   </head>
   <body>
     <header>
@@ -287,255 +288,308 @@
         <h1>Positano Investigations</h1>
         <small>Open evidence. Reusable cases.</small>
       </div>
-      <span class="badge" id="case-status">LOADING / v0.9</span>
+      <span class="badge" id="case-status">Loading evidence</span>
     </header>
     <main>
-      <p class="intro">
-        Follow the evidence, one connection at a time. A portable investigation
-        workspace built for transparent blockchain research.
-      </p>
-      <div class="toolbar">
-        <button id="solana" aria-pressed="false">Solana transaction</button>
-        <button id="solana-token" aria-pressed="false">
-          Solana inner token evidence
-        </button>
-        <button id="solana-lab" aria-pressed="false">
-          Synthetic Solana transfer lab
-        </button>
-        <button id="solana-failed" aria-pressed="false">
-          Synthetic failed Solana case
-        </button>
-        <button id="bitcoin" aria-pressed="false">
-          Bitcoin outpoint trail
-        </button>
-        <button id="bridge" aria-pressed="false">Ethereum → Optimism</button>
-        <button id="assets" aria-pressed="false">Asset movements</button>
-        <button id="trace" aria-pressed="false">Synthetic trace lab</button>
-        <button id="hop" aria-pressed="false">After-bridge scan</button>
-        <button id="multi" aria-pressed="false">Multi-transaction case</button>
-        <button id="real" aria-pressed="false">Real Ethereum receipt</button
-        ><button id="eth" aria-pressed="false">Synthetic ETH transfers</button
-        ><button id="sol" aria-pressed="false">
-          Synthetic Solana observations
-        </button>
+      <div class="workspace-heading">
+        <div>
+          <h2>Follow the transaction.</h2>
+          <p>
+            Explore connections. Inspect the source. Share evidence others can
+            check.
+          </p>
+        </div>
+        <span id="workspace-mode">Saved evidence viewer</span>
       </div>
-      <div class="toolbar">
+      <nav class="workspace-nav" aria-label="Investigation workspace">
+        <button data-view="explore" aria-pressed="true">
+          Explore evidence
+        </button>
+        <button data-view="library" aria-pressed="false">
+          Examples &amp; import
+        </button>
+        <button data-view="capture" aria-pressed="false">
+          Capture &amp; saved cases
+        </button>
+        <button data-view="share" aria-pressed="false">
+          Export &amp; compare
+        </button>
+      </nav>
+      <p id="message" role="status" aria-live="polite">
+        Loading bundled evidence…
+      </p>
+      <section id="view-library" hidden aria-label="Examples and import">
+        <h2>Start with evidence</h2>
+        <p>
+          Choose a saved example below, or open your own case JSON. Files are
+          checked in your browser.
+        </p>
         <label class="file-label"
           >Open local case
-          <input
-            type="file"
-            id="import"
-            accept="application/json,.json" /></label
-        ><a class="download" id="download" download>Download case JSON</a
-        ><button id="report">Export full report</button
-        ><button id="share-card">Download evidence card</button
-        ><a class="download" href="eth-case.gs" download
-          >Sample ETH GraphSense file</a
-        >
-      </div>
-      <div class="toolbar">
-        <label
-          >EVM mainnet example
-          <select id="evm-demo"></select
-        ></label>
-        <button id="open-evm-demo">Open network example</button>
-      </div>
-      <details class="coverage">
-        <summary>Network coverage and limits</summary>
-        <div id="network-coverage"></div>
-        <p>
-          Bitcoin and Solana have separate bounded adapters. Other non-EVM
-          networks are not implemented. A supported network does not imply
-          complete history, finality verification, ownership attribution, or
-          general bridge tracing.
-        </p>
-      </details>
-      <p id="message" role="status" aria-live="polite">
-        Loading bundled evidence...
-      </p>
-      <div id="summary" class="coverage" aria-live="polite"></div>
-      <details class="coverage">
-        <summary>Expand one hop (local read-only capture)</summary>
-        <p>
-          This prepares a bounded CLI command. Your provider credentials stay in
-          your shell.
-        </p>
-        <button id="expand">Prepare one-hop command</button>
-        <pre
-          id="hop-command"
-          style="white-space: pre-wrap; overflow-wrap: anywhere"
-        ></pre>
-      </details>
-      <section class="coverage" aria-label="Local investigation service">
-        <h2>Saved investigations and local expansion</h2>
-        <p id="local-status" role="status">
-          Run python serve.py to enable saved cases and local expansion. This
-          hosted/static viewer does not contact a local service.
-        </p>
-        <label
-          >Bitcoin transaction ID
-          <input
-            id="bitcoin-txid"
-            maxlength="64"
-            spellcheck="false"
-            placeholder="64-character transaction ID"
-            style="width: 100%"
-          />
-        </label>
-        <p>
-          Select a spending record to follow that transaction. Capture runs only
-          in the local service; the static preview uses saved evidence.
-        </p>
-        <div id="local-controls" hidden>
-          <details>
-            <summary>EVM transaction capture</summary>
-            <label>EVM network<select id="evm-chain"></select></label>
-            <label
-              >EVM transaction hash<input
-                id="evm-transaction"
-                maxlength="66"
-                spellcheck="false"
-                placeholder="0x transaction hash"
-            /></label>
-            <button id="capture-evm">
-              Capture selected EVM transaction locally
-            </button>
-            <p>
-              Set the selected network's provider variable in the server shell.
-              Wrong-chain providers are rejected. This captures supplied
-              receipts and Transfer-shaped logs; no complete history or
-              cross-chain identity inference.
-            </p>
-          </details>
-          <details>
-            <summary>Solana capture and account lookup</summary>
-            <label
-              >Solana transaction signature<input
-                id="solana-signature"
-                maxlength="90"
-                spellcheck="false"
-                placeholder="Base58 transaction signature"
-            /></label>
-            <button id="capture-solana">
-              Capture Solana transaction locally
-            </button>
-            <label
-              >Solana account to follow<input
-                id="solana-address"
-                maxlength="44"
-                spellcheck="false"
-                placeholder="Account or token account address"
-            /></label>
-            <button id="solana-history-start">
-              Find five account signatures
-            </button>
-            <button id="solana-history-next" disabled>Next older page</button>
-            <p id="solana-history-status" role="status">
-              Provider lookup references an account; it does not establish
-              ownership or transfer activity.
-            </p>
-            <div id="solana-history-results"></div>
-          </details>
-          <button id="capture-bitcoin">
-            Capture selected Bitcoin transaction locally
-          </button>
-          <div class="toolbar">
-            <select id="saved-cases" aria-label="Saved cases">
-              <option value="">Select a saved case</option></select
-            ><button id="refresh-local">Refresh saved cases</button
-            ><button id="open-local">Open saved case</button>
-          </div>
-          <label
-            >Case title<input
-              id="case-title"
-              maxlength="100"
-              placeholder="Name this investigation" /></label
-          ><label
-            >Analyst notes (separate from evidence)<textarea
-              id="case-note"
-              maxlength="2000"
-              rows="3"
-            ></textarea>
-          </label>
-          <div class="toolbar">
-            <button id="save-local">Save case / notes locally</button
-            ><button id="run-local-hop">
-              Run five-block expansion locally
-            </button>
-          </div>
-        </div>
-      </section>
-      <details class="coverage">
-        <summary>What changed? Compare Bitcoin snapshots</summary>
-        <p>
-          Open a Bitcoin case above, then select another case for the same
-          transaction. This compares reported spends and confirmation status
-          without merging evidence or assuming which file is newer.
-        </p>
-        <label
-          >Comparison case JSON
-          <input
-            id="compare-import"
-            type="file"
-            accept="application/json,.json"
+          <input type="file" id="import" accept="application/json,.json"
         /></label>
-        <button id="download-comparison">Download comparison</button>
-        <pre
-          id="comparison-result"
-          style="
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-            max-height: 400px;
-            overflow: auto;
-          "
-        ></pre>
-      </details>
-      <div class="filters">
-        <label
-          >Address, transaction, or relationship<input
-            id="search"
-            type="search"
-            placeholder="Search this case..." /></label
-        ><label
-          >Relationship<select id="kind">
-            <option value="">All relationships</option>
-          </select></label
-        ><label>From (UTC)<input id="from" type="date" /></label
-        ><label>Until (UTC)<input id="until" type="date" /></label
-        ><button id="reset">Clear filters</button>
-      </div>
-      <section class="coverage" id="solana-overview" hidden>
-        <h2>Solana execution and balance observations</h2>
-        <div id="solana-execution"></div>
-        <details>
-          <summary>
-            Account balance observations (not inferred transfers)
-          </summary>
-          <div id="solana-balances"></div>
+        <div class="toolbar">
+          <button id="solana" aria-pressed="false">Solana transaction</button>
+          <button id="solana-token" aria-pressed="false">
+            Solana inner token evidence
+          </button>
+          <button id="solana-lab" aria-pressed="false">
+            Synthetic Solana transfer lab
+          </button>
+          <button id="solana-failed" aria-pressed="false">
+            Synthetic failed Solana case
+          </button>
+          <button id="bitcoin" aria-pressed="false">
+            Bitcoin outpoint trail
+          </button>
+          <button id="bridge" aria-pressed="false">Ethereum → Optimism</button>
+          <button id="assets" aria-pressed="false">Asset movements</button>
+          <button id="trace" aria-pressed="false">Synthetic trace lab</button>
+          <button id="hop" aria-pressed="false">After-bridge scan</button>
+          <button id="multi" aria-pressed="false">
+            Multi-transaction case
+          </button>
+          <button id="real" aria-pressed="false">Real Ethereum receipt</button
+          ><button id="eth" aria-pressed="false">Synthetic ETH transfers</button
+          ><button id="sol" aria-pressed="false">
+            Synthetic Solana observations
+          </button>
+        </div>
+        <div class="toolbar">
+          <label
+            >EVM mainnet example
+            <select id="evm-demo"></select
+          ></label>
+          <button id="open-evm-demo">Open network example</button>
+        </div>
+        <details class="coverage">
+          <summary>Network coverage and limits</summary>
+          <div id="network-coverage"></div>
+          <p>
+            Bitcoin and Solana have separate bounded adapters. Other non-EVM
+            networks are not implemented. A supported network does not imply
+            complete history, finality verification, ownership attribution, or
+            general bridge tracing.
+          </p>
         </details>
       </section>
-      <div class="grid">
-        <section class="panel">
-          <h2 id="graph-title">Evidence graph</h2>
-          <svg
-            id="graph"
-            viewBox="0 0 700 440"
-            role="group"
-            aria-label="Evidence graph; select an address to filter"
-          ></svg
-          ><small id="graph-note"
-            >Select an address or record to investigate.</small
+      <section id="view-capture" hidden aria-label="Capture and saved cases">
+        <details class="coverage">
+          <summary>Expand one hop (local read-only capture)</summary>
+          <p>
+            This prepares a bounded CLI command. Your provider credentials stay
+            in your shell.
+          </p>
+          <button id="expand">Prepare one-hop command</button>
+          <pre
+            id="hop-command"
+            style="white-space: pre-wrap; overflow-wrap: anywhere"
+          ></pre>
+        </details>
+        <section class="coverage" aria-label="Local investigation service">
+          <h2>Saved investigations and local expansion</h2>
+          <p id="local-status" role="status">
+            Run python serve.py to enable saved cases and local expansion. This
+            hosted/static viewer does not contact a local service.
+          </p>
+          <label
+            >Bitcoin transaction ID
+            <input
+              id="bitcoin-txid"
+              maxlength="64"
+              spellcheck="false"
+              placeholder="64-character transaction ID"
+              style="width: 100%"
+            />
+          </label>
+          <p>
+            Select a spending record to follow that transaction. Capture runs
+            only in the local service; the static preview uses saved evidence.
+          </p>
+          <div id="local-controls" hidden>
+            <details>
+              <summary>EVM transaction capture</summary>
+              <label>EVM network<select id="evm-chain"></select></label>
+              <label
+                >EVM transaction hash<input
+                  id="evm-transaction"
+                  maxlength="66"
+                  spellcheck="false"
+                  placeholder="0x transaction hash"
+              /></label>
+              <button id="capture-evm">
+                Capture selected EVM transaction locally
+              </button>
+              <p>
+                Set the selected network's provider variable in the server
+                shell. Wrong-chain providers are rejected. This captures
+                supplied receipts and Transfer-shaped logs; no complete history
+                or cross-chain identity inference.
+              </p>
+            </details>
+            <details>
+              <summary>Solana capture and account lookup</summary>
+              <label
+                >Solana transaction signature<input
+                  id="solana-signature"
+                  maxlength="90"
+                  spellcheck="false"
+                  placeholder="Base58 transaction signature"
+              /></label>
+              <button id="capture-solana">
+                Capture Solana transaction locally
+              </button>
+              <label
+                >Solana account to follow<input
+                  id="solana-address"
+                  maxlength="44"
+                  spellcheck="false"
+                  placeholder="Account or token account address"
+              /></label>
+              <button id="solana-history-start">
+                Find five account signatures
+              </button>
+              <button id="solana-history-next" disabled>Next older page</button>
+              <p id="solana-history-status" role="status">
+                Provider lookup references an account; it does not establish
+                ownership or transfer activity.
+              </p>
+              <div id="solana-history-results"></div>
+            </details>
+            <button id="capture-bitcoin">
+              Capture selected Bitcoin transaction locally
+            </button>
+            <div class="toolbar">
+              <select id="saved-cases" aria-label="Saved cases">
+                <option value="">Select a saved case</option></select
+              ><button id="refresh-local">Refresh saved cases</button
+              ><button id="open-local">Open saved case</button>
+            </div>
+            <label
+              >Case title<input
+                id="case-title"
+                maxlength="100"
+                placeholder="Name this investigation" /></label
+            ><label
+              >Analyst notes (separate from evidence)<textarea
+                id="case-note"
+                maxlength="2000"
+                rows="3"
+              ></textarea>
+            </label>
+            <div class="toolbar">
+              <button id="save-local">Save case / notes locally</button
+              ><button id="run-local-hop">
+                Run five-block expansion locally
+              </button>
+            </div>
+          </div>
+        </section>
+        <details class="coverage">
+          <summary>What changed? Compare Bitcoin snapshots</summary>
+          <p>
+            Open a Bitcoin case above, then select another case for the same
+            transaction. This compares reported spends and confirmation status
+            without merging evidence or assuming which file is newer.
+          </p>
+          <label
+            >Comparison case JSON
+            <input
+              id="compare-import"
+              type="file"
+              accept="application/json,.json"
+          /></label>
+          <button id="download-comparison">Download comparison</button>
+          <pre
+            id="comparison-result"
+            style="
+              white-space: pre-wrap;
+              overflow-wrap: anywhere;
+              max-height: 400px;
+              overflow: auto;
+            "
+          ></pre>
+        </details>
+      </section>
+      <section id="view-share" hidden aria-label="Export and compare">
+        <h2>Make your findings reproducible</h2>
+        <p>
+          Share the case JSON for verification, the report for detail, or an
+          image for a quick overview. Analyst notes stay separate.
+        </p>
+        <div class="toolbar">
+          <a class="download" id="download" download>Download case JSON</a
+          ><button id="report">Export full report</button
+          ><button id="share-card">Download evidence card</button
+          ><a class="download" href="eth-case.gs" download
+            >Sample ETH GraphSense file</a
           >
+        </div>
+      </section>
+      <section id="view-explore" aria-label="Explore evidence">
+        <div class="case-heading">
+          <h2 id="case-name">Opening investigation…</h2>
+          <span id="case-count"></span>
+        </div>
+        <details class="case-summary">
+          <summary>Case summary and interpretation</summary>
+          <div id="summary" aria-live="polite"></div>
+        </details>
+        <div class="filters">
+          <label
+            >Address, transaction, or relationship<input
+              id="search"
+              type="search"
+              placeholder="Search this case..." /></label
+          ><label
+            >Relationship<select id="kind">
+              <option value="">All relationships</option>
+            </select></label
+          ><label>From (UTC)<input id="from" type="date" /></label
+          ><label>Until (UTC)<input id="until" type="date" /></label
+          ><button id="reset">Clear filters</button>
+        </div>
+
+        <p id="filter-feedback" role="status"></p>
+        <div class="grid">
+          <section class="panel">
+            <h2 id="graph-title">Evidence graph</h2>
+            <svg
+              id="graph"
+              viewBox="0 0 700 440"
+              role="group"
+              aria-label="Evidence graph; select an address to filter"
+            ></svg
+            ><small id="graph-note"
+              >Select an address or record to investigate.</small
+            >
+          </section>
+          <section class="panel details">
+            <h2>Evidence inspector</h2>
+            <div id="details">Loading case...</div>
+          </section>
+        </div>
+
+        <section class="panel rows">
+          <h2>Timeline / source records</h2>
+          <div id="records"></div>
         </section>
-        <section class="panel details">
-          <h2>Evidence inspector</h2>
-          <div id="details">Loading case...</div>
+
+        <section class="coverage" id="solana-overview" hidden>
+          <h2>Solana execution and balance observations</h2>
+          <div id="solana-execution"></div>
+          <details>
+            <summary>
+              Account balance observations (not inferred transfers)
+            </summary>
+            <div id="solana-balances"></div>
+          </details>
         </section>
-      </div>
-      <div class="coverage" id="coverage"></div>
-      <section class="panel rows">
-        <h2>Timeline / source records</h2>
-        <div id="records"></div>
+
+        <details class="coverage">
+          <summary>Evidence coverage and checksum</summary>
+          <div id="coverage"></div>
+        </details>
       </section>
     </main>
     <footer>
@@ -544,6 +598,7 @@
         >Source &amp; limitations</a
       >
     </footer>
+    <script type="module" src="workspace.mjs"></script>
     <script type="module" src="app.js"></script>
   </body>
 </html>

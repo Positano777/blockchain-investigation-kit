@@ -8,11 +8,13 @@ import { compareBitcoinCases } from "./compare.mjs";
 import { verifyCase, filterEdges, formatEth, caseEdges } from "./case.mjs";
 import { evidenceCardPng } from "./share.mjs";
 import { initLocalService } from "./service.mjs";
+import { openView } from "./workspace.mjs";
 const $ = (id) => document.getElementById(id),
   ns = "http://www.w3.org/2000/svg";
 let current,
   generation = 0,
-  downloadUrl;
+  downloadUrl,
+  selectedRecord;
 function element(tag, attrs, text) {
   const n = document.createElementNS(ns, tag);
   for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
@@ -34,6 +36,14 @@ function nativeAmount(amount) {
     : formatEth(amount);
 }
 function inspect(e) {
+  selectedRecord = e.id + ":" + e.to;
+  for (const row of $("records").querySelectorAll("button"))
+    row.setAttribute(
+      "aria-pressed",
+      String(row.dataset.key === selectedRecord),
+    );
+  for (const line of $("graph").querySelectorAll(".edge"))
+    line.classList.toggle("active", line.dataset.key === selectedRecord);
   $("details").replaceChildren();
   for (const [label, value] of [
     ["Record", e.id],
@@ -91,6 +101,7 @@ function inspect(e) {
       button.textContent = "Select this transaction for next capture";
       button.addEventListener("click", () => {
         $("bitcoin-txid").value = e.to.slice(7);
+        openView("capture");
         $("message").textContent =
           "Transaction selected. Run locally to capture its outputs and reported spends.";
       });
@@ -243,6 +254,11 @@ function render() {
     from: $("from").value,
     until: $("until").value,
   });
+  const invalidDates =
+    $("from").value && $("until").value && $("from").value > $("until").value;
+  $("filter-feedback").textContent = invalidDates
+    ? "The start date is after the end date. Adjust the dates or clear filters."
+    : `${edges.length} of ${current.edges.length} records match. Select a connection or record to inspect its evidence.`;
   $("graph").replaceChildren();
   $("records").replaceChildren();
   const shown = [],
@@ -303,7 +319,19 @@ function render() {
         : { "marker-end": "url(#arrow)" }),
     });
     line.dataset.key = e.id + ":" + e.to;
+    line.setAttribute("tabindex", "0");
+    line.setAttribute("role", "button");
+    line.setAttribute(
+      "aria-label",
+      `Inspect ${e.kind.replaceAll("_", " ")}: ${e.amount} ${e.unit}`,
+    );
     line.addEventListener("click", () => inspect(e));
+    line.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        inspect(e);
+      }
+    });
     $("graph").append(line);
   }
   for (const n of nodes) {
@@ -365,6 +393,7 @@ function render() {
   for (const e of edges) {
     const row = document.createElement("button");
     row.className = "row";
+    row.dataset.key = e.id + ":" + e.to;
     if (e.outcome) row.dataset.outcome = e.outcome;
     row.textContent =
       (current.solanaAnalysis ? e.outcome.replaceAll("_", " ") + " / " : "") +
@@ -383,7 +412,10 @@ function render() {
     $("records").append(row);
   }
   $("details").replaceChildren();
-  if (edges.length) inspect(edges[0]);
+  if (edges.length)
+    inspect(
+      edges.find((e) => e.id + ":" + e.to === selectedRecord) || edges[0],
+    );
   else {
     const emptySolana = current.solanaAnalysis && current.edges.length === 0;
     const emptyEvm = current.assetEvidence && current.edges.length === 0;
@@ -420,8 +452,10 @@ async function activate(d, token, example = "") {
   await verifyCase(d);
   if (token !== generation) return;
   current = d;
+  selectedRecord = null;
   document.dispatchEvent(new Event("investigation-case-changed"));
   $("comparison-result").textContent = "";
+  $("download-comparison").disabled = true;
   $("hop-command").textContent = "";
   $("hop-command").closest("details").open = false;
   for (const key of [
@@ -441,8 +475,21 @@ async function activate(d, token, example = "") {
   ])
     $(key).setAttribute("aria-pressed", String(key === example));
   $("case-status").textContent = d.synthetic
-    ? "SYNTHETIC CASE / v0.9"
-    : "IMPORTED EVIDENCE / v0.9";
+    ? "Synthetic example"
+    : example
+      ? "Saved mainnet example"
+      : "Opened evidence";
+  $("case-name").textContent = d.assetEvidence
+    ? evmNetwork(d.assetEvidence.chainId).name + " transaction evidence"
+    : d.network === "bitcoin-mainnet"
+      ? "Bitcoin transaction trail"
+      : d.solanaAnalysis
+        ? "Solana transaction evidence"
+        : d.bridge
+          ? "Ethereum → Optimism deposit"
+          : "Blockchain evidence case";
+  $("case-count").textContent =
+    `${d.nodes.length} nodes · ${d.edges.length} records`;
   const receipts = d.receipts
     ? Object.values(d.receipts)
     : d.receipt
@@ -520,16 +567,28 @@ async function activate(d, token, example = "") {
   $("message").textContent = example
     ? "Bundled example loaded. Your local files stay in this browser."
     : "Local case opened in memory. Nothing uploaded or saved to a server.";
+  $("message").dataset.state = "ready";
   render();
+  document.dispatchEvent(new Event("investigation-case-ready"));
 }
 async function show(example) {
-  const token = ++generation,
-    response = await fetch(example + "-case.json");
-  if (!response.ok) throw new Error("Case unavailable");
-  await activate(await response.json(), token, example);
-  if (token === generation) history.replaceState(null, "", "#" + example);
+  const token = ++generation;
+  $("message").dataset.state = "loading";
+  $("message").textContent = "Opening and checking evidence…";
+  try {
+    const response = await fetch(example + "-case.json");
+    if (!response.ok)
+      throw new Error(
+        "Example unavailable. Try another example or import a case.",
+      );
+    await activate(await response.json(), token, example);
+    if (token === generation) history.replaceState(null, "", "#" + example);
+  } catch (error) {
+    if (token === generation) fail(error);
+  }
 }
 function fail(error) {
+  $("message").dataset.state = "error";
   $("message").textContent = error.message || "Unable to load case.";
 }
 for (const example of [
@@ -555,8 +614,10 @@ $("import").addEventListener("change", async (event) => {
   try {
     if (file.size > 2_000_000) throw new Error("Case exceeds 2 MB.");
     await activate(JSON.parse(await file.text()), token);
+    if (token === generation)
+      history.replaceState(null, "", location.pathname + location.search);
   } catch (error) {
-    fail(error);
+    if (token === generation) fail(error);
   }
   event.target.value = "";
 });
@@ -720,6 +781,7 @@ $("compare-import").addEventListener("change", async (event) => {
     base = current;
   event.target.value = "";
   if (!file || !base) return;
+  $("download-comparison").disabled = true;
   try {
     if (file.size > 2000000) throw new Error("Comparison case exceeds 2 MB.");
     const result = await compareBitcoinCases(
@@ -729,6 +791,8 @@ $("compare-import").addEventListener("change", async (event) => {
     if (current !== base)
       throw new Error("Current case changed; compare again.");
     $("comparison-result").textContent = JSON.stringify(result, null, 2);
+    $("download-comparison").disabled = false;
+    $("message").dataset.state = "ready";
     $("message").textContent =
       `Compared two snapshots: ${result.changes.length} changed observations, ${result.conflicts.length} data conflicts. Original evidence is unchanged.`;
   } catch (error) {
@@ -790,7 +854,12 @@ for (const profile of EVM_NETWORKS) {
 }
 initLocalService({
   getCase: () => current,
-  openCase: (data) => activate(data, ++generation),
+  openCase: async (data) => {
+    const token = ++generation;
+    await activate(data, token);
+    if (token === generation)
+      history.replaceState(null, "", location.pathname + location.search);
+  },
 });
 const examples = [
   ...EVM_NETWORKS.map((profile) => "evm-" + profile.key),
