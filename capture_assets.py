@@ -7,6 +7,7 @@ import subprocess
 import tempfile
 from collect import rpc, quantity
 from kit import hex_id, MAX_BYTES
+from networks import network, BY_CHAIN
 
 ROOT=Path(__file__).resolve().parent
 TRACE_CONFIG={'tracer':'callTracer','timeout':'5s','tracerConfig':{'onlyTopCall':False}}
@@ -35,6 +36,8 @@ def capture_record(endpoint,tx_hash,trace=False,transport=rpc):
     receipt=transport(endpoint,'eth_getTransactionReceipt',[tx_hash])
     if not isinstance(tx,dict) or not isinstance(receipt,dict) or hex_id(tx['hash'],64)!=tx_hash:
         raise ValueError('Mined transaction required')
+    if tx.get('feeCurrency') is not None or receipt.get('feeCurrency') is not None:
+        raise ValueError('Alternative fee-currency transactions are not supported')
     block=transport(endpoint,'eth_getBlockByHash',[hex_id(tx['blockHash'],64),False])
     tf=['hash','from','to','value','blockHash','blockNumber','transactionIndex']
     rf=['transactionHash','from','to','status','blockHash','blockNumber','transactionIndex','gasUsed','effectiveGasPrice']
@@ -56,8 +59,9 @@ def capture_record(endpoint,tx_hash,trace=False,transport=rpc):
 
 
 def discover(endpoint,chain,address,start,end,trace=False,transport=rpc):
+    network(chain)
     address=hex_id(address,40)
-    if not 0<=start<=end<=2**64-1 or end-start>=20:
+    if type(start) is not int or type(end) is not int or not 0<=start<=end<=2**64-1 or end-start>=20:
         raise ValueError('Use 1 to 20 explicit blocks')
     if quantity(transport(endpoint,'eth_chainId',[]))!=chain:
         raise ValueError('Wrong chain')
@@ -87,22 +91,29 @@ def discover(endpoint,chain,address,start,end,trace=False,transport=rpc):
             'discovery':{'mode':'direct_address_blocks','address':address,'fromBlock':str(start),'toBlock':str(end),'scannedBlocks':scanned,'limitReached':limited}}
 
 
+def capture_transaction(endpoint,chain,transaction,trace=False,transport=rpc):
+    network(chain)
+    if type(trace) is not bool:raise ValueError('Trace flag type')
+    transaction=hex_id(transaction,64)
+    if quantity(transport(endpoint,'eth_chainId',[]))!=chain:raise ValueError('Wrong chain')
+    return {'schema':'positano.asset-evidence.v1','chainId':hex(chain),'synthetic':False,
+            'records':[capture_record(endpoint,transaction,trace,transport)],
+            'discovery':{'mode':'supplied','address':None,'fromBlock':None,'toBlock':None,'scannedBlocks':[],'limitReached':False}}
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     sub=parser.add_subparsers(dest='mode',required=True)
-    single=sub.add_parser('transaction');single.add_argument('chain',type=int,choices=[1,10]);single.add_argument('transaction');single.add_argument('output')
-    hop=sub.add_parser('hop');hop.add_argument('chain',type=int,choices=[1,10]);hop.add_argument('address');hop.add_argument('start',type=int);hop.add_argument('end',type=int);hop.add_argument('output')
+    single=sub.add_parser('transaction');single.add_argument('chain',type=int,choices=sorted(BY_CHAIN));single.add_argument('transaction');single.add_argument('output')
+    hop=sub.add_parser('hop');hop.add_argument('chain',type=int,choices=sorted(BY_CHAIN));hop.add_argument('address');hop.add_argument('start',type=int);hop.add_argument('end',type=int);hop.add_argument('output')
     for command in (single,hop):command.add_argument('--trace',action='store_true',help='Try built-in callTracer; unavailable traces remain explicit gaps')
     args=parser.parse_args()
     try:
-        endpoint=os.environ['ETH_RPC_URL' if args.chain==1 else 'OP_RPC_URL']
+        endpoint=os.environ[network(args.chain)['rpcEnv']]
         if args.mode=='hop':
             bundle=discover(endpoint,args.chain,args.address,args.start,args.end,args.trace)
         else:
-            if quantity(rpc(endpoint,'eth_chainId',[]))!=args.chain:raise ValueError('Wrong chain')
-            bundle={'schema':'positano.asset-evidence.v1','chainId':hex(args.chain),'synthetic':False,
-                    'records':[capture_record(endpoint,args.transaction,args.trace)],
-                    'discovery':{'mode':'supplied','address':None,'fromBlock':None,'toBlock':None,'scannedBlocks':[],'limitReached':False}}
+            bundle=capture_transaction(endpoint,args.chain,args.transaction,args.trace)
         data=(json.dumps(bundle,indent=2)+'\n').encode()
         if len(data)>MAX_BYTES:raise ValueError('Bundle exceeds 2 MB')
         with tempfile.TemporaryDirectory(prefix='positano-assets-') as directory:

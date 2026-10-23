@@ -1,0 +1,79 @@
+[
+  {
+    "chainId": 1,
+    "checkedAt": "2026-10-23T01:01:22.646685+00:00",
+    "status": "mainnet_fixture",
+    "fixture": "evm-eth-case.json",
+    "caseDigest": "sha256:fe506594aae682085f33e4463e9a6b03c46d067b760154851bc0d5ac3d4be4e6"
+  },
+  {
+    "chainId": 10,
+    "checkedAt": "2026-10-23T01:00:04.317827+00:00",
+    "status": "mainnet_fixture",
+    "fixture": "evm-op-case.json",
+    "caseDigest": "sha256:7a82e38c1502f42aef98d69b992536418dc551c7a312a1e4431f6487feb0ec55"
+  },
+  {
+    "chainId": 8453,
+    "checkedAt": "2026-10-23T01:01:22.647512+00:00",
+    "status": "mainnet_fixture",
+    "fixture": "evm-base-case.json",
+    "caseDigest": "sha256:518031060afb21ecef2eb2772cb4b04da892e044eecc4b234a44da030e8d6327"
+  },
+  {
+    "chainId": 42161,
+    "checkedAt": "2026-10-23T01:01:22.648294+00:00",
+    "status": "mainnet_fixture",
+    "fixture": "evm-arbitrum-case.json",
+    "caseDigest": "sha256:22ee6f5a34c39df6c45f0b96385a4e641e4caccdd9f34be8dd149692c591a336"
+  },
+  {
+    "chainId": 137,
+    "checkedAt": "2026-10-23T01:01:24.690948+00:00",
+    "status": "mainnet_fixture",
+    "fixture": "evm-polygon-case.json",
+    "caseDigest": "sha256:0614c233c4363b6ff2ed4af619efa8b05e84f1ddb45ea2f465c513d759850f79"
+  },
+  {
+    "chainId": 56,
+    "checkedAt": "2026-10-23T01:00:05.171557+00:00",
+    "status": "mainnet_fixture",
+    "fixture": "evm-bsc-case.json",
+    "caseDigest": "sha256:7aae891826d85b016a7d97c9805d1bd58587796216e5e15d05a2e540f7c7c0bc"
+  },
+  {
+    "chainId": 43114,
+    "checkedAt": "2026-10-23T01:00:05.221262+00:00",
+    "status": "mainnet_fixture",
+    "fixture": "evm-avalanche-case.json",
+    "caseDigest": "sha256:54b3a93e80528e0c6be23689bb823ab7465b25745f3f3d40053ed5b02cf47751"
+  },
+  {
+    "chainId": 100,
+    "checkedAt": "2026-10-23T01:00:06.638459+00:00",
+    "status": "mainnet_fixture",
+    "fixture": "evm-gnosis-case.json",
+    "caseDigest": "sha256:8d1b0655dc80a0fa40e309d0c93d8f5d1007fc8b133b3959775979fafced4126"
+  },
+  {
+    "chainId": 42220,
+    "checkedAt": "2026-10-23T01:01:24.969404+00:00",
+    "status": "mainnet_fixture",
+    "fixture": "evm-celo-case.json",
+    "caseDigest": "sha256:43cf15e4f47072090a0c866b9bcfd251edebd7678fdb22b8d3c6dd9e04ca89ec"
+  },
+  {
+    "chainId": 59144,
+    "checkedAt": "2026-10-23T01:01:25.144426+00:00",
+    "status": "mainnet_fixture",
+    "fixture": "evm-linea-case.json",
+    "caseDigest": "sha256:c0b742030c1c88a904882851cec7f55d503e316222fa7cc8fef484e434d423f1"
+  },
+  {
+    "chainId": 534352,
+    "checkedAt": "2026-10-23T01:01:26.638103+00:00",
+    "status": "mainnet_fixture",
+    "fixture": "evm-scroll-case.json",
+    "caseDigest": "sha256:9cf2565f0b75a6fbd3e42f7a15052bb6d81863a17772234c98e6cc84b6225723"
+  }
+]

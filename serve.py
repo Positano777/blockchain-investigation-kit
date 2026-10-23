@@ -13,7 +13,8 @@ import subprocess
 import threading
 from urllib.parse import urlsplit
 import uuid
-from capture_assets import discover
+from capture_assets import discover, capture_transaction
+from networks import network as evm_network, NETWORKS
 from bitcoin import capture as capture_bitcoin, txid as bitcoin_txid
 from kit import hex_id, base58
 from solana import capture as capture_solana, history as solana_history, signature as solana_signature
@@ -77,22 +78,31 @@ class CaseStore:
 
 class InvestigationsServer(ThreadingHTTPServer):
     daemon_threads=True
-    def __init__(self,address,store,discovery=discover,converter=node_case,bitcoin_capture=capture_bitcoin,solana_capture=capture_solana,solana_discovery=solana_history):
-        self.store=store;self.discovery=discovery;self.converter=converter;self.bitcoin_capture=bitcoin_capture;self.solana_capture=solana_capture;self.solana_discovery=solana_discovery
+    def __init__(self,address,store,discovery=discover,converter=node_case,bitcoin_capture=capture_bitcoin,solana_capture=capture_solana,solana_discovery=solana_history,evm_capture=capture_transaction):
+        self.store=store;self.discovery=discovery;self.converter=converter;self.bitcoin_capture=bitcoin_capture;self.solana_capture=solana_capture;self.solana_discovery=solana_discovery;self.evm_capture=evm_capture
         self.token=secrets.token_urlsafe(32);self.jobs={};self.lock=threading.Lock();self.busy=False
         super().__init__(address,Handler)
 
     def expand(self,data):
         if not isinstance(data,dict) or set(data)!={'chainId','address','fromBlock','toBlock','trace'}:raise ValueError('Expansion fields')
         chain=data['chainId'];start=data['fromBlock'];end=data['toBlock']
-        if type(chain) is not int or chain not in (1,10) or type(start) is not int or type(end) is not int or type(data['trace']) is not bool:
+        if type(chain) is not int or chain not in {row['chainId'] for row in NETWORKS} or type(start) is not int or type(end) is not int or type(data['trace']) is not bool:
             raise ValueError('Expansion types')
         if not 0<=start<=end<=2**53-1 or end-start>=20:raise ValueError('Block limits')
         address=hex_id(data['address'],40)
-        endpoint=os.environ.get('ETH_RPC_URL' if chain==1 else 'OP_RPC_URL')
+        endpoint=os.environ.get(evm_network(chain)['rpcEnv'])
         if not endpoint:raise ValueError('Configure server RPC environment')
         return self.queue_job(lambda:self.converter(self.discovery(endpoint,chain,address,start,end,data['trace']),'assets'),
                               f'Chain {chain}: {address[:10]} blocks {start}-{end}')
+
+    def evm(self,data):
+        if not isinstance(data,dict) or set(data)!={'chainId','transaction','trace'}:raise ValueError('EVM fields')
+        profile=evm_network(data['chainId']);transaction=hex_id(data['transaction'],64)
+        if type(data['trace']) is not bool:raise ValueError('Trace flag')
+        endpoint=os.environ.get(profile['rpcEnv'])
+        if not endpoint:raise ValueError('Configure selected network provider')
+        return self.queue_job(lambda:self.converter(self.evm_capture(endpoint,profile['chainId'],transaction,data['trace']),'assets'),
+                              f"{profile['name']}: {transaction[:16]}")
 
     def bitcoin(self,data):
         if not isinstance(data,dict) or set(data)!={'txid'}:raise ValueError('Bitcoin fields')
@@ -173,7 +183,7 @@ class Handler(SimpleHTTPRequestHandler):
         path=urlsplit(self.path).path
         try:
             if path=='/api/status':
-                self.reply(200,{'local':True,'token':self.server.token,'rpcConfigured':{'1':bool(os.environ.get('ETH_RPC_URL')),'10':bool(os.environ.get('OP_RPC_URL'))}})
+                self.reply(200,{'local':True,'token':self.server.token,'rpcConfigured':{str(row['chainId']):bool(os.environ.get(row['rpcEnv'])) for row in NETWORKS}})
             elif path=='/api/cases':self.reply(200,{'cases':self.server.store.list(),'limit':100})
             elif re.fullmatch('/api/cases/[0-9a-f]{32}',path):self.reply(200,self.server.store.get(path.rsplit('/',1)[1]))
             elif re.fullmatch('/api/jobs/[0-9a-f]{32}',path):
@@ -207,6 +217,7 @@ class Handler(SimpleHTTPRequestHandler):
             elif patch and re.fullmatch('/api/cases/[0-9a-f]{32}',path):
                 if not isinstance(data,dict) or set(data)!={'title','note'}:raise ValueError()
                 identifier=path.rsplit('/',1)[1];self.server.store.annotate(identifier,data['title'],data['note']);self.reply(200,{'id':identifier})
+            elif not patch and path=='/api/evm':self.reply(202,{'id':self.server.evm(data)})
             elif not patch and path=='/api/solana/history':self.reply(200,self.server.solana_page(data))
             elif not patch and path=='/api/solana':self.reply(202,{'id':self.server.solana(data)})
             elif not patch and path=='/api/bitcoin':self.reply(202,{'id':self.server.bitcoin(data)})

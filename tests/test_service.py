@@ -162,6 +162,29 @@ class LocalAPI(unittest.TestCase):
             self.assertEqual(self.request(path,data,headers=self.write_headers())[0],400)
         self.assertEqual(self.request('/api/solana',{'signature':'1'*64})[0],403)
 
+    def test_evm_capture_uses_selected_server_provider_and_persists_case(self):
+        self.store.validator=node_case;calls=[]
+        fixture=load(ROOT/'examples/evm-bsc.mainnet.json');transaction=fixture['records'][0]['transaction']['hash']
+        def capture(endpoint,chain,identifier,trace):calls.append((endpoint,chain,identifier,trace));return fixture
+        self.server.evm_capture=capture
+        with patch.dict(os.environ,{'BSC_RPC_URL':'https://provider.invalid/private-bsc-endpoint'}):
+            code,raw,_=self.request('/api/evm',{'chainId':56,'transaction':transaction,'trace':False},headers=self.write_headers())
+            self.assertEqual(code,202);identifier=json.loads(raw)['id']
+            for _ in range(200):
+                job=self.server.jobs[identifier]
+                if job['status']!='running':break
+                time.sleep(.01)
+            self.assertEqual(job['status'],'succeeded');case=self.store.get(job['caseId'])['case']
+            self.assertEqual(case,load(ROOT/'web/evm-bsc-case.json'));self.assertNotIn('private-bsc-endpoint',json.dumps(case))
+            self.assertEqual(calls,[('https://provider.invalid/private-bsc-endpoint',56,transaction,False)])
+
+    def test_evm_api_rejects_unknown_chain_endpoint_override_and_missing_session(self):
+        data={'chainId':999999,'transaction':'0x'+'1'*64,'trace':False}
+        self.assertEqual(self.request('/api/evm',data,headers=self.write_headers())[0],400)
+        data.update(chainId=56,endpoint='https://attacker.invalid')
+        self.assertEqual(self.request('/api/evm',data,headers=self.write_headers())[0],400)
+        self.assertEqual(self.request('/api/evm',data)[0],403)
+
     def test_bounds_and_extra_endpoint_fields_rejected(self):
         data={'chainId':10,'address':'0x'+'1'*40,'fromBlock':1,'toBlock':21,'trace':False}
         self.assertEqual(self.request('/api/expand',data,headers=self.write_headers())[0],400)

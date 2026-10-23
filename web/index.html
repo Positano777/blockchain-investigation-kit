@@ -287,7 +287,7 @@
         <h1>Positano Investigations</h1>
         <small>Open evidence. Reusable cases.</small>
       </div>
-      <span class="badge" id="case-status">LOADING / v0.8</span>
+      <span class="badge" id="case-status">LOADING / v0.9</span>
     </header>
     <main>
       <p class="intro">
@@ -333,6 +333,23 @@
           >Sample ETH GraphSense file</a
         >
       </div>
+      <div class="toolbar">
+        <label
+          >EVM mainnet example
+          <select id="evm-demo"></select
+        ></label>
+        <button id="open-evm-demo">Open network example</button>
+      </div>
+      <details class="coverage">
+        <summary>Network coverage and limits</summary>
+        <div id="network-coverage"></div>
+        <p>
+          Bitcoin and Solana have separate bounded adapters. Other non-EVM
+          networks are not implemented. A supported network does not imply
+          complete history, finality verification, ownership attribution, or
+          general bridge tracing.
+        </p>
+      </details>
       <p id="message" role="status" aria-live="polite">
         Loading bundled evidence...
       </p>
@@ -370,6 +387,26 @@
           in the local service; the static preview uses saved evidence.
         </p>
         <div id="local-controls" hidden>
+          <details>
+            <summary>EVM transaction capture</summary>
+            <label>EVM network<select id="evm-chain"></select></label>
+            <label
+              >EVM transaction hash<input
+                id="evm-transaction"
+                maxlength="66"
+                spellcheck="false"
+                placeholder="0x transaction hash"
+            /></label>
+            <button id="capture-evm">
+              Capture selected EVM transaction locally
+            </button>
+            <p>
+              Set the selected network's provider variable in the server shell.
+              Wrong-chain providers are rejected. This captures supplied
+              receipts and Transfer-shaped logs; no complete history or
+              cross-chain identity inference.
+            </p>
+          </details>
           <details>
             <summary>Solana capture and account lookup</summary>
             <label

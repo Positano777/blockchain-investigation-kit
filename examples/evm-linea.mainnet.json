@@ -1,0 +1,50 @@
+{
+  "schema": "positano.asset-evidence.v1",
+  "chainId": "0xe708",
+  "synthetic": false,
+  "records": [
+    {
+      "transaction": {
+        "hash": "0x3a6ec4a732a4909cc92cd8fc78fefc51d27ab34050be1251d37f4afecf222016",
+        "from": "0xf0537a40157649477663d03603dfbca1d7e93639",
+        "to": "0x81cc38f435c64004b38e364e570ea407a55a8364",
+        "value": "0x119f17fe16000",
+        "blockHash": "0x06f7f75236e5005f08fa1194f6a0b31a1f071f05517bd7f01930e3f49335e46c",
+        "blockNumber": "0x1ee60e6",
+        "transactionIndex": "0x0"
+      },
+      "receipt": {
+        "transactionHash": "0x3a6ec4a732a4909cc92cd8fc78fefc51d27ab34050be1251d37f4afecf222016",
+        "from": "0xf0537a40157649477663d03603dfbca1d7e93639",
+        "to": "0x81cc38f435c64004b38e364e570ea407a55a8364",
+        "status": "0x1",
+        "blockHash": "0x06f7f75236e5005f08fa1194f6a0b31a1f071f05517bd7f01930e3f49335e46c",
+        "blockNumber": "0x1ee60e6",
+        "transactionIndex": "0x0",
+        "gasUsed": "0x5208",
+        "effectiveGasPrice": "0x3b9aca07",
+        "logs": []
+      },
+      "block": {
+        "hash": "0x06f7f75236e5005f08fa1194f6a0b31a1f071f05517bd7f01930e3f49335e46c",
+        "number": "0x1ee60e6",
+        "timestamp": "0x6adab1d4",
+        "transactions": [
+          "0x3a6ec4a732a4909cc92cd8fc78fefc51d27ab34050be1251d37f4afecf222016"
+        ]
+      },
+      "trace": {
+        "status": "not_requested",
+        "root": null
+      }
+    }
+  ],
+  "discovery": {
+    "mode": "supplied",
+    "address": null,
+    "fromBlock": null,
+    "toBlock": null,
+    "scannedBlocks": [],
+    "limitReached": false
+  }
+}

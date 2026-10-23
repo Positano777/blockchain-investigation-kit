@@ -1,3 +1,4 @@
+import { evmNetwork } from "./networks.mjs";
 import { bytes, hex, hash, quantity } from "./bridge.mjs";
 const check = (ok, message = "Invalid asset evidence") => {
   if (!ok) throw new Error(message);
@@ -27,12 +28,9 @@ export function buildAssetCase(bundle) {
       typeof bundle.synthetic === "boolean",
   );
   const chain = quantity(bundle.chainId).toString();
-  check(["1", "10"].includes(chain));
-  const network = chain === "1" ? "eth" : "op",
-    explorer =
-      chain === "1"
-        ? "https://etherscan.io/tx/"
-        : "https://optimistic.etherscan.io/tx/";
+  const profile = evmNetwork(chain),
+    network = profile.key,
+    explorer = profile.explorerTx;
   check(Array.isArray(bundle.records) && bundle.records.length <= 10);
   const discovery = bundle.discovery;
   keys(discovery, [

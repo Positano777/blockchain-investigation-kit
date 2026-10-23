@@ -1,0 +1,67 @@
+{
+  "schema": "positano.asset-evidence.v1",
+  "chainId": "0xa",
+  "synthetic": false,
+  "records": [
+    {
+      "transaction": {
+        "hash": "0x614100f821aa1d0092fb954683b412c6c726564e3ee4e66a633c6aaec8c586b9",
+        "from": "0xdeaddeaddeaddeaddeaddeaddeaddeaddead0001",
+        "to": "0x4200000000000000000000000000000000000015",
+        "value": "0x0",
+        "blockHash": "0x24583b7dad6193d15f38b71ff4ae7163fccabfd9ef13d40769d67f207ffdac87",
+        "blockNumber": "0x9736bed",
+        "transactionIndex": "0x0"
+      },
+      "receipt": {
+        "transactionHash": "0x614100f821aa1d0092fb954683b412c6c726564e3ee4e66a633c6aaec8c586b9",
+        "from": "0xdeaddeaddeaddeaddeaddeaddeaddeaddead0001",
+        "to": "0x4200000000000000000000000000000000000015",
+        "status": "0x1",
+        "blockHash": "0x24583b7dad6193d15f38b71ff4ae7163fccabfd9ef13d40769d67f207ffdac87",
+        "blockNumber": "0x9736bed",
+        "transactionIndex": "0x0",
+        "gasUsed": "0xb496",
+        "effectiveGasPrice": "0x0",
+        "logs": []
+      },
+      "block": {
+        "hash": "0x24583b7dad6193d15f38b71ff4ae7163fccabfd9ef13d40769d67f207ffdac87",
+        "number": "0x9736bed",
+        "timestamp": "0x6adab193",
+        "transactions": [
+          "0x614100f821aa1d0092fb954683b412c6c726564e3ee4e66a633c6aaec8c586b9",
+          "0x132f56417978cc2baf56809f2f110e6f5c911ecdf72202c3504917591df0110c",
+          "0x561078db23fc5834034bb1c059ad50731f37fbbe04d6ef5513636479d99e38a8",
+          "0x1a8e9091bc21f26071248cb88e0c12a93ba07b86641064b80b3ba9db97bf3022",
+          "0xa0e3fd21926eae9510b5f270807815523efa6e677aa3f957eaedbf7175b8c83e",
+          "0x9da50ccfef756de28ec3487182e0289411eddd68968e1ea504b01f0302d502f5",
+          "0xa4d9d57376012f905d6aac0f0e19599e84d866a114e6c89eaef41c7fd833d2da",
+          "0x8f7d9e45d231e583b60f651333389982907bd1704d2eb4fa307caa225819e18c",
+          "0x9d1e7b6b15a992c6a78fb083a61774d372712aec76d7750b8608c06cb1e97aca",
+          "0x561e0fdb441fda8e165ddfaae066f8c35591bd68ba9f186182cd2197b7279af0",
+          "0xd83276d6ab258a943e92acf82982d538781ddeddbd0d1169e56626933f285a6b",
+          "0x4721db358c3463a4e4afb6b9c30ff6717605a0f67f418f7ed330617b43e3e578",
+          "0x7d39dee767459e4c3b5f1d5224bbce3d0730bdcaf7c28aebdf8a17516fc56274",
+          "0x9aa80e31722ef52923822c97a17655ac6ad0080140c952fd104b4699e4fcdff0",
+          "0xec60e0cf612579014f10475cb7e8e1ad6732d3431c9b0677f966d6c846b85d28",
+          "0x0d1c9913a5e399f719e92963101699469ded992736ecc8b7b57bcc5afb332145",
+          "0x8cebce25a3754de31f1dd8044a348230d3c51866837e366ebc4c61b56144a190",
+          "0xf8d8327964c682a4eb31f433516b85ebcc131dab6ffbfa384265fa91753f7191"
+        ]
+      },
+      "trace": {
+        "status": "not_requested",
+        "root": null
+      }
+    }
+  ],
+  "discovery": {
+    "mode": "supplied",
+    "address": null,
+    "fromBlock": null,
+    "toBlock": null,
+    "scannedBlocks": [],
+    "limitReached": false
+  }
+}

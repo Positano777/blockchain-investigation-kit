@@ -1,0 +1,96 @@
+{
+  "schema": "positano.asset-evidence.v1",
+  "chainId": "0x82750",
+  "synthetic": false,
+  "records": [
+    {
+      "transaction": {
+        "hash": "0x7b6a0ee1c960342eac9ff9bbe024ac0e98683f4fae4ecce70d6078614c57e018",
+        "from": "0x275806c7d691522b16ebf66ff894048077be4174",
+        "to": "0x7f4434e1ab330d8565ca689e9774bf5d82db65df",
+        "value": "0x0",
+        "blockHash": "0xf2f262b08b359442f4484c2d9d41d627aa8eb28360c5b3895a8eb21fb9cd9ec6",
+        "blockNumber": "0x21d321c",
+        "transactionIndex": "0x0"
+      },
+      "receipt": {
+        "transactionHash": "0x7b6a0ee1c960342eac9ff9bbe024ac0e98683f4fae4ecce70d6078614c57e018",
+        "from": "0x275806c7d691522b16ebf66ff894048077be4174",
+        "to": "0x7f4434e1ab330d8565ca689e9774bf5d82db65df",
+        "status": "0x1",
+        "blockHash": "0xf2f262b08b359442f4484c2d9d41d627aa8eb28360c5b3895a8eb21fb9cd9ec6",
+        "blockNumber": "0x21d321c",
+        "transactionIndex": "0x0",
+        "gasUsed": "0x21299",
+        "effectiveGasPrice": "0x35b68",
+        "logs": [
+          {
+            "address": "0x06efdbff2a14a7c8e15944d1f4a48f9f95f663a4",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x00000000000000000000000004566bf83399e4f750728d1ef57008aedda00e71",
+              "0x0000000000000000000000007f4434e1ab330d8565ca689e9774bf5d82db65df"
+            ],
+            "data": "0x0000000000000000000000000000000000000000000000000000000005f599cc",
+            "blockNumber": "0x21d321c",
+            "transactionHash": "0x7b6a0ee1c960342eac9ff9bbe024ac0e98683f4fae4ecce70d6078614c57e018",
+            "transactionIndex": "0x0",
+            "blockHash": "0xf2f262b08b359442f4484c2d9d41d627aa8eb28360c5b3895a8eb21fb9cd9ec6",
+            "logIndex": "0x0",
+            "removed": false
+          },
+          {
+            "address": "0x5300000000000000000000000000000000000004",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x0000000000000000000000007f4434e1ab330d8565ca689e9774bf5d82db65df",
+              "0x00000000000000000000000004566bf83399e4f750728d1ef57008aedda00e71"
+            ],
+            "data": "0x0000000000000000000000000000000000000000000000000094b12adbf7d0fc",
+            "blockNumber": "0x21d321c",
+            "transactionHash": "0x7b6a0ee1c960342eac9ff9bbe024ac0e98683f4fae4ecce70d6078614c57e018",
+            "transactionIndex": "0x0",
+            "blockHash": "0xf2f262b08b359442f4484c2d9d41d627aa8eb28360c5b3895a8eb21fb9cd9ec6",
+            "logIndex": "0x1",
+            "removed": false
+          },
+          {
+            "address": "0x04566bf83399e4f750728d1ef57008aedda00e71",
+            "topics": [
+              "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67",
+              "0x0000000000000000000000007b4a845130ead4dab545c598422ec55c011b18ff",
+              "0x0000000000000000000000007f4434e1ab330d8565ca689e9774bf5d82db65df"
+            ],
+            "data": "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffffa0a66340000000000000000000000000000000000000000000000000094b12adbf7d0fc0000000000000000000000000000000000004fe76e7a94f0f3759a0a3b2fc1810000000000000000000000000000000000000000000000000071b249b5c3d4b60000000000000000000000000000000000000000000000000000000000030782",
+            "blockNumber": "0x21d321c",
+            "transactionHash": "0x7b6a0ee1c960342eac9ff9bbe024ac0e98683f4fae4ecce70d6078614c57e018",
+            "transactionIndex": "0x0",
+            "blockHash": "0xf2f262b08b359442f4484c2d9d41d627aa8eb28360c5b3895a8eb21fb9cd9ec6",
+            "logIndex": "0x2",
+            "removed": false
+          }
+        ]
+      },
+      "block": {
+        "hash": "0xf2f262b08b359442f4484c2d9d41d627aa8eb28360c5b3895a8eb21fb9cd9ec6",
+        "number": "0x21d321c",
+        "timestamp": "0x6adab2f2",
+        "transactions": [
+          "0x7b6a0ee1c960342eac9ff9bbe024ac0e98683f4fae4ecce70d6078614c57e018"
+        ]
+      },
+      "trace": {
+        "status": "not_requested",
+        "root": null
+      }
+    }
+  ],
+  "discovery": {
+    "mode": "supplied",
+    "address": null,
+    "fromBlock": null,
+    "toBlock": null,
+    "scannedBlocks": [],
+    "limitReached": false
+  }
+}

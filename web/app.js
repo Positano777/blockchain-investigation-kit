@@ -1,3 +1,9 @@
+import {
+  EVM_NETWORKS,
+  EVM_VALIDATION,
+  evmNetwork,
+  formatNative,
+} from "./networks.mjs";
 import { compareBitcoinCases } from "./compare.mjs";
 import { verifyCase, filterEdges, formatEth, caseEdges } from "./case.mjs";
 import { evidenceCardPng } from "./share.mjs";
@@ -22,6 +28,11 @@ function paragraph(parent, label, value) {
   p.append(s, c);
   parent.append(p);
 }
+function nativeAmount(amount) {
+  return current?.assetEvidence
+    ? formatNative(amount, current.assetEvidence.chainId)
+    : formatEth(amount);
+}
 function inspect(e) {
   $("details").replaceChildren();
   for (const [label, value] of [
@@ -30,7 +41,7 @@ function inspect(e) {
     [
       current.solanaAnalysis ? "Instruction amount" : "Amount",
       e.unit === "wei"
-        ? formatEth(e.amount) + ` (${e.amount} wei)`
+        ? nativeAmount(e.amount) + ` (${e.amount} atomic units)`
         : `${e.amount} ${e.unit}`,
     ],
     [
@@ -123,6 +134,12 @@ function inspect(e) {
     });
     $("details").append(button);
   }
+  if (current.assetEvidence)
+    paragraph(
+      $("details"),
+      "Network",
+      `${evmNetwork(current.assetEvidence.chainId).name} / chain ID ${BigInt(current.assetEvidence.chainId)}`,
+    );
   if (current.analysis) {
     paragraph(
       $("details"),
@@ -353,7 +370,7 @@ function render() {
       (current.solanaAnalysis ? e.outcome.replaceAll("_", " ") + " / " : "") +
       e.kind.replaceAll("_", " ") +
       " / " +
-      (e.unit === "wei" ? formatEth(e.amount) : e.amount + " " + e.unit);
+      (e.unit === "wei" ? nativeAmount(e.amount) : e.amount + " " + e.unit);
     const sub = document.createElement("span");
     sub.textContent =
       (e.timestamp === null
@@ -369,12 +386,34 @@ function render() {
   if (edges.length) inspect(edges[0]);
   else {
     const emptySolana = current.solanaAnalysis && current.edges.length === 0;
+    const emptyEvm = current.assetEvidence && current.edges.length === 0;
     $("details").textContent = emptySolana
       ? "No supported transfer instructions decoded. Execution and balance observations above remain available; this does not establish no activity."
-      : "No matching records. Clear the filters to see this case.";
+      : emptyEvm
+        ? "No supported value/token movements decoded. Zero-value calls and unsupported logs may still be present in the captured receipt. This does not establish no activity."
+        : "No matching records. Clear the filters to see this case.";
     $("records").textContent = emptySolana
       ? "No supported transfer records. Review the unsupported-instruction count and coverage."
-      : "No records match these filters.";
+      : emptyEvm
+        ? "No decoded movements. The transaction receipt remains in the full case JSON and fee summary."
+        : "No records match these filters.";
+    if (emptyEvm && current.assetEvidence.records.length) {
+      const record = current.assetEvidence.records[0];
+      paragraph($("details"), "Captured transaction", record.transaction.hash);
+      paragraph(
+        $("details"),
+        "Receipt status",
+        BigInt(record.receipt.status) === 1n ? "success" : "failed",
+      );
+      const link = document.createElement("a");
+      link.textContent = "Open captured transaction";
+      link.href =
+        evmNetwork(current.assetEvidence.chainId).explorerTx +
+        record.transaction.hash;
+      link.rel = "noopener noreferrer";
+      link.target = "_blank";
+      $("details").append(link);
+    }
   }
 }
 async function activate(d, token, example = "") {
@@ -402,8 +441,8 @@ async function activate(d, token, example = "") {
   ])
     $(key).setAttribute("aria-pressed", String(key === example));
   $("case-status").textContent = d.synthetic
-    ? "SYNTHETIC CASE / v0.8"
-    : "IMPORTED EVIDENCE / v0.8";
+    ? "SYNTHETIC CASE / v0.9"
+    : "IMPORTED EVIDENCE / v0.9";
   const receipts = d.receipts
     ? Object.values(d.receipts)
     : d.receipt
@@ -450,9 +489,14 @@ async function activate(d, token, example = "") {
   if (d.bridge)
     $("summary").textContent =
       `Ethereum (1) → OP Mainnet (10). Exact destination transaction hash derived from the supplied Portal event. Deposit mint: ${formatEth(d.bridge.mintWei)}. Destination receipt: ${d.bridge.destinationStatus}. This is a protocol deposit link, not proof of common ownership or complete asset movement.`;
-  if (d.analysis)
+  if (d.analysis) {
+    $("evm-chain").value = String(BigInt(d.assetEvidence.chainId));
+    $("evm-demo").value = evmNetwork(d.assetEvidence.chainId).key;
+    $("evm-transaction").value =
+      d.assetEvidence.records[0]?.transaction.hash ?? "";
     $("summary").textContent =
-      `${d.analysis.transactions} supplied transactions / ${d.edges.length} movements or attempts. Trace coverage: ${d.analysis.traceAvailable} available, ${d.analysis.traceMissing} missing/not requested. ${d.analysis.unrecognizedLogs} other logs and ${d.analysis.unsupportedTransferLogs} unsupported Transfer-shaped logs not decoded. Execution fee portion: ${formatEth(d.analysis.executionFeesWei)} (other fee components excluded).`;
+      `${d.analysis.transactions} supplied transactions / ${d.edges.length} movements or attempts. Trace coverage: ${d.analysis.traceAvailable} available, ${d.analysis.traceMissing} missing/not requested. ${d.analysis.unrecognizedLogs} other logs and ${d.analysis.unsupportedTransferLogs} unsupported Transfer-shaped logs not decoded. ${evmNetwork(d.assetEvidence.chainId).name}: receipt gasUsed × effectiveGasPrice = ${formatNative(d.analysis.executionFeesWei, d.assetEvidence.chainId)}. Partial fee accounting; chain-specific extra fees are excluded or not separately resolved.`;
+  }
   if (d.assetEvidence?.discovery.mode === "direct_address_blocks") {
     const s = d.assetEvidence.discovery;
     $("summary").textContent +=
@@ -539,7 +583,9 @@ $("report").addEventListener("click", () => {
       "",
       e.kind,
       e.from + " -> " + e.to,
-      e.amount + " " + e.unit,
+      e.unit === "wei" && current.assetEvidence
+        ? nativeAmount(e.amount) + " / " + e.amount + " atomic units"
+        : e.amount + " " + e.unit,
       e.timestamp === null
         ? "Time not supplied"
         : new Date(e.timestamp * 1000).toISOString(),
@@ -604,6 +650,13 @@ $("report").addEventListener("click", () => {
         current.bridge.destinationTransaction,
       "Download the full JSON case to retain the supplied RPC evidence.",
     );
+  if (current.assetEvidence)
+    lines.push(
+      "",
+      "EVM network:",
+      JSON.stringify(evmNetwork(current.assetEvidence.chainId), null, 2),
+      "Receipt fee product is partial; it is not a complete cross-network transaction cost.",
+    );
   if (current.analysis)
     lines.push(
       "",
@@ -660,7 +713,7 @@ $("expand").addEventListener("click", () => {
     return;
   }
   $("hop-command").textContent =
-    `Set ${chain === 1 ? "ETH_RPC_URL" : "OP_RPC_URL"} to your HTTPS provider in your shell, then run locally:\npython capture_assets.py hop ${chain} ${address} ${start} ${start + 4n} next-hop-evidence.json\nnode assets.mjs next-hop-evidence.json next-hop-case.json\nOpen next-hop-case.json here. Scans five explicit blocks, captures at most ten direct from/to transactions, and excludes token-only/internal-only discovery. This follows the selected call target, not an attributed owner or specific deposited coins.`;
+    `Set ${evmNetwork(chain).rpcEnv} to your HTTPS provider in your shell, then run locally:\npython capture_assets.py hop ${chain} ${address} ${start} ${start + 4n} next-hop-evidence.json\nnode assets.mjs next-hop-evidence.json next-hop-case.json\nOpen next-hop-case.json here. Scans five explicit blocks, captures at most ten direct from/to transactions, and excludes token-only/internal-only discovery. This follows the selected call target, not an attributed owner or specific deposited coins.`;
 });
 $("compare-import").addEventListener("change", async (event) => {
   const file = event.target.files[0],
@@ -718,11 +771,29 @@ $("share-card").addEventListener("click", async () => {
     $("share-card").disabled = false;
   }
 });
+$("evm-demo").replaceChildren(
+  ...EVM_NETWORKS.map(
+    (profile) =>
+      new Option(
+        `${profile.name} / chain ${profile.chainId} / ${profile.symbol}`,
+        profile.key,
+      ),
+  ),
+);
+$("open-evm-demo").addEventListener("click", () =>
+  show("evm-" + $("evm-demo").value).catch(fail),
+);
+for (const profile of EVM_NETWORKS) {
+  const row = document.createElement("p");
+  row.textContent = `${profile.name} / chain ${profile.chainId} / native ${profile.symbol}. Saved mainnet sample: ${EVM_VALIDATION.find((v) => v.chainId === profile.chainId)?.status === "mainnet_fixture" ? "captured and checked" : "not verified"}. Bounded receipt/log/trace evidence only.`;
+  $("network-coverage").append(row);
+}
 initLocalService({
   getCase: () => current,
   openCase: (data) => activate(data, ++generation),
 });
 const examples = [
+  ...EVM_NETWORKS.map((profile) => "evm-" + profile.key),
   "solana",
   "solana-token",
   "solana-lab",

@@ -2,13 +2,13 @@
 
 An open-source starting point for portable blockchain investigations: inspect a graph, follow its source transactions, and export evidence for other tools.
 
-**v0.8 prototype: Solana transaction evidence joins Bitcoin/EVM investigations, saved cases, and shareable cards.** Preserve evidence, keep analyst notes separate, reopen investigations after restart, and collect a bounded next hop from the interface. Existing receipt, asset, bridge, and launch-observation decoders remain available. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
+**v0.9 prototype: 11 EVM mainnets plus bounded Bitcoin/Solana investigations, saved cases, and shareable cards.** Preserve evidence, keep analyst notes separate, reopen investigations after restart, and collect a bounded next hop from the interface. Existing receipt, asset, bridge, and launch-observation decoders remain available. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
 
 ![Local investigation workspace with saved cases and bounded expansion](docs/screenshots/workspace.png)
 
 ## Run locally
 
-Python 3.11+; no pip installs, wallet connection, or API key required.
+Python 3.11+; no pip installs or wallet connection. Offline examples and Bitcoin/Solana public defaults need no API key; EVM capture requires a configured HTTPS provider.
 The local service and cross-network builder/capture require Node 22+. Keccak uses pinned, attributed Noble modules already vendored in the repository; no npm install is needed.
 
 ```sh
@@ -32,6 +32,10 @@ With `serve.py`, use **Save case / notes locally** to explicitly persist an inve
 Start with [the cross-network connector guide and reproducible mainnet case](docs/OP-DEPOSIT.md). The link uses protocol derivation, not a timing/amount heuristic. Supplied RPC evidence remains unauthenticated and no finality verification is claimed.
 
 Then use [asset-movement decoding and bounded one-hop discovery](docs/ASSET-MOVEMENTS.md). The static browser prepares a local capture command; the local service can also run a bounded five-block expansion. Neither provides an automatic wallet crawler. Real examples disclose missing traces and a five-block zero-result scan. The trace lab is explicitly synthetic.
+
+## EVM mainnet coverage
+
+Ethereum, OP Mainnet, Base, Arbitrum One, Polygon PoS, BNB Smart Chain, Avalanche C-Chain, Gnosis, Celo, Linea, and Scroll share the bounded receipt/log/trace adapter. Each has a saved mainnet fixture, chain-ID validation, correct native-currency labels, local capture/persistence, and bounded direct-address expansion. See [network setup, validation, fee limits, and unsupported families](docs/NETWORKS.md). This is not universal blockchain or general bridge tracing.
 
 ## Solana transaction investigations
 

@@ -1,0 +1,56 @@
+{
+  "schema": "positano.asset-evidence.v1",
+  "chainId": "0xa4b1",
+  "synthetic": false,
+  "records": [
+    {
+      "transaction": {
+        "hash": "0xca1f74bc98f116b464be5b3691974dc135ca8e07d6c0b20cf8f30390bda0369b",
+        "from": "0xe63e6b49bdae642cd2060c83a6c095ab8b8f5ab9",
+        "to": "0x1a396f12e9f4bbfdfb35a010f94c1e700c6927af",
+        "value": "0x490cd9fd5f0",
+        "blockHash": "0xdfe1c2d747899c51da540f87d02091f6a5e17b09635762e7775010c7af4287f7",
+        "blockNumber": "0x1ed6b77f",
+        "transactionIndex": "0x1"
+      },
+      "receipt": {
+        "transactionHash": "0xca1f74bc98f116b464be5b3691974dc135ca8e07d6c0b20cf8f30390bda0369b",
+        "from": "0xe63e6b49bdae642cd2060c83a6c095ab8b8f5ab9",
+        "to": "0x1a396f12e9f4bbfdfb35a010f94c1e700c6927af",
+        "status": "0x1",
+        "blockHash": "0xdfe1c2d747899c51da540f87d02091f6a5e17b09635762e7775010c7af4287f7",
+        "blockNumber": "0x1ed6b77f",
+        "transactionIndex": "0x1",
+        "gasUsed": "0x523a",
+        "effectiveGasPrice": "0x1c9c380",
+        "logs": []
+      },
+      "block": {
+        "hash": "0xdfe1c2d747899c51da540f87d02091f6a5e17b09635762e7775010c7af4287f7",
+        "number": "0x1ed6b77f",
+        "timestamp": "0x6adab300",
+        "transactions": [
+          "0x7374daf9d6342da764b4dee696c66adccc6ee1153ebb8cfb27cd7403a88bac99",
+          "0xca1f74bc98f116b464be5b3691974dc135ca8e07d6c0b20cf8f30390bda0369b",
+          "0xa4a2374ce9c51c00bffe4f87241a7ae4be6061404e357ad9b4a565ee35af0d58",
+          "0x9f7e4560b4446afae25263b20689d15ee2b4aa3fffc1ef70d0748b745ca3c892",
+          "0x409c857fd6cbb514e63525df32d7d711f6306e1a2591d6c09b9c9e660622b2c1",
+          "0x2ec908d2426038fb4c4773162751a643bd7e6c4df761cf8d114b2fed1a530917",
+          "0x9565dabd7d309b74fb669c9b5b26454f33ec6057fecd0b5a293e6586b376f06e"
+        ]
+      },
+      "trace": {
+        "status": "not_requested",
+        "root": null
+      }
+    }
+  ],
+  "discovery": {
+    "mode": "supplied",
+    "address": null,
+    "fromBlock": null,
+    "toBlock": null,
+    "scannedBlocks": [],
+    "limitReached": false
+  }
+}

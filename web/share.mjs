@@ -1,3 +1,4 @@
+import { evmNetwork } from "./networks.mjs";
 // Self-contained SVG: no external assets, scripts, links, or analyst annotations.
 function xml(value) {
   return String(value).replace(
@@ -15,6 +16,7 @@ function xml(value) {
 export function evidenceCard(d) {
   const btc = d.network === "bitcoin-mainnet";
   const sol = d.solanaAnalysis;
+  const evm = d.assetEvidence ? evmNetwork(d.assetEvidence.chainId) : null;
   const headline = sol
     ? "Understand the transaction."
     : btc
@@ -26,14 +28,14 @@ export function evidenceCard(d) {
     ? `${sol.status} / ${sol.feeLamports} lamport fee / ${d.edges.length} instruction record${d.edges.length === 1 ? "" : "s"}`
     : btc
       ? `${d.evidence.transaction.vin.length} input${d.evidence.transaction.vin.length === 1 ? "" : "s"} / ${d.evidence.transaction.vout.length} output${d.evidence.transaction.vout.length === 1 ? "" : "s"} / ${d.feeSatoshis} satoshi fee`
-      : `${d.nodes.length} nodes / ${d.edges.length} supplied records`;
+      : `${evm ? evm.name + " (" + evm.symbol + ") / " : ""}${d.nodes.length} nodes / ${d.edges.length} supplied records`;
   const reference = sol
     ? sol.signature
     : btc
       ? d.evidence.transaction.txid
       : d.bridge
         ? d.bridge.sourceTransaction
-        : d.digest.slice(7);
+        : (d.assetEvidence?.records[0]?.transaction.hash ?? d.digest.slice(7));
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="${xml(headline)}">
 <rect width="1200" height="630" fill="#edf3f0"/><rect x="0" y="0" width="18" height="630" fill="#2d604d"/>
 <g font-family="Arial, sans-serif" fill="#173e39"><text x="65" y="75" font-size="26" font-weight="700">Positano Investigations</text>

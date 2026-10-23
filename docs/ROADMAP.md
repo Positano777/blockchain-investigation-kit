@@ -4,7 +4,7 @@ The product promise is **a reproducible trail from a transaction to its evidence
 
 | Milestone | Status | Completion criteria |
 | --- | --- | --- |
-| Portable EVM/bridge investigation | Bounded prototype shipped | Local reconstruction, inspectable evidence, honest coverage |
+| Portable EVM/bridge investigation | Bounded prototype; 11 EVM mainnets in v0.9 | Local reconstruction, inspectable evidence, honest coverage |
 | Local persistent workspace | Shipped | SQLite cases, separate notes, reopen after restart, protected local writes |
 | Bitcoin interactive trail | Shipped in v0.7 | Browser import/graph, checked outpoints, saved cases, manual next capture |
 | Reproducible sharing | Shipped in v0.7 | PNG card, JSON/report, checksum/reference, no analyst notes in exports |
@@ -12,6 +12,7 @@ The product promise is **a reproducible trail from a transaction to its evidence
 | Solana transaction decoder | Bounded v0.8 preview shipped | Mainnet capture; exact lamport/token units; explicit program/instruction references; failed/CPI behavior tested; unsupported instructions labeled |
 | pump.fun lifecycle evidence | Next, not implemented | Version-pinned creation/curve/migration/disposal decoding; actual mainnet fixtures; no timing-only bundle claims |
 | Indexed history and watchlists | Planned | Cursor/range/cap provenance, reorganization handling, deduplication, provider budgets, persistent jobs and cancellation |
+| Non-EVM expansion beyond Bitcoin/Solana | Not implemented | Dedicated reviewed adapters; official metadata, real fixtures, negative and browser tests; see [network matrix](NETWORKS.md) |
 | Wider bridge routes | Planned | Protocol-specific message derivation and captured destination evidence for each supported route |
 | Case exchange/API | Planned | Versioned connector API, reproducible fixtures, migration policy, explicit annotation export, cross-tool examples |
 | Community beta | Needs external use | Five independent testers complete the walkthrough; all blocking reproducible bugs fixed; unsupported cases displayed clearly |

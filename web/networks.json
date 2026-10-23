@@ -1,0 +1,112 @@
+[
+  {
+    "chainId": 1,
+    "key": "eth",
+    "name": "Ethereum",
+    "symbol": "ETH",
+    "decimals": 18,
+    "rpcEnv": "ETH_RPC_URL",
+    "explorerTx": "https://etherscan.io/tx/",
+    "source": "https://eips.ethereum.org/EIPS/eip-2228"
+  },
+  {
+    "chainId": 10,
+    "key": "op",
+    "name": "OP Mainnet",
+    "symbol": "ETH",
+    "decimals": 18,
+    "rpcEnv": "OP_RPC_URL",
+    "explorerTx": "https://optimistic.etherscan.io/tx/",
+    "source": "https://github.com/ethereum-optimism/superchain-registry/blob/main/superchain/configs/mainnet/op.toml"
+  },
+  {
+    "chainId": 8453,
+    "key": "base",
+    "name": "Base",
+    "symbol": "ETH",
+    "decimals": 18,
+    "rpcEnv": "BASE_RPC_URL",
+    "explorerTx": "https://basescan.org/tx/",
+    "source": "https://docs.base.org/get-started/connect-to-base"
+  },
+  {
+    "chainId": 42161,
+    "key": "arbitrum",
+    "name": "Arbitrum One",
+    "symbol": "ETH",
+    "decimals": 18,
+    "rpcEnv": "ARB_RPC_URL",
+    "explorerTx": "https://arbiscan.io/tx/",
+    "source": "https://docs.arbitrum.io/chain-info"
+  },
+  {
+    "chainId": 137,
+    "key": "polygon",
+    "name": "Polygon PoS",
+    "symbol": "POL",
+    "decimals": 18,
+    "rpcEnv": "POLYGON_RPC_URL",
+    "explorerTx": "https://polygonscan.com/tx/",
+    "source": "https://support.polygon.technology/support/solutions/articles/82000889434-how-to-add-polygon-mainnet-on-metamask-"
+  },
+  {
+    "chainId": 56,
+    "key": "bsc",
+    "name": "BNB Smart Chain",
+    "symbol": "BNB",
+    "decimals": 18,
+    "rpcEnv": "BSC_RPC_URL",
+    "explorerTx": "https://bscscan.com/tx/",
+    "source": "https://docs.bnbchain.org/bnb-smart-chain/developers/wallet-configuration/"
+  },
+  {
+    "chainId": 43114,
+    "key": "avalanche",
+    "name": "Avalanche C-Chain",
+    "symbol": "AVAX",
+    "decimals": 18,
+    "rpcEnv": "AVAX_RPC_URL",
+    "explorerTx": "https://snowtrace.io/tx/",
+    "source": "https://build.avax.network/docs/primary-network"
+  },
+  {
+    "chainId": 100,
+    "key": "gnosis",
+    "name": "Gnosis",
+    "symbol": "xDAI",
+    "decimals": 18,
+    "rpcEnv": "GNOSIS_RPC_URL",
+    "explorerTx": "https://gnosisscan.io/tx/",
+    "source": "https://docs.gnosischain.com/about/networks/mainnet/"
+  },
+  {
+    "chainId": 42220,
+    "key": "celo",
+    "name": "Celo",
+    "symbol": "CELO",
+    "decimals": 18,
+    "rpcEnv": "CELO_RPC_URL",
+    "explorerTx": "https://celoscan.io/tx/",
+    "source": "https://docs.celo.org/learn/network/overview"
+  },
+  {
+    "chainId": 59144,
+    "key": "linea",
+    "name": "Linea",
+    "symbol": "ETH",
+    "decimals": 18,
+    "rpcEnv": "LINEA_RPC_URL",
+    "explorerTx": "https://lineascan.build/tx/",
+    "source": "https://docs.linea.build/get-started/build/network-info/"
+  },
+  {
+    "chainId": 534352,
+    "key": "scroll",
+    "name": "Scroll",
+    "symbol": "ETH",
+    "decimals": 18,
+    "rpcEnv": "SCROLL_RPC_URL",
+    "explorerTx": "https://scrollscan.com/tx/",
+    "source": "https://docs.scroll.io/en/developers"
+  }
+]

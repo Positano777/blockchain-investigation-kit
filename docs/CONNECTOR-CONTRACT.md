@@ -4,7 +4,7 @@ The service stores validated evidence cases without assuming that every chain us
 
 | Connector | State | What exists |
 | --- | --- | --- |
-| Ethereum / OP asset evidence | Implemented, bounded | Receipt-event and supplied call-trace decoding; direct-address block scan |
+| EVM asset evidence (11 reviewed mainnets) | Implemented, bounded | Receipt/log and supplied call-trace decoding; direct-address block scan; chain/currency-aware capture and exports; see [network matrix](NETWORKS.md) |
 | Ethereum → OP Portal deposits | Implemented, narrow | One supported deposit version/route with deterministic destination hash |
 | Solana launch observations | Implemented, offline subset | Import of existing launch-evidence observations; no full Solana history |
 | Bitcoin UTXO investigations | Implemented, bounded | One transaction, projected previous outputs, checked reported output spends; browser graph/import/persistence and manual next-transaction capture; no recursive crawl |

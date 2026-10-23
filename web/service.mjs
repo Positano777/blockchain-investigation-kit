@@ -1,3 +1,4 @@
+import { EVM_NETWORKS } from "./networks.mjs";
 import { solanaId } from "./solana.mjs";
 // Local service UI. The hosted static preview never probes localhost or receives RPC secrets.
 export function initLocalService({ getCase, openCase }) {
@@ -16,6 +17,7 @@ export function initLocalService({ getCase, openCase }) {
     historyCursor = null;
   function busy(value) {
     for (const id of [
+      "capture-evm",
       "run-local-hop",
       "capture-bitcoin",
       "capture-solana",
@@ -151,6 +153,19 @@ export function initLocalService({ getCase, openCase }) {
       busy(false);
     }
   }
+  $("capture-evm").addEventListener("click", () => {
+    const chainId = Number($("evm-chain").value),
+      transaction = $("evm-transaction").value.trim();
+    if (!/^0x[0-9a-fA-F]{64}$/.test(transaction)) {
+      status("Enter a 0x-prefixed EVM transaction hash.");
+      return;
+    }
+    run(
+      "/api/evm",
+      { chainId, transaction, trace: false },
+      "EVM capture running locally. The provider chain ID must match the selected network. Receipt/log evidence will be saved as a new case.",
+    );
+  });
   $("capture-solana").addEventListener("click", () => {
     try {
       const signature = solanaId($("solana-signature").value.trim(), 64);
@@ -262,9 +277,22 @@ export function initLocalService({ getCase, openCase }) {
   api("/api/status")
     .then(async (data) => {
       token = data.token;
+      const selected = getCase()?.assetEvidence
+        ? String(BigInt(getCase().assetEvidence.chainId))
+        : "1";
+      $("evm-chain").replaceChildren(
+        ...EVM_NETWORKS.map(
+          (row) =>
+            new Option(
+              `${row.name} (${row.symbol}) / ${data.rpcConfigured[String(row.chainId)] ? "configured" : "set " + row.rpcEnv}`,
+              String(row.chainId),
+            ),
+        ),
+      );
+      $("evm-chain").value = selected;
       $("local-controls").hidden = false;
       status(
-        `Local service connected. Ethereum RPC: ${data.rpcConfigured["1"] ? "configured" : "not configured"}; Optimism RPC: ${data.rpcConfigured["10"] ? "configured" : "not configured"}. Bitcoin and Solana capture: available using public defaults or configured server endpoints. Provider URLs stay on the server.`,
+        `Local service connected. ${EVM_NETWORKS.filter((row) => data.rpcConfigured[String(row.chainId)]).length} of ${EVM_NETWORKS.length} EVM provider variables configured. Bitcoin and Solana capture: available using public defaults or configured server endpoints. Provider URLs stay on the server.`,
       );
       await refresh();
     })

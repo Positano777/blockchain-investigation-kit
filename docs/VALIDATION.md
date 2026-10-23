@@ -1,5 +1,12 @@
 # Validation record
 
+## v0.9 additions
+
+- Python: 79 tests; Node: 59 tests (138 total). Added registry/endpoint selection, wrong-chain/unknown-chain rejection before transaction access, alternate fee-currency exclusion, qualified-node separation, native-currency formatting, metadata tampering, case reconstruction on every registry network, HTTP field/session controls, and non-ETH sharing-card labels.
+- Live read-only receipt/log capture on all 11 EVM registry networks. Each saved projected fixture reconstructs and passes checksum validation. OP/Celo samples have zero decoded value/token movements; no absence-of-activity inference is made. Newly added network traces were not positively verified.
+- Chrome: all 11 examples load with correct currency labels; live BNB and Base capture, five-block BNB expansion, case save/reopen with separate notes, partial-fee labels, zero-movement receipt explanation, network-aware report/PNG export; no page/console errors, warnings, or 390px mobile overflow.
+- No packages installed. Case data excludes provider endpoints/credentials. More EVM networks, non-EVM adapters beyond Bitcoin/Solana, complete history, general bridges, and chain-specific full fee accounting remain outside this release.
+
 ## v0.8 additions
 
 - Python: 72 tests. Node: 54 tests. Added Solana projection/capture, exact u64 amounts, account/program validation, mint consistency, version/null-metadata rejection, bounded cursor pages, method/endpoint restrictions, shared-service persistence/session/busy checks, reconstructed outcomes/references, and Solana card labels.

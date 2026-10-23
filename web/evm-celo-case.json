@@ -1,0 +1,85 @@
+{
+  "schema": "positano.asset-case.v1",
+  "network": "celo",
+  "synthetic": false,
+  "coverage": "Supplied RPC receipts and optional provider callTracer only. Transfer-shaped logs are emitted claims, not verified token balances or standard compliance. Reverted traces/attempts are not successful transfers; DELEGATECALL/CALLCODE values are excluded. Execution fees exclude blob, L1 data and operator fees. Discovery, when used, scans only direct from/to transactions in the recorded block range; token-only and internal-only address activity is not discovered. No complete history, net balances, exact fund attribution, ownership inference, or chain/finality proof.",
+  "nodes": [
+    {
+      "id": "eip155:42220:0xdeaddeaddeaddeaddeaddeaddeaddeaddead0001",
+      "network": "celo",
+      "kind": "address"
+    },
+    {
+      "id": "eip155:42220:0x4200000000000000000000000000000000000015",
+      "network": "celo",
+      "kind": "address"
+    }
+  ],
+  "edges": [],
+  "analysis": {
+    "transactions": 1,
+    "traceAvailable": 0,
+    "traceMissing": 1,
+    "unrecognizedLogs": 0,
+    "unsupportedTransferLogs": 0,
+    "executionFeesWei": "0"
+  },
+  "assetEvidence": {
+    "schema": "positano.asset-evidence.v1",
+    "chainId": "0xa4ec",
+    "synthetic": false,
+    "records": [
+      {
+        "transaction": {
+          "hash": "0x84e0896222b2f987b3c346c714e0a4d39725d2e28c28fd51de0641e0faf3ca1c",
+          "from": "0xdeaddeaddeaddeaddeaddeaddeaddeaddead0001",
+          "to": "0x4200000000000000000000000000000000000015",
+          "value": "0x0",
+          "blockHash": "0xec55389976332d77e0aba4a2f0b05d05f67370a5ed3117a9b73119363721e51b",
+          "blockNumber": "0x4d1298d",
+          "transactionIndex": "0x0"
+        },
+        "receipt": {
+          "transactionHash": "0x84e0896222b2f987b3c346c714e0a4d39725d2e28c28fd51de0641e0faf3ca1c",
+          "from": "0xdeaddeaddeaddeaddeaddeaddeaddeaddead0001",
+          "to": "0x4200000000000000000000000000000000000015",
+          "status": "0x1",
+          "blockHash": "0xec55389976332d77e0aba4a2f0b05d05f67370a5ed3117a9b73119363721e51b",
+          "blockNumber": "0x4d1298d",
+          "transactionIndex": "0x0",
+          "gasUsed": "0xb442",
+          "effectiveGasPrice": "0x0",
+          "logs": []
+        },
+        "block": {
+          "hash": "0xec55389976332d77e0aba4a2f0b05d05f67370a5ed3117a9b73119363721e51b",
+          "number": "0x4d1298d",
+          "timestamp": "0x6adab1e3",
+          "transactions": [
+            "0x84e0896222b2f987b3c346c714e0a4d39725d2e28c28fd51de0641e0faf3ca1c",
+            "0x9469e90f984a2b45ec4c7905cb88e9e07774655342fe96ff3183bbd5ccf5c868",
+            "0xea2e530aed9edb4cbe31c59e596f022c063cc1fede54604db968ebcb304132c7",
+            "0x5dc7f920d49c3195f25e2ee9ec20bd3816e76cb370fd54e6be030e07f245cf2a",
+            "0x156d16c6a16a3ba5c6d85f1b002a375dd6b85b4711cf0a46ff75bb934ab41dcb",
+            "0x7bf2424a4d1cfa5ae23e2d7aaf7ebe888e0c1691d7bffd7bd86ddc84642beac9",
+            "0xba898f58d9a5def621ca334da426d4f08b4b5b4e95974b6da51ea55e59622039",
+            "0xfc2e4566da4977afed26e4274e81e3b9d5f172f24ffe1188ae44255ad12eac19"
+          ]
+        },
+        "trace": {
+          "status": "not_requested",
+          "root": null
+        }
+      }
+    ],
+    "discovery": {
+      "mode": "supplied",
+      "address": null,
+      "fromBlock": null,
+      "toBlock": null,
+      "scannedBlocks": [],
+      "limitReached": false
+    }
+  },
+  "digest": "sha256:43cf15e4f47072090a0c866b9bcfd251edebd7678fdb22b8d3c6dd9e04ca89ec"
+}
