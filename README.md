@@ -27,11 +27,15 @@ node --test tests/case.test.mjs tests/bridge.test.mjs tests/movements.test.mjs
 
 Output paths must be new. Keep private investigations in an untracked `private-cases/` folder. Use **Open local case** to inspect a CLI-produced case JSON. In static/offline mode, files are validated and opened in browser memory; they are not uploaded, persisted, or sent to an RPC endpoint. Closing/reloading clears imported state. The static viewer makes no RPC calls and stores no credentials. Its bundled examples are fetched from its own site.
 
-With `serve.py`, use **Save case / notes locally** to explicitly persist an investigation to SQLite on your computer. The local UI can run bounded expansion using server-environment RPC credentials; the hosted static preview cannot. Read [local setup and persistence limits](docs/LOCAL-SERVICE.md) and [the multi-chain connector contract](docs/CONNECTOR-CONTRACT.md). Bitcoin UTXO, full Solana history, and pump.fun lifecycle connectors are planned, not shipped.
+With `serve.py`, use **Save case / notes locally** to explicitly persist an investigation to SQLite on your computer. The local UI can run bounded expansion using server-environment RPC credentials; the hosted static preview cannot. Read [local setup and persistence limits](docs/LOCAL-SERVICE.md) and [the multi-chain connector contract](docs/CONNECTOR-CONTRACT.md). A bounded Bitcoin UTXO CLI connector is available separately; full Solana history and pump.fun lifecycle connectors remain planned.
 
 Start with [the cross-network connector guide and reproducible mainnet case](docs/OP-DEPOSIT.md). The link uses protocol derivation, not a timing/amount heuristic. Supplied RPC evidence remains unauthenticated and no finality verification is claimed.
 
 Then use [asset-movement decoding and bounded one-hop discovery](docs/ASSET-MOVEMENTS.md). The static browser prepares a local capture command; the local service can also run a bounded five-block expansion. Neither provides an automatic wallet crawler. Real examples disclose missing traces and a five-block zero-result scan. The trace lab is explicitly synthetic.
+
+## Bitcoin UTXO connector (CLI preview)
+
+Capture a Bitcoin transaction, verify its reported output spends, and export exact-satoshi evidence plus a readable report. See [setup, reproducible mainnet example, and bounds](docs/BITCOIN.md). Bitcoin cases are currently CLI-only; browser import and saved-case integration are not yet supported.
 
 ## Capture a real Ethereum receipt
 

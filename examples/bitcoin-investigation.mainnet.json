@@ -1,0 +1,192 @@
+{
+  "schema": "positano.bitcoin-investigation.v1",
+  "network": "bitcoin-mainnet",
+  "synthetic": false,
+  "nodes": [
+    {
+      "id": "btc:tx:f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+      "kind": "transaction"
+    },
+    {
+      "id": "btc:out:0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9:0",
+      "kind": "outpoint"
+    },
+    {
+      "id": "btc:out:f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16:0",
+      "kind": "outpoint"
+    },
+    {
+      "id": "btc:tx:ea44e97271691990157559d0bdd9959e02790c34db6c006d779e82fa5aee708e",
+      "kind": "transaction"
+    },
+    {
+      "id": "btc:out:f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16:1",
+      "kind": "outpoint"
+    },
+    {
+      "id": "btc:tx:a16f3ce4dd5deb92d98ef5cf8afeaf0775ebca408f708b2146c4fb42b41e14be",
+      "kind": "transaction"
+    }
+  ],
+  "edges": [
+    {
+      "from": "btc:out:0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9:0",
+      "to": "btc:tx:f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+      "kind": "spends",
+      "satoshis": "5000000000",
+      "inputIndex": 0
+    },
+    {
+      "from": "btc:tx:f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+      "to": "btc:out:f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16:0",
+      "kind": "creates",
+      "satoshis": "1000000000"
+    },
+    {
+      "from": "btc:out:f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16:0",
+      "to": "btc:tx:ea44e97271691990157559d0bdd9959e02790c34db6c006d779e82fa5aee708e",
+      "kind": "spends",
+      "satoshis": "1000000000",
+      "inputIndex": 0
+    },
+    {
+      "from": "btc:tx:f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+      "to": "btc:out:f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16:1",
+      "kind": "creates",
+      "satoshis": "4000000000"
+    },
+    {
+      "from": "btc:out:f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16:1",
+      "to": "btc:tx:a16f3ce4dd5deb92d98ef5cf8afeaf0775ebca408f708b2146c4fb42b41e14be",
+      "kind": "spends",
+      "satoshis": "4000000000",
+      "inputIndex": 0
+    }
+  ],
+  "feeSatoshis": "0",
+  "source": "https://blockstream.info/tx/f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+  "coverage": "One supplied transaction and reported output spends at capture time. No ancestry crawl, ownership/change inference, consensus proof, or finality verification. Parent output amounts are provider-reported.",
+  "evidence": {
+    "schema": "positano.bitcoin-utxo.v1",
+    "network": "bitcoin-mainnet",
+    "genesisHash": "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
+    "syntheticExample": false,
+    "capturedAt": "2026-10-23T00:21:49.370425+00:00",
+    "transaction": {
+      "txid": "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+      "vin": [
+        {
+          "txid": "0437cd7f8525ceed2324359c2d0ba26006d92d856a9c20fa0241106ee5a597c9",
+          "vout": 0,
+          "is_coinbase": false,
+          "prevout": {
+            "scriptpubkey": "410411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3ac",
+            "value": 5000000000
+          }
+        }
+      ],
+      "vout": [
+        {
+          "scriptpubkey": "4104ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f554a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84cac",
+          "value": 1000000000
+        },
+        {
+          "scriptpubkey": "410411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3ac",
+          "value": 4000000000
+        }
+      ],
+      "fee": 0,
+      "status": {
+        "confirmed": true,
+        "block_height": 170,
+        "block_hash": "00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee",
+        "block_time": 1231731025
+      }
+    },
+    "outspends": [
+      {
+        "spent": true,
+        "txid": "ea44e97271691990157559d0bdd9959e02790c34db6c006d779e82fa5aee708e",
+        "vin": 0,
+        "status": {
+          "confirmed": true,
+          "block_height": 92240,
+          "block_hash": "0000000000077430a94a5376bf2af42d4b1aebdecedfa9e4f7e3f0465a84d891",
+          "block_time": 1289939967
+        }
+      },
+      {
+        "spent": true,
+        "txid": "a16f3ce4dd5deb92d98ef5cf8afeaf0775ebca408f708b2146c4fb42b41e14be",
+        "vin": 0,
+        "status": {
+          "confirmed": true,
+          "block_height": 181,
+          "block_hash": "00000000dc55860c8a29c58d45209318fa9e9dc2c1833a7226d86bc465afc6e5",
+          "block_time": 1231740133
+        }
+      }
+    ],
+    "spendingTransactions": [
+      {
+        "txid": "a16f3ce4dd5deb92d98ef5cf8afeaf0775ebca408f708b2146c4fb42b41e14be",
+        "vin": [
+          {
+            "txid": "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+            "vout": 1,
+            "is_coinbase": false,
+            "prevout": {
+              "scriptpubkey": "410411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3ac",
+              "value": 4000000000
+            }
+          }
+        ],
+        "vout": [
+          {
+            "scriptpubkey": "4104b5abd412d4341b45056d3e376cd446eca43fa871b51961330deebd84423e740daa520690e1d9e074654c59ff87b408db903649623e86f1ca5412786f61ade2bfac",
+            "value": 1000000000
+          },
+          {
+            "scriptpubkey": "410411db93e1dcdb8a016b49840f8c53bc1eb68a382e97b1482ecad7b148a6909a5cb2e0eaddfb84ccf9744464f82e160bfa9b8b64f9d4c03f999b8643f656b412a3ac",
+            "value": 3000000000
+          }
+        ],
+        "fee": 0,
+        "status": {
+          "confirmed": true,
+          "block_height": 181,
+          "block_hash": "00000000dc55860c8a29c58d45209318fa9e9dc2c1833a7226d86bc465afc6e5",
+          "block_time": 1231740133
+        }
+      },
+      {
+        "txid": "ea44e97271691990157559d0bdd9959e02790c34db6c006d779e82fa5aee708e",
+        "vin": [
+          {
+            "txid": "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+            "vout": 0,
+            "is_coinbase": false,
+            "prevout": {
+              "scriptpubkey": "4104ae1a62fe09c5f51b13905f07f06b99a2f7159b2225f374cd378d71302fa28414e7aab37397f554a7df5f142c21c1b7303b8a0626f1baded5c72a704f7e6cd84cac",
+              "value": 1000000000
+            }
+          }
+        ],
+        "vout": [
+          {
+            "scriptpubkey": "76a914340cfcffe029e6935f4e4e5839a2ff5f29c7a57188ac",
+            "value": 1000000000
+          }
+        ],
+        "fee": 0,
+        "status": {
+          "confirmed": true,
+          "block_height": 92240,
+          "block_hash": "0000000000077430a94a5376bf2af42d4b1aebdecedfa9e4f7e3f0465a84d891",
+          "block_time": 1289939967
+        }
+      }
+    ]
+  },
+  "digest": "sha256:dd543ec68ae0a8b198feb29e0107a500127f0b8fbe7384618d791257b1d45f67"
+}

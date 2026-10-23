@@ -1,5 +1,11 @@
 # Validation record
 
+## Bitcoin CLI preview additions
+
+- Python suite: 57 tests total; existing Node suite: 34 tests. New Bitcoin checks cover exact amounts/fees, duplicate/coinbase inputs, reference/script/status mismatches, confirmation ordering, caps/network rejection, endpoint/path restrictions, projected fields, and reproduction of saved mainnet JSON and Markdown.
+- Live read-only Esplora capture: one mainnet transaction plus both reported spending transactions. Reported spend references and previous outputs agree. The original captured fixture is retained for offline reproduction.
+- No new packages installed; no browser changes. Bitcoin schemas remain CLI-only and are not accepted by the local case service yet.
+
 ## v0.6 additions
 
 - Python suite: 46 tests; Node suite: 34 tests (80 total). Added persisted-case reopening, immutable evidence with separate notes, all eight schema checks, origin/Host/session protection, endpoint injection rejection, bounded jobs, concurrency limits, and redacted failures.
