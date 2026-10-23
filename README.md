@@ -2,17 +2,17 @@
 
 An open-source starting point for portable blockchain investigations: inspect a graph, follow its source transactions, and export evidence for other tools.
 
-**v0.5 prototype: inspect asset evidence and prepare a bounded next hop.** Decode Transfer-shaped receipt logs and optional provider call traces, distinguish reverted attempts, and explain each connection by its evidence reference. Includes the real Ethereum → Optimism connector, bounded receipt assembly, local imports, filters, and reports. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
+**v0.6 prototype: a local investigation service with saved cases and UI-driven expansion.** Preserve evidence, keep analyst notes separate, reopen investigations after restart, and collect a bounded next hop from the interface. Existing receipt, asset, bridge, and launch-observation decoders remain available. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
 
-![Investigation workspace showing a real Ethereum receipt and exact fee breakdown](docs/screenshots/workspace.png)
+![Local investigation workspace with saved cases and bounded expansion](docs/screenshots/workspace.png)
 
 ## Run locally
 
 Python 3.11+; no pip installs, wallet connection, or API key required.
-The cross-network builder/capture additionally requires Node 22+. Keccak uses pinned, attributed Noble modules already vendored in the repository; no npm install is needed.
+The local service and cross-network builder/capture require Node 22+. Keccak uses pinned, attributed Noble modules already vendored in the repository; no npm install is needed.
 
 ```sh
-python -m http.server 8080 --directory web --bind 127.0.0.1
+python serve.py
 # Open http://127.0.0.1:8080
 python kit.py eth examples/eth-snapshot.synthetic.json case.json
 python kit.py eth examples/eth-snapshot.synthetic.json case.gs --gs
@@ -25,11 +25,13 @@ python -m unittest discover -s tests -v
 node --test tests/case.test.mjs tests/bridge.test.mjs tests/movements.test.mjs
 ```
 
-Output paths must be new. Keep private investigations in an untracked `private-cases/` folder. Use **Open local case** to inspect a CLI-produced case JSON. Files are validated and opened in browser memory; they are not uploaded, persisted, or sent to an RPC endpoint. Closing/reloading clears imported state. The static viewer makes no RPC calls and stores no credentials. Its bundled examples are fetched from its own site.
+Output paths must be new. Keep private investigations in an untracked `private-cases/` folder. Use **Open local case** to inspect a CLI-produced case JSON. In static/offline mode, files are validated and opened in browser memory; they are not uploaded, persisted, or sent to an RPC endpoint. Closing/reloading clears imported state. The static viewer makes no RPC calls and stores no credentials. Its bundled examples are fetched from its own site.
+
+With `serve.py`, use **Save case / notes locally** to explicitly persist an investigation to SQLite on your computer. The local UI can run bounded expansion using server-environment RPC credentials; the hosted static preview cannot. Read [local setup and persistence limits](docs/LOCAL-SERVICE.md) and [the multi-chain connector contract](docs/CONNECTOR-CONTRACT.md). Bitcoin UTXO, full Solana history, and pump.fun lifecycle connectors are planned, not shipped.
 
 Start with [the cross-network connector guide and reproducible mainnet case](docs/OP-DEPOSIT.md). The link uses protocol derivation, not a timing/amount heuristic. Supplied RPC evidence remains unauthenticated and no finality verification is claimed.
 
-Then use [asset-movement decoding and bounded one-hop discovery](docs/ASSET-MOVEMENTS.md). The browser prepares a local capture command; it does not run live tracing or an automatic wallet crawler. Real examples disclose missing traces and a five-block zero-result scan. The trace lab is explicitly synthetic.
+Then use [asset-movement decoding and bounded one-hop discovery](docs/ASSET-MOVEMENTS.md). The static browser prepares a local capture command; the local service can also run a bounded five-block expansion. Neither provides an automatic wallet crawler. Real examples disclose missing traces and a five-block zero-result scan. The trace lab is explicitly synthetic.
 
 ## Capture a real Ethereum receipt
 
@@ -72,7 +74,7 @@ The example GitHub Actions configuration in `docs/github-actions.example.yml` is
 
 ## Roadmap
 
-1. Current: reproducible offline cases, Ethereum → Optimism deposit derivation, receipt assembly/capture, local imports, evidence viewer, native ETH value-transfer export.
+1. Current: local saved cases with separate analyst notes, UI-driven bounded expansion, reproducible offline cases, Ethereum → Optimism deposit derivation, receipt assembly/capture, local imports, evidence viewer, native ETH value-transfer export.
 2. Broader indexed history coverage, additional protocol-specific bridge connectors, and protocol event decoding. Current asset decoding is limited to supplied Transfer-shaped logs/call traces and bounded direct-address scans.
 3. Solana decoded transfers and creation allocations with transaction-level provenance and labeled inference.
 4. Plugin contract for additional chains, case comparison, evidence export, and upstream contributions.

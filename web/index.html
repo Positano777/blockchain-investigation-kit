@@ -1,334 +1,391 @@
 <!doctype html>
 <html lang="en">
-  <meta charset="utf-8" /><meta
-    name="viewport"
-    content="width=device-width,initial-scale=1"
-  /><link rel="icon" href="favicon.svg" /><title>Positano Investigations</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      background: #f1f4f1;
-      color: #20372e;
-      font: 15px system-ui;
-    }
-    header {
-      padding: 26px 4vw;
-      border-bottom: 1px solid #cbd6cc;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    h1 {
-      font-size: 22px;
-      margin: 0;
-    }
-    small {
-      color: #53695e;
-    }
-    main {
-      padding: 30px 4vw;
-      max-width: 1500px;
-      margin: auto;
-    }
-    .intro {
-      max-width: 750px;
-      font-size: 19px;
-      line-height: 1.5;
-    }
-    .toolbar {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin: 24px 0;
-    }
-    button,
-    a.download {
-      font: inherit;
-      border: 1px solid #a1b6a7;
-      border-radius: 6px;
-      background: white;
-      padding: 10px 16px;
-      color: #20372e;
-      cursor: pointer;
-    }
-    button[aria-pressed="true"] {
-      background: #2d604b;
-      color: white;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 20px;
-    }
-    .panel {
-      background: white;
-      border: 1px solid #ccd7cf;
-      border-radius: 10px;
-      padding: 22px;
-      min-width: 0;
-    }
-    h2 {
-      font-size: 16px;
-      margin: 0 0 18px;
-    }
-    .badge {
-      color: #75521b;
-      background: #fcf0d5;
-      padding: 7px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-    svg {
-      width: 100%;
-      height: 370px;
-    }
-    .edge {
-      stroke: #718e7e;
-      stroke-width: 3;
-      cursor: pointer;
-    }
-    .edge:hover,
-    .edge.active {
-      stroke: #d98e28;
-      stroke-width: 6;
-    }
-    circle {
-      fill: #2d604b;
-      stroke: white;
-      stroke-width: 3;
-    }
-    text {
-      font: 12px system-ui;
-      fill: #20372e;
-    }
-    .details {
-      overflow-wrap: anywhere;
-      line-height: 1.7;
-    }
-    .details code {
-      font-size: 12px;
-    }
-    .coverage {
-      overflow-wrap: anywhere;
-      padding: 18px;
-      background: #e7eee8;
-      border-radius: 6px;
-      line-height: 1.6;
-      margin-top: 22px;
-    }
-    .rows {
-      margin-top: 20px;
-    }
-    .row {
-      overflow-wrap: anywhere;
-      display: block;
-      width: 100%;
-      text-align: left;
-      margin: 8px 0;
-      font-size: 13px;
-    }
-    .row span {
-      display: block;
-      color: #53695e;
-      font-size: 12px;
-      margin-top: 6px;
-    }
-    footer {
-      padding: 28px 4vw;
-      color: #53695e;
-      font-size: 12px;
-    }
-    @media (max-width: 800px) {
-      .grid {
-        grid-template-columns: 1fr;
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="icon" href="favicon.svg" />
+    <title>Positano Investigations</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #f1f4f1;
+        color: #20372e;
+        font: 15px system-ui;
       }
       header {
-        gap: 18px;
+        padding: 26px 4vw;
+        border-bottom: 1px solid #cbd6cc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
-      svg {
-        height: 300px;
+      h1 {
+        font-size: 22px;
+        margin: 0;
       }
-    }
-
-    input,
-    select {
-      font: inherit;
-      min-width: 0;
-      padding: 10px;
-      border: 1px solid #a1b6a7;
-      border-radius: 5px;
-      background: white;
-      color: #20372e;
-    }
-    .file-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .file-label input {
-      max-width: 250px;
-    }
-    .filters {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: end;
-      margin: 22px 0;
-    }
-    .filters label {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      flex: 1;
-      min-width: 130px;
-      font-size: 12px;
-    }
-    .filters label:first-child {
-      flex: 2;
-      min-width: 240px;
-    }
-    #message {
-      font-size: 13px;
-      overflow-wrap: anywhere;
-    }
-    circle {
-      cursor: pointer;
-    }
-    button:focus-visible,
-    a:focus-visible,
-    circle:focus-visible,
-    input:focus-visible,
-    select:focus-visible {
-      outline: 3px solid #d98e28;
-      outline-offset: 3px;
-    }
-    svg {
-      height: 440px;
-    }
-    @media (max-width: 800px) {
-      svg {
-        height: 300px;
+      small {
+        color: #53695e;
+      }
+      main {
+        padding: 30px 4vw;
+        max-width: 1500px;
+        margin: auto;
+      }
+      .intro {
+        max-width: 750px;
+        font-size: 19px;
+        line-height: 1.5;
+      }
+      .toolbar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 24px 0;
+      }
+      button,
+      a.download {
+        font: inherit;
+        border: 1px solid #a1b6a7;
+        border-radius: 6px;
+        background: white;
+        padding: 10px 16px;
+        color: #20372e;
+        cursor: pointer;
+      }
+      button[aria-pressed="true"] {
+        background: #2d604b;
+        color: white;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+      }
+      .panel {
+        background: white;
+        border: 1px solid #ccd7cf;
+        border-radius: 10px;
+        padding: 22px;
+        min-width: 0;
+      }
+      h2 {
+        font-size: 16px;
+        margin: 0 0 18px;
       }
       .badge {
-        max-width: 140px;
+        color: #75521b;
+        background: #fcf0d5;
+        padding: 7px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
       }
-      .file-label input {
-        max-width: 100%;
+      svg {
+        width: 100%;
+        height: 370px;
+      }
+      .edge {
+        stroke: #718e7e;
+        stroke-width: 3;
+        cursor: pointer;
+      }
+      .edge:hover,
+      .edge.active {
+        stroke: #d98e28;
+        stroke-width: 6;
+      }
+      circle {
+        fill: #2d604b;
+        stroke: white;
+        stroke-width: 3;
+      }
+      text {
+        font: 12px system-ui;
+        fill: #20372e;
+      }
+      .details {
+        overflow-wrap: anywhere;
+        line-height: 1.7;
+      }
+      .details code {
+        font-size: 12px;
+      }
+      .coverage {
+        overflow-wrap: anywhere;
+        padding: 18px;
+        background: #e7eee8;
+        border-radius: 6px;
+        line-height: 1.6;
+        margin-top: 22px;
+      }
+      .rows {
+        margin-top: 20px;
+      }
+      .row {
+        overflow-wrap: anywhere;
+        display: block;
+        width: 100%;
+        text-align: left;
+        margin: 8px 0;
+        font-size: 13px;
+      }
+      .row span {
+        display: block;
+        color: #53695e;
+        font-size: 12px;
+        margin-top: 6px;
+      }
+      footer {
+        padding: 28px 4vw;
+        color: #53695e;
+        font-size: 12px;
+      }
+      @media (max-width: 800px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        header {
+          gap: 18px;
+        }
+        svg {
+          height: 300px;
+        }
+      }
+
+      input,
+      select {
+        font: inherit;
+        min-width: 0;
+        padding: 10px;
+        border: 1px solid #a1b6a7;
+        border-radius: 5px;
+        background: white;
+        color: #20372e;
       }
       .file-label {
-        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .file-label input {
+        max-width: 250px;
+      }
+      .filters {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: end;
+        margin: 22px 0;
+      }
+      .filters label {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+        min-width: 130px;
+        font-size: 12px;
+      }
+      .filters label:first-child {
+        flex: 2;
+        min-width: 240px;
+      }
+      #message {
+        font-size: 13px;
+        overflow-wrap: anywhere;
+      }
+      circle {
+        cursor: pointer;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      circle:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 3px solid #d98e28;
+        outline-offset: 3px;
+      }
+      svg {
+        height: 440px;
+      }
+      @media (max-width: 800px) {
+        svg {
+          height: 300px;
+        }
+        .badge {
+          max-width: 140px;
+        }
+        .file-label input {
+          max-width: 100%;
+        }
+        .file-label {
+          min-width: 0;
+          width: 100%;
+        }
+      }
+      .edge.reverted {
+        stroke: #ad4c43;
+        stroke-dasharray: 4 5;
+      }
+      .edge.reverted.active {
+        stroke: #aa3322;
+      }
+      .row[data-outcome="reverted"] {
+        border-color: #ad4c43;
+      }
+      #local-controls label {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 12px 0;
+      }
+      textarea {
+        font: inherit;
+        padding: 12px;
+        border: 1px solid #a1b6a7;
+        border-radius: 5px;
+        resize: vertical;
         width: 100%;
       }
-    }
-    .edge.reverted {
-      stroke: #ad4c43;
-      stroke-dasharray: 4 5;
-    }
-    .edge.reverted.active {
-      stroke: #aa3322;
-    }
-    .row[data-outcome="reverted"] {
-      border-color: #ad4c43;
-    }
-  </style>
-  <header>
-    <div>
-      <h1>Positano Investigations</h1>
-      <small>Open evidence. Reusable cases.</small>
-    </div>
-    <span class="badge" id="case-status">LOADING / v0.5</span>
-  </header>
-  <main>
-    <p class="intro">
-      Follow the evidence, one connection at a time. A portable investigation
-      workspace built for transparent blockchain research.
-    </p>
-    <div class="toolbar">
-      <button id="bridge" aria-pressed="false">Ethereum → Optimism</button>
-      <button id="assets" aria-pressed="false">Asset movements</button>
-      <button id="trace" aria-pressed="false">Synthetic trace lab</button>
-      <button id="hop" aria-pressed="false">After-bridge scan</button>
-      <button id="multi" aria-pressed="false">Multi-transaction case</button>
-      <button id="real" aria-pressed="false">Real Ethereum receipt</button
-      ><button id="eth" aria-pressed="false">Synthetic ETH transfers</button
-      ><button id="sol" aria-pressed="false">
-        Synthetic Solana observations
-      </button>
-    </div>
-    <div class="toolbar">
-      <label class="file-label"
-        >Open local case
-        <input type="file" id="import" accept="application/json,.json" /></label
-      ><a class="download" id="download" download>Download case JSON</a
-      ><button id="report">Export full report</button
-      ><a class="download" href="eth-case.gs" download
-        >Sample ETH GraphSense file</a
-      >
-    </div>
-    <p id="message" role="status" aria-live="polite">
-      Loading bundled evidence...
-    </p>
-    <div id="summary" class="coverage" aria-live="polite"></div>
-    <details class="coverage">
-      <summary>Expand one hop (local read-only capture)</summary>
-      <p>
-        This prepares a bounded CLI command. Your provider credentials stay in
-        your shell.
+      #saved-cases {
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Positano Investigations</h1>
+        <small>Open evidence. Reusable cases.</small>
+      </div>
+      <span class="badge" id="case-status">LOADING / v0.6</span>
+    </header>
+    <main>
+      <p class="intro">
+        Follow the evidence, one connection at a time. A portable investigation
+        workspace built for transparent blockchain research.
       </p>
-      <button id="expand">Prepare one-hop command</button>
-      <pre
-        id="hop-command"
-        style="white-space: pre-wrap; overflow-wrap: anywhere"
-      ></pre>
-    </details>
-    <div class="filters">
-      <label
-        >Address, transaction, or relationship<input
-          id="search"
-          type="search"
-          placeholder="Search this case..." /></label
-      ><label
-        >Relationship<select id="kind">
-          <option value="">All relationships</option>
-        </select></label
-      ><label>From (UTC)<input id="from" type="date" /></label
-      ><label>Until (UTC)<input id="until" type="date" /></label
-      ><button id="reset">Clear filters</button>
-    </div>
-    <div class="grid">
-      <section class="panel">
-        <h2 id="graph-title">Evidence graph</h2>
-        <svg
-          id="graph"
-          viewBox="0 0 700 440"
-          role="group"
-          aria-label="Evidence graph; select an address to filter"
-        ></svg
-        ><small id="graph-note"
-          >Select an address or record to investigate.</small
+      <div class="toolbar">
+        <button id="bridge" aria-pressed="false">Ethereum → Optimism</button>
+        <button id="assets" aria-pressed="false">Asset movements</button>
+        <button id="trace" aria-pressed="false">Synthetic trace lab</button>
+        <button id="hop" aria-pressed="false">After-bridge scan</button>
+        <button id="multi" aria-pressed="false">Multi-transaction case</button>
+        <button id="real" aria-pressed="false">Real Ethereum receipt</button
+        ><button id="eth" aria-pressed="false">Synthetic ETH transfers</button
+        ><button id="sol" aria-pressed="false">
+          Synthetic Solana observations
+        </button>
+      </div>
+      <div class="toolbar">
+        <label class="file-label"
+          >Open local case
+          <input
+            type="file"
+            id="import"
+            accept="application/json,.json" /></label
+        ><a class="download" id="download" download>Download case JSON</a
+        ><button id="report">Export full report</button
+        ><a class="download" href="eth-case.gs" download
+          >Sample ETH GraphSense file</a
         >
+      </div>
+      <p id="message" role="status" aria-live="polite">
+        Loading bundled evidence...
+      </p>
+      <div id="summary" class="coverage" aria-live="polite"></div>
+      <details class="coverage">
+        <summary>Expand one hop (local read-only capture)</summary>
+        <p>
+          This prepares a bounded CLI command. Your provider credentials stay in
+          your shell.
+        </p>
+        <button id="expand">Prepare one-hop command</button>
+        <pre
+          id="hop-command"
+          style="white-space: pre-wrap; overflow-wrap: anywhere"
+        ></pre>
+      </details>
+      <section class="coverage" aria-label="Local investigation service">
+        <h2>Saved investigations and local expansion</h2>
+        <p id="local-status" role="status">
+          Run python serve.py to enable saved cases and local expansion. This
+          hosted/static viewer does not contact a local service.
+        </p>
+        <div id="local-controls" hidden>
+          <div class="toolbar">
+            <select id="saved-cases" aria-label="Saved cases">
+              <option value="">Select a saved case</option></select
+            ><button id="refresh-local">Refresh saved cases</button
+            ><button id="open-local">Open saved case</button>
+          </div>
+          <label
+            >Case title<input
+              id="case-title"
+              maxlength="100"
+              placeholder="Name this investigation" /></label
+          ><label
+            >Analyst notes (separate from evidence)<textarea
+              id="case-note"
+              maxlength="2000"
+              rows="3"
+            ></textarea>
+          </label>
+          <div class="toolbar">
+            <button id="save-local">Save case / notes locally</button
+            ><button id="run-local-hop">
+              Run five-block expansion locally
+            </button>
+          </div>
+        </div>
       </section>
-      <section class="panel details">
-        <h2>Evidence inspector</h2>
-        <div id="details">Loading case...</div>
+      <div class="filters">
+        <label
+          >Address, transaction, or relationship<input
+            id="search"
+            type="search"
+            placeholder="Search this case..." /></label
+        ><label
+          >Relationship<select id="kind">
+            <option value="">All relationships</option>
+          </select></label
+        ><label>From (UTC)<input id="from" type="date" /></label
+        ><label>Until (UTC)<input id="until" type="date" /></label
+        ><button id="reset">Clear filters</button>
+      </div>
+      <div class="grid">
+        <section class="panel">
+          <h2 id="graph-title">Evidence graph</h2>
+          <svg
+            id="graph"
+            viewBox="0 0 700 440"
+            role="group"
+            aria-label="Evidence graph; select an address to filter"
+          ></svg
+          ><small id="graph-note"
+            >Select an address or record to investigate.</small
+          >
+        </section>
+        <section class="panel details">
+          <h2>Evidence inspector</h2>
+          <div id="details">Loading case...</div>
+        </section>
+      </div>
+      <div class="coverage" id="coverage"></div>
+      <section class="panel rows">
+        <h2>Timeline / source records</h2>
+        <div id="records"></div>
       </section>
-    </div>
-    <div class="coverage" id="coverage"></div>
-    <section class="panel rows">
-      <h2>Timeline / source records</h2>
-      <div id="records"></div>
-    </section>
-  </main>
-  <footer>
-    MIT open source · No wallet connection · No RPC requests ·
-    <a href="https://github.com/Positano777/blockchain-investigation-kit"
-      >Source &amp; limitations</a
-    >
-  </footer>
-  <script type="module" src="app.js"></script>
+    </main>
+    <footer>
+      MIT open source · No wallet connection · Read-only evidence tools ·
+      <a href="https://github.com/Positano777/blockchain-investigation-kit"
+        >Source &amp; limitations</a
+      >
+    </footer>
+    <script type="module" src="app.js"></script>
+  </body>
 </html>

@@ -1,4 +1,5 @@
 import { verifyCase, filterEdges, formatEth } from "./case.mjs";
+import { initLocalService } from "./service.mjs";
 const $ = (id) => document.getElementById(id),
   ns = "http://www.w3.org/2000/svg";
 let current,
@@ -296,6 +297,7 @@ async function activate(d, token, example = "") {
   await verifyCase(d);
   if (token !== generation) return;
   current = d;
+  document.dispatchEvent(new Event("investigation-case-changed"));
   $("hop-command").textContent = "";
   $("hop-command").closest("details").open = false;
   for (const key of [
@@ -310,8 +312,8 @@ async function activate(d, token, example = "") {
   ])
     $(key).setAttribute("aria-pressed", String(key === example));
   $("case-status").textContent = d.synthetic
-    ? "SYNTHETIC CASE / v0.5"
-    : "IMPORTED EVIDENCE / v0.5";
+    ? "SYNTHETIC CASE / v0.6"
+    : "IMPORTED EVIDENCE / v0.6";
   const receipts = d.receipts
     ? Object.values(d.receipts)
     : d.receipt
@@ -490,5 +492,9 @@ $("expand").addEventListener("click", () => {
   }
   $("hop-command").textContent =
     `Set ${chain === 1 ? "ETH_RPC_URL" : "OP_RPC_URL"} to your HTTPS provider in your shell, then run locally:\npython capture_assets.py hop ${chain} ${address} ${start} ${start + 4n} next-hop-evidence.json\nnode assets.mjs next-hop-evidence.json next-hop-case.json\nOpen next-hop-case.json here. Scans five explicit blocks, captures at most ten direct from/to transactions, and excludes token-only/internal-only discovery. This follows the selected call target, not an attributed owner or specific deposited coins.`;
+});
+initLocalService({
+  getCase: () => current,
+  openCase: (data) => activate(data, ++generation),
 });
 show("bridge").catch(fail);

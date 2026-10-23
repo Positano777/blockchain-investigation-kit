@@ -1,5 +1,13 @@
 # Validation record
 
+## v0.6 additions
+
+- Python suite: 46 tests; Node suite: 34 tests (80 total). Added persisted-case reopening, immutable evidence with separate notes, all eight schema checks, origin/Host/session protection, endpoint injection rejection, bounded jobs, concurrency limits, and redacted failures.
+- Chrome: saved/reopened cases, notes isolated between views, evidence checksum unchanged after annotation, successful live five-block OP expansion, saved results surviving page reload, and 390px layout without overflow; zero console errors or warnings.
+- The live expansion found zero direct-address matches. This checks successful collection and persistence, not complete wallet history. Positive/capped captures use existing offline transports.
+- No new dependencies installed. SQLite data remains local and excluded from source publication. Hosted previews remain static; persistence and live jobs require `python serve.py` locally.
+- Bitcoin UTXO, full Solana history, and pump.fun lifecycle remain planned connector capabilities, not implemented adapters.
+
 ## v0.5 additions
 
 - Python suite: 36 tests total. New checks cover trace-field redaction, unavailable trace status, bounds/chain validation, fixed tracer configuration, ten-transaction scan cap, detected reorganization, and unsupported trace shapes.
