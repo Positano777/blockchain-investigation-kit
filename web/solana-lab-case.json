@@ -1,0 +1,234 @@
+{
+  "schema": "positano.solana-case.v1",
+  "network": "solana-mainnet",
+  "synthetic": true,
+  "coverage": "One provider-parsed Solana transaction. Top-level supported transfers are committed only when the whole transaction succeeds. Inner instruction outcomes are unverified; failed transaction instructions are not committed. Balance deltas are observations, not transfer edges. No signature/consensus proof, ownership, complete history, or pump.fun lifecycle decoding.",
+  "nodes": [
+    {
+      "id": "solana-mainnet:account:4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+      "network": "solana-mainnet",
+      "kind": "account"
+    },
+    {
+      "id": "solana-mainnet:account:8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+      "network": "solana-mainnet",
+      "kind": "account"
+    },
+    {
+      "id": "solana-mainnet:account:CktRuQ2mttgRGkXJtyksdKHjUdc2C4TgDzyB98oEzy8",
+      "network": "solana-mainnet",
+      "kind": "account"
+    },
+    {
+      "id": "solana-mainnet:account:11111111111111111111111111111111",
+      "network": "solana-mainnet",
+      "kind": "account"
+    },
+    {
+      "id": "solana-mainnet:account:TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "network": "solana-mainnet",
+      "kind": "account"
+    }
+  ],
+  "edges": [
+    {
+      "id": "1GMkH3brNXiNNs1tiFZHu4yZSRrzJwxi5wB9bHFtMinfCXNnR1adh8Vo8NTheK4evneedH4qmvjeqcBBNAefgS:instruction:0",
+      "from": "solana-mainnet:account:4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+      "to": "solana-mainnet:account:8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+      "kind": "sol_transfer",
+      "amount": "123456789",
+      "unit": "lamports",
+      "timestamp": 1700000000,
+      "source": "https://solscan.io/tx/1GMkH3brNXiNNs1tiFZHu4yZSRrzJwxi5wB9bHFtMinfCXNnR1adh8Vo8NTheK4evneedH4qmvjeqcBBNAefgS",
+      "outcome": "committed",
+      "evidenceRef": {
+        "kind": "provider_parsed_instruction",
+        "index": 0,
+        "innerIndex": null,
+        "programId": "11111111111111111111111111111111"
+      }
+    },
+    {
+      "id": "1GMkH3brNXiNNs1tiFZHu4yZSRrzJwxi5wB9bHFtMinfCXNnR1adh8Vo8NTheK4evneedH4qmvjeqcBBNAefgS:instruction:1",
+      "from": "solana-mainnet:account:4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+      "to": "solana-mainnet:account:8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+      "kind": "token_transfer",
+      "amount": "18446744073709551615",
+      "unit": "raw_token_units",
+      "timestamp": 1700000000,
+      "source": "https://solscan.io/tx/1GMkH3brNXiNNs1tiFZHu4yZSRrzJwxi5wB9bHFtMinfCXNnR1adh8Vo8NTheK4evneedH4qmvjeqcBBNAefgS",
+      "outcome": "committed",
+      "evidenceRef": {
+        "kind": "provider_parsed_instruction",
+        "index": 1,
+        "innerIndex": null,
+        "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+      },
+      "assetMint": "CktRuQ2mttgRGkXJtyksdKHjUdc2C4TgDzyB98oEzy8",
+      "decimals": 9
+    },
+    {
+      "id": "1GMkH3brNXiNNs1tiFZHu4yZSRrzJwxi5wB9bHFtMinfCXNnR1adh8Vo8NTheK4evneedH4qmvjeqcBBNAefgS:instruction:0:inner:0",
+      "from": "solana-mainnet:account:4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+      "to": "solana-mainnet:account:8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+      "kind": "token_transfer",
+      "amount": "18446744073709551615",
+      "unit": "raw_token_units",
+      "timestamp": 1700000000,
+      "source": "https://solscan.io/tx/1GMkH3brNXiNNs1tiFZHu4yZSRrzJwxi5wB9bHFtMinfCXNnR1adh8Vo8NTheK4evneedH4qmvjeqcBBNAefgS",
+      "outcome": "inner_outcome_unverified",
+      "evidenceRef": {
+        "kind": "provider_parsed_instruction",
+        "index": 0,
+        "innerIndex": 0,
+        "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+      },
+      "assetMint": "CktRuQ2mttgRGkXJtyksdKHjUdc2C4TgDzyB98oEzy8",
+      "decimals": 9
+    }
+  ],
+  "solanaAnalysis": {
+    "signature": "1GMkH3brNXiNNs1tiFZHu4yZSRrzJwxi5wB9bHFtMinfCXNnR1adh8Vo8NTheK4evneedH4qmvjeqcBBNAefgS",
+    "slot": 1,
+    "version": 0,
+    "status": "succeeded",
+    "requestedCommitment": "finalized",
+    "feeLamports": "5000",
+    "feePayer": "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+    "unsupportedInstructions": 1,
+    "innerSupportedInstructions": 1,
+    "innerCoverage": "supplied",
+    "balanceObservations": [
+      {
+        "address": "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+        "signer": true,
+        "writable": true,
+        "preLamports": "9007199254740993",
+        "postLamports": "9007199254735993",
+        "deltaLamports": "-5000"
+      },
+      {
+        "address": "8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+        "signer": false,
+        "writable": true,
+        "preLamports": "0",
+        "postLamports": "0",
+        "deltaLamports": "0"
+      },
+      {
+        "address": "CktRuQ2mttgRGkXJtyksdKHjUdc2C4TgDzyB98oEzy8",
+        "signer": false,
+        "writable": false,
+        "preLamports": "0",
+        "postLamports": "0",
+        "deltaLamports": "0"
+      },
+      {
+        "address": "11111111111111111111111111111111",
+        "signer": false,
+        "writable": false,
+        "preLamports": "0",
+        "postLamports": "0",
+        "deltaLamports": "0"
+      },
+      {
+        "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+        "signer": false,
+        "writable": false,
+        "preLamports": "0",
+        "postLamports": "0",
+        "deltaLamports": "0"
+      }
+    ]
+  },
+  "solanaEvidence": {
+    "schema": "positano.solana-transaction.v1",
+    "network": "solana-mainnet",
+    "genesisHash": "5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d",
+    "syntheticExample": true,
+    "capturedAt": "2026-10-23T00:00:00+00:00",
+    "signature": "1GMkH3brNXiNNs1tiFZHu4yZSRrzJwxi5wB9bHFtMinfCXNnR1adh8Vo8NTheK4evneedH4qmvjeqcBBNAefgS",
+    "slot": 1,
+    "blockTime": 1700000000,
+    "version": 0,
+    "requestedCommitment": "finalized",
+    "feeLamports": "5000",
+    "success": true,
+    "accounts": [
+      {
+        "address": "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+        "signer": true,
+        "writable": true,
+        "preLamports": "9007199254740993",
+        "postLamports": "9007199254735993"
+      },
+      {
+        "address": "8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+        "signer": false,
+        "writable": true,
+        "preLamports": "0",
+        "postLamports": "0"
+      },
+      {
+        "address": "CktRuQ2mttgRGkXJtyksdKHjUdc2C4TgDzyB98oEzy8",
+        "signer": false,
+        "writable": false,
+        "preLamports": "0",
+        "postLamports": "0"
+      },
+      {
+        "address": "11111111111111111111111111111111",
+        "signer": false,
+        "writable": false,
+        "preLamports": "0",
+        "postLamports": "0"
+      },
+      {
+        "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+        "signer": false,
+        "writable": false,
+        "preLamports": "0",
+        "postLamports": "0"
+      }
+    ],
+    "topInstructions": [
+      {
+        "programId": "11111111111111111111111111111111",
+        "kind": "sol_transfer",
+        "source": "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+        "destination": "8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+        "amount": "123456789"
+      },
+      {
+        "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+        "kind": "token_transfer",
+        "source": "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+        "destination": "8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+        "amount": "18446744073709551615",
+        "mint": "CktRuQ2mttgRGkXJtyksdKHjUdc2C4TgDzyB98oEzy8",
+        "decimals": 9
+      },
+      {
+        "programId": "11111111111111111111111111111111",
+        "kind": "unsupported"
+      }
+    ],
+    "innerInstructions": [
+      {
+        "index": 0,
+        "instructions": [
+          {
+            "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+            "kind": "token_transfer",
+            "source": "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+            "destination": "8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+            "amount": "18446744073709551615",
+            "mint": "CktRuQ2mttgRGkXJtyksdKHjUdc2C4TgDzyB98oEzy8",
+            "decimals": 9
+          }
+        ]
+      }
+    ]
+  },
+  "digest": "sha256:131d6c8666abe46fa2c0d9b9eb2083869365ddc7b413f0e398cd4757b2606ba6"
+}

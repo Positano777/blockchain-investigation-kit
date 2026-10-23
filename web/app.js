@@ -28,7 +28,7 @@ function inspect(e) {
     ["Record", e.id],
     ["Relationship", e.kind.replaceAll("_", " ")],
     [
-      "Amount",
+      current.solanaAnalysis ? "Instruction amount" : "Amount",
       e.unit === "wei"
         ? formatEth(e.amount) + ` (${e.amount} wei)`
         : `${e.amount} ${e.unit}`,
@@ -85,6 +85,43 @@ function inspect(e) {
       });
       $("details").append(button);
     }
+  }
+  if (current.solanaAnalysis) {
+    const a = current.solanaAnalysis;
+    paragraph($("details"), "Transaction outcome", a.status);
+    paragraph(
+      $("details"),
+      "Instruction outcome",
+      e.outcome.replaceAll("_", " "),
+    );
+    paragraph(
+      $("details"),
+      "Source instruction",
+      JSON.stringify(e.evidenceRef),
+    );
+    if (e.unit === "raw_token_units")
+      paragraph(
+        $("details"),
+        "Token mint",
+        e.assetMint ?? "Not supplied; do not aggregate with other tokens",
+      );
+    paragraph(
+      $("details"),
+      "Meaning",
+      e.outcome === "committed"
+        ? "Supported top-level transfer in a provider-reported successful transaction."
+        : e.outcome === "not_committed"
+          ? "Transaction failed. This instruction amount is not a committed transfer; some instructions may not have executed."
+          : "Inner instruction listed by the provider. Local CPI success is not verified, even when the enclosing transaction succeeds.",
+    );
+    const button = document.createElement("button");
+    button.textContent = "Select recipient for Solana account lookup";
+    button.addEventListener("click", () => {
+      $("solana-address").value = e.to.split(":").at(-1);
+      $("message").textContent =
+        "Recipient account selected. Use the local account lookup to request at most five signatures; no ownership or payment relation is inferred.";
+    });
+    $("details").append(button);
   }
   if (current.analysis) {
     paragraph(
@@ -242,7 +279,7 @@ function render() {
         : `M ${x1} ${y1} L ${x2} ${y2}`;
     const line = element("path", {
       d,
-      class: e.outcome === "reverted" ? "edge reverted" : "edge",
+      class: "edge" + (e.outcome ? " " + e.outcome : ""),
       fill: "none",
       ...(e.kind === "token_gain_observation"
         ? { "stroke-dasharray": "6 5" }
@@ -302,6 +339,9 @@ function render() {
   if (current.network === "bitcoin-mainnet")
     $("graph-note").textContent =
       `Graph shows ${shown.length} of ${current.edges.length} records, bounded to 24 nodes / 40 connections. Large circles are transactions; small circles are outpoints. Arrows show spends and creates, not ownership or allocation of particular input coins to outputs.`;
+  if (current.solanaAnalysis)
+    $("graph-note").textContent =
+      `${shown.length} displayed instruction records (maximum 24 nodes / 40 connections). Solid supported top-level transfers are committed only on transaction success. Dashed amber lines have unverified inner outcomes; dashed red lines are not committed. Account deltas do not become transfer edges.`;
   if (current.analysis)
     $("graph-note").textContent =
       `Graph shows ${shown.length} supplied movements/attempts, bounded to 24 nodes and 40 connections. Select a record to explain its source. Reverted attempts are not successful transfers; token event amounts use raw units.`;
@@ -310,6 +350,7 @@ function render() {
     row.className = "row";
     if (e.outcome) row.dataset.outcome = e.outcome;
     row.textContent =
+      (current.solanaAnalysis ? e.outcome.replaceAll("_", " ") + " / " : "") +
       e.kind.replaceAll("_", " ") +
       " / " +
       (e.unit === "wei" ? formatEth(e.amount) : e.amount + " " + e.unit);
@@ -327,9 +368,13 @@ function render() {
   $("details").replaceChildren();
   if (edges.length) inspect(edges[0]);
   else {
-    $("details").textContent =
-      "No matching records. Clear the filters to see this case.";
-    $("records").textContent = "No records match these filters.";
+    const emptySolana = current.solanaAnalysis && current.edges.length === 0;
+    $("details").textContent = emptySolana
+      ? "No supported transfer instructions decoded. Execution and balance observations above remain available; this does not establish no activity."
+      : "No matching records. Clear the filters to see this case.";
+    $("records").textContent = emptySolana
+      ? "No supported transfer records. Review the unsupported-instruction count and coverage."
+      : "No records match these filters.";
   }
 }
 async function activate(d, token, example = "") {
@@ -350,11 +395,15 @@ async function activate(d, token, example = "") {
     "hop",
     "trace",
     "bitcoin",
+    "solana",
+    "solana-token",
+    "solana-lab",
+    "solana-failed",
   ])
     $(key).setAttribute("aria-pressed", String(key === example));
   $("case-status").textContent = d.synthetic
-    ? "SYNTHETIC CASE / v0.7"
-    : "IMPORTED EVIDENCE / v0.7";
+    ? "SYNTHETIC CASE / v0.8"
+    : "IMPORTED EVIDENCE / v0.8";
   const receipts = d.receipts
     ? Object.values(d.receipts)
     : d.receipt
@@ -370,6 +419,33 @@ async function activate(d, token, example = "") {
     $("summary").textContent =
       `Bitcoin mainnet: ${t.vin.length} inputs / ${t.vout.length} outputs / ${d.evidence.outspends.filter((o) => o.spent).length} reported spent outputs. Root fee: ${d.feeSatoshis} satoshis. Spends were checked against supplied spending inputs; this does not identify owners or allocate input funds.`;
     $("bitcoin-txid").value = t.txid;
+  }
+  $("solana-overview").hidden = !d.solanaAnalysis;
+  if (d.solanaAnalysis) {
+    const a = d.solanaAnalysis;
+    $("solana-signature").value = a.signature;
+    $("solana-address").value = a.feePayer;
+    $("summary").textContent =
+      `Solana mainnet / transaction ${a.status} / fee ${a.feeLamports} lamports / ${d.edges.length} supported instruction records / ${a.unsupportedInstructions} instructions not decoded. Inner coverage: ${a.innerCoverage}. Inner outcomes are unverified; balance changes are observations.`;
+    $("solana-execution").replaceChildren();
+    $("solana-balances").replaceChildren();
+    for (const [label, value] of [
+      ["Signature", a.signature],
+      ["Slot", a.slot],
+      ["Fee payer", a.feePayer],
+      ["Fee (charged even on failure)", a.feeLamports + " lamports"],
+      [
+        "RPC commitment requested",
+        a.requestedCommitment + " (not independently authenticated)",
+      ],
+    ])
+      paragraph($("solana-execution"), label, value);
+    for (const account of a.balanceObservations)
+      paragraph(
+        $("solana-balances"),
+        account.address,
+        `${account.preLamports} -> ${account.postLamports} lamports; observed delta ${account.deltaLamports}`,
+      );
   }
   if (d.bridge)
     $("summary").textContent =
@@ -422,6 +498,10 @@ for (const example of [
   "hop",
   "trace",
   "bitcoin",
+  "solana",
+  "solana-token",
+  "solana-lab",
+  "solana-failed",
 ])
   $(example).addEventListener("click", () => show(example).catch(fail));
 $("import").addEventListener("change", async (event) => {
@@ -472,6 +552,25 @@ $("report").addEventListener("click", () => {
       "Capture time: " + current.evidence.capturedAt,
       "Full Bitcoin evidence:",
       JSON.stringify(current.evidence, null, 2),
+    );
+  if (current.solanaAnalysis)
+    lines.push(
+      "",
+      "Solana instruction references and outcomes:",
+      JSON.stringify(
+        current.edges.map((e) => ({
+          record: e.id,
+          reference: e.evidenceRef,
+          outcome: e.outcome,
+          assetMint: e.assetMint ?? null,
+        })),
+        null,
+        2,
+      ),
+      "Solana execution and balance observations:",
+      JSON.stringify(current.solanaAnalysis, null, 2),
+      "Full projected evidence:",
+      JSON.stringify(current.solanaEvidence, null, 2),
     );
   if (current.receipt)
     lines.push(
@@ -534,6 +633,12 @@ $("report").addEventListener("click", () => {
 });
 $("expand").addEventListener("click", () => {
   let chain, address, start;
+  if (current?.solanaAnalysis) {
+    const sig = current.solanaAnalysis.signature;
+    $("hop-command").textContent =
+      `Run locally:\npython solana.py capture ${sig} next-solana-evidence.json\npython solana.py build next-solana-evidence.json next-solana-case.json\nFor a bounded account page:\npython solana.py history ${current.solanaAnalysis.feePayer} account-page.json\nNo recursive history, trade classification, ownership, or pump.fun lifecycle decoding.`;
+    return;
+  }
   if (current?.network === "bitcoin-mainnet") {
     const id = $("bitcoin-txid").value.trim();
     $("hop-command").textContent = /^[0-9a-f]{64}$/.test(id)
@@ -618,6 +723,10 @@ initLocalService({
   openCase: (data) => activate(data, ++generation),
 });
 const examples = [
+  "solana",
+  "solana-token",
+  "solana-lab",
+  "solana-failed",
   "bitcoin",
   "bridge",
   "assets",

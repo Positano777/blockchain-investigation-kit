@@ -1,3 +1,4 @@
+import { buildSolanaCase } from "./solana.mjs";
 import { buildBitcoinCase, bitcoinEdges } from "./bitcoin.mjs";
 import { buildBridgeCase } from "./bridge.mjs";
 import { buildAssetCase } from "./movements.mjs";
@@ -30,6 +31,14 @@ function keys(v, required, optional = []) {
   );
 }
 export function validateCase(d) {
+  if (d?.schema === "positano.solana-case.v1") {
+    check(
+      typeof d.digest === "string" && /^sha256:[0-9a-f]{64}$/.test(d.digest),
+    );
+    const { digest, ...content } = d;
+    check(canonical(content) === canonical(buildSolanaCase(d.solanaEvidence)));
+    return d;
+  }
   if (d?.schema === "positano.bitcoin-investigation.v1") {
     check(
       typeof d.digest === "string" && /^sha256:[0-9a-f]{64}$/.test(d.digest),

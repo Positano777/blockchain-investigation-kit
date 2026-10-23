@@ -7,6 +7,6 @@
 5. Export **Download case JSON**, **Export full report**, and **Download evidence card**. The PNG includes the digest/reference; share the JSON/report alongside it. Never post private evidence or notes by accident.
 6. To compare two captures of the same Bitcoin transaction, open one and use **What changed?** to load the other. Review conflicting provider data before making a claim.
 
-For offline-only viewing, serve `web/` as static files. Import, graph, filters, comparison, and exports work; server persistence/capture do not. Demo anchors include `#bitcoin`, `#bridge`, and `#assets`. The bundled Solana example remains synthetic observations, not a full decoded Solana investigation.
+For offline-only viewing, serve `web/` as static files. Import, graph, filters, comparison, and exports work; server persistence/capture do not. Demo anchors include `#bitcoin`, `#bridge`, and `#assets`. For Solana, open **Solana transaction** or **Solana inner token evidence**, then use the local capture/account panel to inspect a signature or a five-result account page. Separate Solana transfer/failure labs remain explicitly synthetic. Read [Solana coverage](SOLANA.md).
 
 Read [Bitcoin limits](BITCOIN.md) and [local storage details](LOCAL-SERVICE.md). An observed link is not an ownership assertion; a checksum is not chain authentication.

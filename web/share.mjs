@@ -14,19 +14,26 @@ function xml(value) {
 }
 export function evidenceCard(d) {
   const btc = d.network === "bitcoin-mainnet";
-  const headline = btc
-    ? "Follow the outpoints."
-    : d.bridge
-      ? "One deposit. Two networks."
-      : "Follow the evidence.";
-  const detail = btc
-    ? `${d.evidence.transaction.vin.length} input${d.evidence.transaction.vin.length === 1 ? "" : "s"} / ${d.evidence.transaction.vout.length} output${d.evidence.transaction.vout.length === 1 ? "" : "s"} / ${d.feeSatoshis} satoshi fee`
-    : `${d.nodes.length} nodes / ${d.edges.length} supplied records`;
-  const reference = btc
-    ? d.evidence.transaction.txid
-    : d.bridge
-      ? d.bridge.sourceTransaction
-      : d.digest.slice(7);
+  const sol = d.solanaAnalysis;
+  const headline = sol
+    ? "Understand the transaction."
+    : btc
+      ? "Follow the outpoints."
+      : d.bridge
+        ? "One deposit. Two networks."
+        : "Follow the evidence.";
+  const detail = sol
+    ? `${sol.status} / ${sol.feeLamports} lamport fee / ${d.edges.length} instruction record${d.edges.length === 1 ? "" : "s"}`
+    : btc
+      ? `${d.evidence.transaction.vin.length} input${d.evidence.transaction.vin.length === 1 ? "" : "s"} / ${d.evidence.transaction.vout.length} output${d.evidence.transaction.vout.length === 1 ? "" : "s"} / ${d.feeSatoshis} satoshi fee`
+      : `${d.nodes.length} nodes / ${d.edges.length} supplied records`;
+  const reference = sol
+    ? sol.signature
+    : btc
+      ? d.evidence.transaction.txid
+      : d.bridge
+        ? d.bridge.sourceTransaction
+        : d.digest.slice(7);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="${xml(headline)}">
 <rect width="1200" height="630" fill="#edf3f0"/><rect x="0" y="0" width="18" height="630" fill="#2d604d"/>
 <g font-family="Arial, sans-serif" fill="#173e39"><text x="65" y="75" font-size="26" font-weight="700">Positano Investigations</text>
@@ -34,7 +41,7 @@ export function evidenceCard(d) {
 <text x="65" y="226" font-size="60" font-weight="700">${xml(headline)}</text><text x="65" y="284" font-size="28">${xml(detail)}</text>
 <path d="M90 355 H550 M585 355 H1050" stroke="#b67416" stroke-width="5"/><circle cx="90" cy="355" r="13" fill="#2d604d"/><circle cx="565" cy="355" r="23" fill="#b67416"/><circle cx="1050" cy="355" r="13" fill="#2d604d"/>
 <text x="65" y="421" font-size="18" font-family="monospace">${xml(reference)}</text>
-<text x="65" y="467" font-size="19">Share the case JSON and report to reproduce. No ownership or finality claim.</text>
+<text x="65" y="467" font-size="19">${sol ? "Instruction amounts may be uncommitted. Share the JSON and full report." : "Share the case JSON and report to reproduce. No ownership or finality claim."}</text>
 <text x="65" y="510" font-size="16" font-family="monospace">${xml(d.digest)}</text>
 <text x="65" y="578" font-size="22">Open source: github.com/Positano777/blockchain-investigation-kit</text></g></svg>`;
 }

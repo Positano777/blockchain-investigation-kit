@@ -1,3 +1,4 @@
+import { solanaId } from "./solana.mjs";
 // Local service UI. The hosted static preview never probes localhost or receives RPC secrets.
 export function initLocalService({ getCase, openCase }) {
   const $ = (id) => document.getElementById(id);
@@ -11,6 +12,18 @@ export function initLocalService({ getCase, openCase }) {
     activeId = null,
     jobId = null,
     revision = 0;
+  let historyAddress = null,
+    historyCursor = null;
+  function busy(value) {
+    for (const id of [
+      "run-local-hop",
+      "capture-bitcoin",
+      "capture-solana",
+      "solana-history-start",
+    ])
+      $(id).disabled = value;
+    $("solana-history-next").disabled = value || !historyCursor;
+  }
   const status = (text) => {
     $("local-status").textContent = text;
   };
@@ -62,6 +75,12 @@ export function initLocalService({ getCase, openCase }) {
   }
   document.addEventListener("investigation-case-changed", () => {
     revision++;
+    historyAddress = null;
+    historyCursor = null;
+    $("solana-history-results").replaceChildren();
+    $("solana-history-next").disabled = true;
+    $("solana-history-status").textContent =
+      "Select an account and request a bounded provider page.";
     activeId = null;
     $("case-title").value = "";
     $("case-note").value = "";
@@ -104,8 +123,7 @@ export function initLocalService({ getCase, openCase }) {
     }
     // Mark busy before awaiting the POST so double clicks cannot enqueue two jobs.
     jobId = "pending";
-    $("run-local-hop").disabled = true;
-    $("capture-bitcoin").disabled = true;
+    busy(true);
     try {
       const job = await api(path, data);
       jobId = job.id;
@@ -130,10 +148,72 @@ export function initLocalService({ getCase, openCase }) {
       status(error.message);
     } finally {
       jobId = null;
-      $("run-local-hop").disabled = false;
-      $("capture-bitcoin").disabled = false;
+      busy(false);
     }
   }
+  $("capture-solana").addEventListener("click", () => {
+    try {
+      const signature = solanaId($("solana-signature").value.trim(), 64);
+      run(
+        "/api/solana",
+        { signature },
+        "Solana capture running locally: mainnet checkpoint and one finalized-request transaction. Parsed evidence will be saved as a new case.",
+      );
+    } catch {
+      status("Enter a valid base58 Solana transaction signature.");
+    }
+  });
+  async function accountPage(next) {
+    if (jobId) {
+      status("A provider operation is already running.");
+      return;
+    }
+    let address;
+    try {
+      address = solanaId($("solana-address").value.trim());
+    } catch {
+      status("Enter a valid Solana account address.");
+      return;
+    }
+    if (next && address !== historyAddress) {
+      status("Account changed. Start a new five-signature lookup.");
+      return;
+    }
+    const before = next ? historyCursor : null,
+      version = revision;
+    jobId = "history";
+    busy(true);
+    $("solana-history-status").textContent =
+      "Requesting at most five account references from the provider...";
+    try {
+      const result = await api("/api/solana/history", { address, before });
+      if (version !== revision || address !== $("solana-address").value.trim())
+        throw new Error("Case or account changed; request the page again.");
+      historyAddress = address;
+      historyCursor = result.nextBefore;
+      $("solana-history-results").replaceChildren();
+      for (const item of result.transactions) {
+        const button = document.createElement("button");
+        button.textContent = `Select signature ${item.signature} / slot ${item.slot} / transaction ${item.success ? "succeeded" : "failed"}`;
+        button.addEventListener("click", () => {
+          $("solana-signature").value = item.signature;
+          status(
+            "Signature selected. Capture it locally to inspect the transaction; account reference alone does not establish a payment.",
+          );
+        });
+        $("solana-history-results").append(button);
+      }
+      $("solana-history-status").textContent =
+        `${result.transactions.length} signatures returned; five-result cap reached: ${result.pageCapReached ? "yes" : "no"}. ${result.coverage}`;
+    } catch (error) {
+      $("solana-history-status").textContent = error.message;
+    } finally {
+      jobId = null;
+      busy(false);
+    }
+  }
+  $("solana-history-start").addEventListener("click", () => accountPage(false));
+  $("solana-history-next").addEventListener("click", () => accountPage(true));
   $("capture-bitcoin").addEventListener("click", () => {
     const id = $("bitcoin-txid").value.trim();
     if (!/^[0-9a-f]{64}$/.test(id)) {
@@ -184,7 +264,7 @@ export function initLocalService({ getCase, openCase }) {
       token = data.token;
       $("local-controls").hidden = false;
       status(
-        `Local service connected. Ethereum RPC: ${data.rpcConfigured["1"] ? "configured" : "not configured"}; Optimism RPC: ${data.rpcConfigured["10"] ? "configured" : "not configured"}. Bitcoin capture: available (public Esplora default or configured server endpoint). Provider URLs stay on the server.`,
+        `Local service connected. Ethereum RPC: ${data.rpcConfigured["1"] ? "configured" : "not configured"}; Optimism RPC: ${data.rpcConfigured["10"] ? "configured" : "not configured"}. Bitcoin and Solana capture: available using public defaults or configured server endpoints. Provider URLs stay on the server.`,
       );
       await refresh();
     })

@@ -15,7 +15,8 @@ from urllib.parse import urlsplit
 import uuid
 from capture_assets import discover
 from bitcoin import capture as capture_bitcoin, txid as bitcoin_txid
-from kit import hex_id
+from kit import hex_id, base58
+from solana import capture as capture_solana, history as solana_history, signature as solana_signature
 
 ROOT=Path(__file__).resolve().parent
 LIMIT=2_100_000
@@ -76,8 +77,8 @@ class CaseStore:
 
 class InvestigationsServer(ThreadingHTTPServer):
     daemon_threads=True
-    def __init__(self,address,store,discovery=discover,converter=node_case,bitcoin_capture=capture_bitcoin):
-        self.store=store;self.discovery=discovery;self.converter=converter;self.bitcoin_capture=bitcoin_capture
+    def __init__(self,address,store,discovery=discover,converter=node_case,bitcoin_capture=capture_bitcoin,solana_capture=capture_solana,solana_discovery=solana_history):
+        self.store=store;self.discovery=discovery;self.converter=converter;self.bitcoin_capture=bitcoin_capture;self.solana_capture=solana_capture;self.solana_discovery=solana_discovery
         self.token=secrets.token_urlsafe(32);self.jobs={};self.lock=threading.Lock();self.busy=False
         super().__init__(address,Handler)
 
@@ -99,6 +100,25 @@ class InvestigationsServer(ThreadingHTTPServer):
         endpoint=os.environ.get('BTC_ESPLORA_URL','https://blockstream.info/api')
         return self.queue_job(lambda:self.converter(self.bitcoin_capture(identifier,endpoint),'bitcoin'),
                               f'Bitcoin: {identifier[:16]}')
+
+    def solana(self,data):
+        if not isinstance(data,dict) or set(data)!={'signature'}:raise ValueError('Solana fields')
+        identifier=solana_signature(data['signature'])
+        endpoint=os.environ.get('SOL_RPC_URL','https://api.mainnet-beta.solana.com')
+        return self.queue_job(lambda:self.converter(self.solana_capture(identifier,endpoint),'solana'),
+                              f'Solana: {identifier[:16]}')
+
+    def solana_page(self,data):
+        if not isinstance(data,dict) or set(data)!={'address','before'}:raise ValueError('Solana history fields')
+        address=base58(data['address'],32);before=data['before']
+        if before is not None:solana_signature(before)
+        endpoint=os.environ.get('SOL_RPC_URL','https://api.mainnet-beta.solana.com')
+        with self.lock:
+            if self.busy:raise BlockingIOError('One provider operation at a time')
+            self.busy=True
+        try:return self.solana_discovery(address,endpoint,before)
+        finally:
+            with self.lock:self.busy=False
 
     def queue_job(self,operation,title):
         with self.lock:
@@ -187,6 +207,8 @@ class Handler(SimpleHTTPRequestHandler):
             elif patch and re.fullmatch('/api/cases/[0-9a-f]{32}',path):
                 if not isinstance(data,dict) or set(data)!={'title','note'}:raise ValueError()
                 identifier=path.rsplit('/',1)[1];self.server.store.annotate(identifier,data['title'],data['note']);self.reply(200,{'id':identifier})
+            elif not patch and path=='/api/solana/history':self.reply(200,self.server.solana_page(data))
+            elif not patch and path=='/api/solana':self.reply(202,{'id':self.server.solana(data)})
             elif not patch and path=='/api/bitcoin':self.reply(202,{'id':self.server.bitcoin(data)})
             elif not patch and path=='/api/expand':self.reply(202,{'id':self.server.expand(data)})
             else:self.reply(404,{'error':'Unknown local API route'})

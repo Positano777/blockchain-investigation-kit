@@ -8,7 +8,7 @@ The service stores validated evidence cases without assuming that every chain us
 | Ethereum → OP Portal deposits | Implemented, narrow | One supported deposit version/route with deterministic destination hash |
 | Solana launch observations | Implemented, offline subset | Import of existing launch-evidence observations; no full Solana history |
 | Bitcoin UTXO investigations | Implemented, bounded | One transaction, projected previous outputs, checked reported output spends; browser graph/import/persistence and manual next-transaction capture; no recursive crawl |
-| Solana instructions and token history | Planned | Requires program/instruction/account-aware capture and coverage |
+| Solana instruction evidence | Implemented, bounded | Legacy/v0 transaction capture, System/classic SPL transfer parsing, failed/inner outcome labels, five-signature account pages, browser persistence/exports; no full indexed history |
 | pump.fun lifecycle | Planned extension | Requires launch, curve, migration, liquidity, and disposal evidence; not just a token label |
 
 Adapters must expose these responsibilities:

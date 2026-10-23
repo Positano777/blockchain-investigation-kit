@@ -2,7 +2,7 @@
 
 An open-source starting point for portable blockchain investigations: inspect a graph, follow its source transactions, and export evidence for other tools.
 
-**v0.7 prototype: Bitcoin outpoint trails, saved investigations, snapshot comparison, and shareable evidence cards.** Preserve evidence, keep analyst notes separate, reopen investigations after restart, and collect a bounded next hop from the interface. Existing receipt, asset, bridge, and launch-observation decoders remain available. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
+**v0.8 prototype: Solana transaction evidence joins Bitcoin/EVM investigations, saved cases, and shareable cards.** Preserve evidence, keep analyst notes separate, reopen investigations after restart, and collect a bounded next hop from the interface. Existing receipt, asset, bridge, and launch-observation decoders remain available. This is a bounded investigation workspace, not a full blockchain indexer or a production forensic platform.
 
 ![Local investigation workspace with saved cases and bounded expansion](docs/screenshots/workspace.png)
 
@@ -27,15 +27,19 @@ node --test tests/*.test.mjs
 
 Output paths must be new. Keep private investigations in an untracked `private-cases/` folder. Use **Open local case** to inspect a CLI-produced case JSON. In static/offline mode, files are validated and opened in browser memory; they are not uploaded, persisted, or sent to an RPC endpoint. Closing/reloading clears imported state. The static viewer makes no RPC calls and stores no credentials. Its bundled examples are fetched from its own site.
 
-With `serve.py`, use **Save case / notes locally** to explicitly persist an investigation to SQLite on your computer. The local UI can run bounded expansion using server-environment RPC credentials; the hosted static preview cannot. Read [local setup and persistence limits](docs/LOCAL-SERVICE.md) and [the multi-chain connector contract](docs/CONNECTOR-CONTRACT.md). Bitcoin UTXO cases now support browser import, graph inspection, local persistence, and interactive transaction capture; full Solana history and pump.fun lifecycle connectors remain planned.
+With `serve.py`, use **Save case / notes locally** to explicitly persist an investigation to SQLite on your computer. The local UI can run bounded expansion using server-environment RPC credentials; the hosted static preview cannot. Read [local setup and persistence limits](docs/LOCAL-SERVICE.md) and [the multi-chain connector contract](docs/CONNECTOR-CONTRACT.md). Bitcoin UTXO cases now support browser import, graph inspection, local persistence, and interactive transaction capture; Solana now supports bounded transaction capture and five-signature account pages. Full indexed history and pump.fun lifecycle decoding remain planned.
 
 Start with [the cross-network connector guide and reproducible mainnet case](docs/OP-DEPOSIT.md). The link uses protocol derivation, not a timing/amount heuristic. Supplied RPC evidence remains unauthenticated and no finality verification is claimed.
 
 Then use [asset-movement decoding and bounded one-hop discovery](docs/ASSET-MOVEMENTS.md). The static browser prepares a local capture command; the local service can also run a bounded five-block expansion. Neither provides an automatic wallet crawler. Real examples disclose missing traces and a five-block zero-result scan. The trace lab is explicitly synthetic.
 
+## Solana transaction investigations
+
+Paste a signature, inspect the reported fee/execution and supported SOL/classic SPL instructions, follow account references through five-signature pages, and save/export the case. Inner outcomes stay unverified; failed transaction amounts are not committed transfers. See [the workflow, mainnet examples, and limits](docs/SOLANA.md). Demo anchors: `#solana`, `#solana-token`, `#solana-lab`, and `#solana-failed`.
+
 ## Bitcoin outpoint investigations
 
-Capture a Bitcoin transaction, verify its reported output spends, and export exact-satoshi evidence plus a readable report. See [setup, reproducible mainnet example, and bounds](docs/BITCOIN.md). Open the **Bitcoin outpoint trail** example, or import a CLI-built case. Run the local service to capture a transaction and its reported output spends, save notes, and follow a selected spending transaction. Compare two captures for changed observations. Download a 1200 � 630 PNG evidence card with its case checksum; share the full JSON and report alongside it.
+Capture a Bitcoin transaction, verify its reported output spends, and export exact-satoshi evidence plus a readable report. See [setup, reproducible mainnet example, and bounds](docs/BITCOIN.md). Open the **Bitcoin outpoint trail** example, or import a CLI-built case. Run the local service to capture a transaction and its reported output spends, save notes, and follow a selected spending transaction. Compare two captures for changed observations. Download a 1200 × 630 PNG evidence card with its case checksum; share the full JSON and report alongside it.
 
 ## Capture a real Ethereum receipt
 
@@ -72,7 +76,7 @@ Input order does not affect the output checksum. Synthetic and nonsynthetic bund
 
 GraphSense codec source is vendored unchanged under `vendor/graphsense_gs`, pinned in `vendor/PROVENANCE.json`, with its MIT license. We build an interoperability layer on that work, not a renamed GraphSense product.
 
-The original GraphSense dashboard/backend has **not** been run here: its database stack is absent and Docker's engine is unavailable. Codec roundtrips and the portable viewer are tested separately. Solana is our portable evidence adapter, not claimed native GraphSense backend support. Cross-chain ownership, funding links, live monitoring, cryptographic execution verification, sanctions labels, and automatic risk scores are not implemented. The new receipt adapter checks consistency of supplied RPC fields; it does not independently verify Ethereum consensus.
+The original GraphSense dashboard/backend has **not** been run here: its database stack is absent and Docker's engine is unavailable. Codec roundtrips and the portable viewer are tested separately. Solana has portable launch observations plus a bounded instruction-evidence adapter; native GraphSense backend support is not claimed. Cross-chain ownership, funding links, live monitoring, cryptographic execution verification, sanctions labels, and automatic risk scores are not implemented. The new receipt adapter checks consistency of supplied RPC fields; it does not independently verify Ethereum consensus.
 
 The example GitHub Actions configuration in `docs/github-actions.example.yml` is not enabled: the current GitHub connection lacks workflow permission. Local Python and Node test commands above require no package installation.
 
@@ -80,7 +84,7 @@ The example GitHub Actions configuration in `docs/github-actions.example.yml` is
 
 1. Current: local saved cases with separate analyst notes, UI-driven bounded expansion, reproducible offline cases, Ethereum → Optimism deposit derivation, receipt assembly/capture, local imports, evidence viewer, native ETH value-transfer export.
 2. Broader indexed history coverage, additional protocol-specific bridge connectors, and protocol event decoding. Current asset decoding is limited to supplied Transfer-shaped logs/call traces and bounded direct-address scans.
-3. Solana decoded transfers and creation allocations with transaction-level provenance and labeled inference.
+3. Broader Solana decoding and pump.fun lifecycle evidence. Current Solana parsing covers System transfer and classic SPL transfers; account pages are bounded references, not complete history.
 4. Broader case comparison, additional chain adapters, and upstream contributions.
 
 See the [milestone delivery criteria and community release plan](docs/ROADMAP.md) and [three-minute walkthrough](docs/QUICKSTART.md).

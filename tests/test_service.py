@@ -37,7 +37,7 @@ class Persistence(unittest.TestCase):
             self.assertEqual(store.list(),[])
 
     def test_all_schemas_validate_through_stdin(self):
-        for name in ['bridge','assets','trace','hop','multi','eth','sol','real','bitcoin']:
+        for name in ['bridge','assets','trace','hop','multi','eth','sol','real','bitcoin','solana','solana-token','solana-lab','solana-failed']:
             case=load(ROOT/f'web/{name}-case.json')
             self.assertEqual(node_case(case),case)
 
@@ -123,6 +123,44 @@ class LocalAPI(unittest.TestCase):
         for data in [{'txid':'bad'},{'txid':'1'*64,'endpoint':'https://attacker.invalid'}]:
             self.assertEqual(self.request('/api/bitcoin',data,headers=self.write_headers())[0],400)
         self.assertEqual(self.request('/api/bitcoin',{'txid':'1'*64})[0],403)
+
+    def test_solana_job_persists_shared_validated_case(self):
+        self.store.validator=node_case;calls=[]
+        def capture(identifier,endpoint):
+            calls.append((identifier,endpoint));return load(ROOT/'examples/solana-transaction.mainnet.json')
+        self.server.solana_capture=capture
+        signature=load(ROOT/'web/solana-case.json')['solanaAnalysis']['signature']
+        with patch.dict(os.environ,{'SOL_RPC_URL':'https://provider.invalid/private-solana-endpoint'}):
+            code,raw,_=self.request('/api/solana',{'signature':signature},headers=self.write_headers())
+            self.assertEqual(code,202);identifier=json.loads(raw)['id']
+            for _ in range(200):
+                job=self.server.jobs[identifier]
+                if job['status']!='running':break
+                time.sleep(.01)
+            self.assertEqual(job['status'],'succeeded')
+            case=self.store.get(job['caseId'])['case'];self.assertEqual(case,load(ROOT/'web/solana-case.json'))
+            self.assertNotIn('private-solana-endpoint',json.dumps(case))
+            self.assertEqual(calls,[(signature,'https://provider.invalid/private-solana-endpoint')])
+
+    def test_solana_history_cursor_and_shared_busy_limit(self):
+        calls=[]
+        def discover(address,endpoint,before):
+            calls.append((address,before));return {'transactions':[],'nextBefore':None}
+        self.server.solana_discovery=discover
+        address=load(ROOT/'web/solana-case.json')['solanaAnalysis']['feePayer']
+        data={'address':address,'before':None}
+        self.assertEqual(self.request('/api/solana/history',data,headers=self.write_headers())[0],200)
+        self.assertEqual(calls,[(address,None)])
+        self.server.busy=True
+        self.assertEqual(self.request('/api/solana/history',data,headers=self.write_headers())[0],409)
+        self.server.busy=False
+        data['before']='not a signature'
+        self.assertEqual(self.request('/api/solana/history',data,headers=self.write_headers())[0],400)
+
+    def test_solana_http_fields_and_session_protection(self):
+        for path,data in [('/api/solana',{'signature':'bad'}),('/api/solana',{'signature':'1'*64,'endpoint':'https://attacker.invalid'}),('/api/solana/history',{'address':'1'*32,'before':None,'limit':999})]:
+            self.assertEqual(self.request(path,data,headers=self.write_headers())[0],400)
+        self.assertEqual(self.request('/api/solana',{'signature':'1'*64})[0],403)
 
     def test_bounds_and_extra_endpoint_fields_rejected(self):
         data={'chainId':10,'address':'0x'+'1'*40,'fromBlock':1,'toBlock':21,'trace':False}

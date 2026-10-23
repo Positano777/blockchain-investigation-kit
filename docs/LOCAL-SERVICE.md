@@ -30,4 +30,6 @@ The CLI binds only to 127.0.0.1. Requests require an expected localhost Host hea
 
 Case validation runs the existing Node decoders through bounded stdin/stdout without a shell. Credentials remain environment-only. The service does not sign transactions, execute arbitrary tracer code, accept shell commands, install software, or upload saved cases to Sites/GitHub.
 
-See [the connector contract](CONNECTOR-CONTRACT.md) for implemented versus planned chain support. Bitcoin transaction capture/persistence is integrated; see [Bitcoin workflow and bounds](BITCOIN.md). Full Solana history and pump.fun lifecycle adapters remain planned.
+See [the connector contract](CONNECTOR-CONTRACT.md) for implemented versus planned chain support. Bitcoin transaction capture/persistence is integrated; see [Bitcoin workflow and bounds](BITCOIN.md). Solana supports bounded transaction capture and five-signature account-reference pages; see [Solana workflow](SOLANA.md). Full indexed Solana history and pump.fun lifecycle decoding remain planned.
+
+Solana uses `SOL_RPC_URL` or the public mainnet default. `/api/solana` accepts only a signature; `/api/solana/history` accepts only an account and optional before-cursor. A history page is not a saved case. Provider requests remain server-side, protected by the same origin/session boundary, with one provider operation at a time across chains.

@@ -28,3 +28,14 @@ test("Evidence card escapes XML", () => {
   assert.ok(evidenceCard(d).includes("&lt;script&gt;&amp;&quot;"));
   assert.ok(!evidenceCard(d).includes("<script>"));
 });
+
+test("Solana cards include signature, fee, execution status, and uncommitted-amount warning", () => {
+  const d = JSON.parse(
+    readFileSync(new URL("../web/solana-failed-case.json", import.meta.url)),
+  );
+  const svg = evidenceCard(d);
+  assert.ok(svg.includes(d.solanaAnalysis.signature));
+  assert.ok(svg.includes("failed / 5000 lamport fee"));
+  assert.ok(svg.includes("Instruction amounts may be uncommitted"));
+  assert.ok(svg.includes("Synthetic example"));
+});

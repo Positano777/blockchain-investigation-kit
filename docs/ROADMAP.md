@@ -9,8 +9,8 @@ The product promise is **a reproducible trail from a transaction to its evidence
 | Bitcoin interactive trail | Shipped in v0.7 | Browser import/graph, checked outpoints, saved cases, manual next capture |
 | Reproducible sharing | Shipped in v0.7 | PNG card, JSON/report, checksum/reference, no analyst notes in exports |
 | Bitcoin snapshot comparison | Shipped in v0.7 | Changed spend/status observations, disagreement flags, both source digests |
-| Solana transaction decoder | Next, not implemented | Mainnet capture; exact lamport/token units; explicit program/instruction references; failed/CPI behavior tested; unsupported instructions labeled |
-| pump.fun lifecycle evidence | Planned after Solana decoding | Version-pinned creation/curve/migration/disposal decoding; actual mainnet fixtures; no timing-only bundle claims |
+| Solana transaction decoder | Bounded v0.8 preview shipped | Mainnet capture; exact lamport/token units; explicit program/instruction references; failed/CPI behavior tested; unsupported instructions labeled |
+| pump.fun lifecycle evidence | Next, not implemented | Version-pinned creation/curve/migration/disposal decoding; actual mainnet fixtures; no timing-only bundle claims |
 | Indexed history and watchlists | Planned | Cursor/range/cap provenance, reorganization handling, deduplication, provider budgets, persistent jobs and cancellation |
 | Wider bridge routes | Planned | Protocol-specific message derivation and captured destination evidence for each supported route |
 | Case exchange/API | Planned | Versioned connector API, reproducible fixtures, migration policy, explicit annotation export, cross-tool examples |

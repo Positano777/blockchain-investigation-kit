@@ -250,6 +250,29 @@
         resize: vertical;
         width: 100%;
       }
+      .edge.not_committed {
+        stroke: #aa3322;
+        stroke-dasharray: 5 5;
+      }
+      .edge.inner_outcome_unverified {
+        stroke: #9a6b1a;
+        stroke-dasharray: 7 5;
+      }
+      .row[data-outcome="not_committed"] {
+        border-color: #aa3322;
+      }
+      .row[data-outcome="inner_outcome_unverified"] {
+        border-color: #9a6b1a;
+      }
+      #solana-history-results button {
+        display: block;
+        margin: 8px 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+      }
+      #solana-balances p {
+        overflow-wrap: anywhere;
+      }
       .transaction-node {
         fill: #b67416;
       }
@@ -264,7 +287,7 @@
         <h1>Positano Investigations</h1>
         <small>Open evidence. Reusable cases.</small>
       </div>
-      <span class="badge" id="case-status">LOADING / v0.7</span>
+      <span class="badge" id="case-status">LOADING / v0.8</span>
     </header>
     <main>
       <p class="intro">
@@ -272,6 +295,16 @@
         workspace built for transparent blockchain research.
       </p>
       <div class="toolbar">
+        <button id="solana" aria-pressed="false">Solana transaction</button>
+        <button id="solana-token" aria-pressed="false">
+          Solana inner token evidence
+        </button>
+        <button id="solana-lab" aria-pressed="false">
+          Synthetic Solana transfer lab
+        </button>
+        <button id="solana-failed" aria-pressed="false">
+          Synthetic failed Solana case
+        </button>
         <button id="bitcoin" aria-pressed="false">
           Bitcoin outpoint trail
         </button>
@@ -337,6 +370,35 @@
           in the local service; the static preview uses saved evidence.
         </p>
         <div id="local-controls" hidden>
+          <details>
+            <summary>Solana capture and account lookup</summary>
+            <label
+              >Solana transaction signature<input
+                id="solana-signature"
+                maxlength="90"
+                spellcheck="false"
+                placeholder="Base58 transaction signature"
+            /></label>
+            <button id="capture-solana">
+              Capture Solana transaction locally
+            </button>
+            <label
+              >Solana account to follow<input
+                id="solana-address"
+                maxlength="44"
+                spellcheck="false"
+                placeholder="Account or token account address"
+            /></label>
+            <button id="solana-history-start">
+              Find five account signatures
+            </button>
+            <button id="solana-history-next" disabled>Next older page</button>
+            <p id="solana-history-status" role="status">
+              Provider lookup references an account; it does not establish
+              ownership or transfer activity.
+            </p>
+            <div id="solana-history-results"></div>
+          </details>
           <button id="capture-bitcoin">
             Capture selected Bitcoin transaction locally
           </button>
@@ -405,6 +467,16 @@
         ><label>Until (UTC)<input id="until" type="date" /></label
         ><button id="reset">Clear filters</button>
       </div>
+      <section class="coverage" id="solana-overview" hidden>
+        <h2>Solana execution and balance observations</h2>
+        <div id="solana-execution"></div>
+        <details>
+          <summary>
+            Account balance observations (not inferred transfers)
+          </summary>
+          <div id="solana-balances"></div>
+        </details>
+      </section>
       <div class="grid">
         <section class="panel">
           <h2 id="graph-title">Evidence graph</h2>

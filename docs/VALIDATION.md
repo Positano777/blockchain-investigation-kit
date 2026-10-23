@@ -1,9 +1,17 @@
 # Validation record
 
+## v0.8 additions
+
+- Python: 72 tests. Node: 54 tests. Added Solana projection/capture, exact u64 amounts, account/program validation, mint consistency, version/null-metadata rejection, bounded cursor pages, method/endpoint restrictions, shared-service persistence/session/busy checks, reconstructed outcomes/references, and Solana card labels.
+- Live read-only capture: one successful top-level System transfer (1,170 lamports, 5,000-lamport fee) and a separate transaction with a classic SPL Token inner instruction. CPI outcome remains unverified. Both projected mainnet fixtures reproduce offline; failure/u64 labs are synthetic.
+- Chrome: graph/outcome styling; exact large amounts/balances; failed transaction not-committed labels; saved/reopened notes; tampered import rejected while retaining prior evidence; live Solana capture persisted; two distinct five-signature account pages, cursor navigation, and manual signature selection; full report and PNG export.
+- Static preview does not call local APIs and hides provider controls. Mobile 390px layout has no overflow; zero page/console errors or warnings. No packages installed. Source/provider credential diagnostics remain excluded.
+- No signature verification, independent finality/consensus proof, local CPI outcome proof, full indexed history, Token-2022, swap semantics, or pump.fun lifecycle decoding is claimed.
+
 ## v0.7 additions
 
 - Python: 59 tests. Node: 44 tests. Added Bitcoin case reconstruction/tampering checks, persisted real-schema Bitcoin jobs, HTTP field/origin restrictions, comparison disagreement cases, and card escaping/privacy checks.
-- Chrome: five Bitcoin relationships and three transaction nodes rendered; selected a reported spender; saved/reopened notes; rejected a tampered import while retaining the case; completed live Bitcoin capture to a saved case; exported full evidence report and 1200 × 630 PNG.
+- Chrome: five Bitcoin relationships and three transaction nodes rendered; selected a reported spender; saved/reopened notes; rejected a tampered import while retaining the case; completed live Bitcoin capture to a saved case; exported full evidence report and 1200 Ã— 630 PNG.
 - Chrome comparison: identical captures produce no changes; an offline constructed observation change is detected and exported with both digests. This is not a live reorganization/mempool demonstration.
 - Local/static boundary: static preview does not request local APIs and keeps capture controls hidden. Bitcoin and asset demo deep links work. Desktop and 390px mobile screenshots inspected; no overflow, console errors, or warnings.
 - No new packages installed. No full Solana history, pump.fun lifecycle, complete wallet history, chain consensus proof, or attribution is claimed.

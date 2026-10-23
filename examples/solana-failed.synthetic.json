@@ -1,0 +1,89 @@
+{
+  "schema": "positano.solana-transaction.v1",
+  "network": "solana-mainnet",
+  "genesisHash": "5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d",
+  "syntheticExample": true,
+  "capturedAt": "2026-10-23T00:00:00+00:00",
+  "signature": "1GMkH3brNXiNNs1tiFZHu4yZSRrzJwxi5wB9bHFtMinfCXNnR1adh8Vo8NTheK4evneedH4qmvjeqcBBNAefgS",
+  "slot": 1,
+  "blockTime": 1700000000,
+  "version": 0,
+  "requestedCommitment": "finalized",
+  "feeLamports": "5000",
+  "success": false,
+  "accounts": [
+    {
+      "address": "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+      "signer": true,
+      "writable": true,
+      "preLamports": "9007199254740993",
+      "postLamports": "9007199254735993"
+    },
+    {
+      "address": "8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+      "signer": false,
+      "writable": true,
+      "preLamports": "0",
+      "postLamports": "0"
+    },
+    {
+      "address": "CktRuQ2mttgRGkXJtyksdKHjUdc2C4TgDzyB98oEzy8",
+      "signer": false,
+      "writable": false,
+      "preLamports": "0",
+      "postLamports": "0"
+    },
+    {
+      "address": "11111111111111111111111111111111",
+      "signer": false,
+      "writable": false,
+      "preLamports": "0",
+      "postLamports": "0"
+    },
+    {
+      "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "signer": false,
+      "writable": false,
+      "preLamports": "0",
+      "postLamports": "0"
+    }
+  ],
+  "topInstructions": [
+    {
+      "programId": "11111111111111111111111111111111",
+      "kind": "sol_transfer",
+      "source": "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+      "destination": "8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+      "amount": "123456789"
+    },
+    {
+      "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "kind": "token_transfer",
+      "source": "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+      "destination": "8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+      "amount": "18446744073709551615",
+      "mint": "CktRuQ2mttgRGkXJtyksdKHjUdc2C4TgDzyB98oEzy8",
+      "decimals": 9
+    },
+    {
+      "programId": "11111111111111111111111111111111",
+      "kind": "unsupported"
+    }
+  ],
+  "innerInstructions": [
+    {
+      "index": 0,
+      "instructions": [
+        {
+          "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+          "kind": "token_transfer",
+          "source": "4vJ9JU1bJJE96FWSJKvHsmmFADCg4gpZQff4P3bkLKi",
+          "destination": "8qbHbw2BbbTHBW1sbeqakYXVKRQM8Ne7pLK7m6CVfeR",
+          "amount": "18446744073709551615",
+          "mint": "CktRuQ2mttgRGkXJtyksdKHjUdc2C4TgDzyB98oEzy8",
+          "decimals": 9
+        }
+      ]
+    }
+  ]
+}
