@@ -20,7 +20,9 @@ Set ETH_RPC_URL and/or OP_RPC_URL in the server's shell before starting. The sta
 
 The UI uses the selected call target and five following blocks. API bounds remain 1–20 explicit blocks and at most ten direct-address transactions. Token-only/internal-only address activity is not discovered. The UI does not request tracing by default; API tracing retains existing availability limits. No provider endpoint can be supplied through the HTTP request. A zero-result saved case remains a bounded observation, not evidence of no activity or proof of where deposited coins went.
 
-Only one expansion runs at a time. Job status is kept in memory (latest 20 jobs), while successful cases are persistent. The UI polls for up to 20 minutes; a failed/disconnected browser does not cancel a running job. There is no durable job queue or cancellation feature yet. Provider reads retain existing request timeouts and response caps. Errors hide raw provider details.
+Bitcoin capture uses the public Esplora default unless `BTC_ESPLORA_URL` is set in the server environment. Enter a transaction ID, capture it, then open the saved result. Bitcoin cases preserve outpoint relationships and can be annotated like other cases.
+
+Only one expansion/capture runs at a time across all chains. Job status is kept in memory (latest 20 jobs), while successful cases are persistent. The UI polls for up to 20 minutes; a failed/disconnected browser does not cancel a running job. There is no durable job queue or cancellation feature yet. Provider reads retain existing request timeouts and response caps. Errors hide raw provider details.
 
 ## Local access boundary
 
@@ -28,4 +30,4 @@ The CLI binds only to 127.0.0.1. Requests require an expected localhost Host hea
 
 Case validation runs the existing Node decoders through bounded stdin/stdout without a shell. Credentials remain environment-only. The service does not sign transactions, execute arbitrary tracer code, accept shell commands, install software, or upload saved cases to Sites/GitHub.
 
-See [the connector contract](CONNECTOR-CONTRACT.md) for implemented versus planned chain support. Bitcoin and full Solana/pump.fun investigation adapters are not implemented by this local-service release.
+See [the connector contract](CONNECTOR-CONTRACT.md) for implemented versus planned chain support. Bitcoin transaction capture/persistence is integrated; see [Bitcoin workflow and bounds](BITCOIN.md). Full Solana history and pump.fun lifecycle adapters remain planned.

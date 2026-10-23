@@ -1,6 +1,7 @@
 // Bounded stdin/stdout bridge for the Python local service; no shell evaluation.
 import { createHash } from "node:crypto";
 import { verifyCase, canonical } from "./web/case.mjs";
+import { buildBitcoinCase } from "./web/bitcoin.mjs";
 import { buildAssetCase } from "./web/movements.mjs";
 try {
   const chunks = [];
@@ -11,8 +12,11 @@ try {
     chunks.push(chunk);
   }
   let data = JSON.parse(Buffer.concat(chunks).toString("utf8"));
-  if (process.argv[2] === "assets") {
-    const content = buildAssetCase(data);
+  if (["assets", "bitcoin"].includes(process.argv[2])) {
+    const content =
+      process.argv[2] === "bitcoin"
+        ? buildBitcoinCase(data)
+        : buildAssetCase(data);
     data = {
       ...content,
       digest:

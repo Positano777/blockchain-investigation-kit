@@ -1,4 +1,6 @@
-import { verifyCase, filterEdges, formatEth } from "./case.mjs";
+import { compareBitcoinCases } from "./compare.mjs";
+import { verifyCase, filterEdges, formatEth, caseEdges } from "./case.mjs";
+import { evidenceCardPng } from "./share.mjs";
 import { initLocalService } from "./service.mjs";
 const $ = (id) => document.getElementById(id),
   ns = "http://www.w3.org/2000/svg";
@@ -36,7 +38,9 @@ function inspect(e) {
         ? "Ethereum transaction ID"
         : current.network === "sol"
           ? "Mint observation anchor"
-          : "From address",
+          : current.network === "bitcoin-mainnet"
+            ? "From outpoint / transaction"
+            : "From address",
       e.from,
     ],
     [
@@ -44,7 +48,9 @@ function inspect(e) {
         ? "Optimism transaction ID"
         : current.network === "sol"
           ? "Observed fee payer"
-          : "To address",
+          : current.network === "bitcoin-mainnet"
+            ? "To outpoint / transaction"
+            : "To address",
       e.to,
     ],
     [
@@ -55,6 +61,31 @@ function inspect(e) {
     ],
   ])
     if (!current.bridge) paragraph($("details"), label, value);
+  if (current.network === "bitcoin-mainnet") {
+    paragraph(
+      $("details"),
+      "Root transaction fee",
+      current.feeSatoshis + " satoshis",
+    );
+    paragraph($("details"), "Captured at", current.evidence.capturedAt);
+    if (e.inputIndex !== undefined)
+      paragraph($("details"), "Spending input index", e.inputIndex);
+    paragraph(
+      $("details"),
+      "Evidence basis",
+      "Outpoint references and amounts checked against supplied provider data. No input-to-output allocation or ownership inference.",
+    );
+    if (e.to.startsWith("btc:tx:")) {
+      const button = document.createElement("button");
+      button.textContent = "Select this transaction for next capture";
+      button.addEventListener("click", () => {
+        $("bitcoin-txid").value = e.to.slice(7);
+        $("message").textContent =
+          "Transaction selected. Run locally to capture its outputs and reported spends.";
+      });
+      $("details").append(button);
+    }
+  }
   if (current.analysis) {
     paragraph(
       $("details"),
@@ -226,11 +257,16 @@ function render() {
       circle = element("circle", {
         cx: x,
         cy: y,
-        r: 16,
+        r: n.kind === "transaction" ? 19 : 12,
+        class: n.kind === "transaction" ? "transaction-node" : "",
         tabindex: 0,
         role: "button",
         "aria-label":
-          (current.bridge ? "Filter transaction " : "Filter address ") + n.id,
+          (current.network === "bitcoin-mainnet"
+            ? "Filter outpoint / transaction "
+            : current.bridge
+              ? "Filter transaction "
+              : "Filter address ") + n.id,
       });
     const focus = () => {
       $("search").value = n.id;
@@ -263,6 +299,9 @@ function render() {
   if (current.bridge)
     $("graph-note").textContent =
       "Ethereum deposit event → derived OP transaction hash → captured Optimism receipt. The link is computed from the protocol encoding, not guessed from timing or amount.";
+  if (current.network === "bitcoin-mainnet")
+    $("graph-note").textContent =
+      `Graph shows ${shown.length} of ${current.edges.length} records, bounded to 24 nodes / 40 connections. Large circles are transactions; small circles are outpoints. Arrows show spends and creates, not ownership or allocation of particular input coins to outputs.`;
   if (current.analysis)
     $("graph-note").textContent =
       `Graph shows ${shown.length} supplied movements/attempts, bounded to 24 nodes and 40 connections. Select a record to explain its source. Reverted attempts are not successful transfers; token event amounts use raw units.`;
@@ -298,6 +337,7 @@ async function activate(d, token, example = "") {
   if (token !== generation) return;
   current = d;
   document.dispatchEvent(new Event("investigation-case-changed"));
+  $("comparison-result").textContent = "";
   $("hop-command").textContent = "";
   $("hop-command").closest("details").open = false;
   for (const key of [
@@ -309,11 +349,12 @@ async function activate(d, token, example = "") {
     "assets",
     "hop",
     "trace",
+    "bitcoin",
   ])
     $(key).setAttribute("aria-pressed", String(key === example));
   $("case-status").textContent = d.synthetic
-    ? "SYNTHETIC CASE / v0.6"
-    : "IMPORTED EVIDENCE / v0.6";
+    ? "SYNTHETIC CASE / v0.7"
+    : "IMPORTED EVIDENCE / v0.7";
   const receipts = d.receipts
     ? Object.values(d.receipts)
     : d.receipt
@@ -324,6 +365,12 @@ async function activate(d, token, example = "") {
     (receipts.length
       ? `Total fees across unique supplied transactions: ${formatEth(receipts.reduce((sum, r) => sum + BigInt(r.totalFeeWei), 0n).toString())}. This is not a wallet balance or complete spending history.`
       : "Coverage is limited to the supplied observations.");
+  if (d.network === "bitcoin-mainnet") {
+    const t = d.evidence.transaction;
+    $("summary").textContent =
+      `Bitcoin mainnet: ${t.vin.length} inputs / ${t.vout.length} outputs / ${d.evidence.outspends.filter((o) => o.spent).length} reported spent outputs. Root fee: ${d.feeSatoshis} satoshis. Spends were checked against supplied spending inputs; this does not identify owners or allocate input funds.`;
+    $("bitcoin-txid").value = t.txid;
+  }
   if (d.bridge)
     $("summary").textContent =
       `Ethereum (1) → OP Mainnet (10). Exact destination transaction hash derived from the supplied Portal event. Deposit mint: ${formatEth(d.bridge.mintWei)}. Destination receipt: ${d.bridge.destinationStatus}. This is a protocol deposit link, not proof of common ownership or complete asset movement.`;
@@ -360,6 +407,7 @@ async function show(example) {
     response = await fetch(example + "-case.json");
   if (!response.ok) throw new Error("Case unavailable");
   await activate(await response.json(), token, example);
+  if (token === generation) history.replaceState(null, "", "#" + example);
 }
 function fail(error) {
   $("message").textContent = error.message || "Unable to load case.";
@@ -373,6 +421,7 @@ for (const example of [
   "assets",
   "hop",
   "trace",
+  "bitcoin",
 ])
   $(example).addEventListener("click", () => show(example).catch(fail));
 $("import").addEventListener("change", async (event) => {
@@ -405,7 +454,7 @@ $("report").addEventListener("click", () => {
     "",
     "Full case records (filters do not limit this report):",
   ];
-  for (const e of current.edges)
+  for (const e of caseEdges(current))
     lines.push(
       "",
       e.kind,
@@ -415,6 +464,14 @@ $("report").addEventListener("click", () => {
         ? "Time not supplied"
         : new Date(e.timestamp * 1000).toISOString(),
       e.source,
+    );
+  if (current.network === "bitcoin-mainnet")
+    lines.push(
+      "",
+      "Root fee (satoshis): " + current.feeSatoshis,
+      "Capture time: " + current.evidence.capturedAt,
+      "Full Bitcoin evidence:",
+      JSON.stringify(current.evidence, null, 2),
     );
   if (current.receipt)
     lines.push(
@@ -477,6 +534,13 @@ $("report").addEventListener("click", () => {
 });
 $("expand").addEventListener("click", () => {
   let chain, address, start;
+  if (current?.network === "bitcoin-mainnet") {
+    const id = $("bitcoin-txid").value.trim();
+    $("hop-command").textContent = /^[0-9a-f]{64}$/.test(id)
+      ? `Run locally:\npython bitcoin.py capture ${id} next-bitcoin-evidence.json\npython bitcoin.py build next-bitcoin-evidence.json next-bitcoin-case.json\nOpen next-bitcoin-case.json here. Bounded to one transaction and its reported output spends; no recursive wallet crawl.`
+      : "Select or enter a Bitcoin transaction first.";
+    return;
+  }
   if (current?.bridge) {
     chain = 10;
     address = current.bridge.to;
@@ -493,8 +557,83 @@ $("expand").addEventListener("click", () => {
   $("hop-command").textContent =
     `Set ${chain === 1 ? "ETH_RPC_URL" : "OP_RPC_URL"} to your HTTPS provider in your shell, then run locally:\npython capture_assets.py hop ${chain} ${address} ${start} ${start + 4n} next-hop-evidence.json\nnode assets.mjs next-hop-evidence.json next-hop-case.json\nOpen next-hop-case.json here. Scans five explicit blocks, captures at most ten direct from/to transactions, and excludes token-only/internal-only discovery. This follows the selected call target, not an attributed owner or specific deposited coins.`;
 });
+$("compare-import").addEventListener("change", async (event) => {
+  const file = event.target.files[0],
+    base = current;
+  event.target.value = "";
+  if (!file || !base) return;
+  try {
+    if (file.size > 2000000) throw new Error("Comparison case exceeds 2 MB.");
+    const result = await compareBitcoinCases(
+      base,
+      JSON.parse(await file.text()),
+    );
+    if (current !== base)
+      throw new Error("Current case changed; compare again.");
+    $("comparison-result").textContent = JSON.stringify(result, null, 2);
+    $("message").textContent =
+      `Compared two snapshots: ${result.changes.length} changed observations, ${result.conflicts.length} data conflicts. Original evidence is unchanged.`;
+  } catch (error) {
+    $("comparison-result").textContent = "";
+    fail(error);
+  }
+});
+$("download-comparison").addEventListener("click", () => {
+  const text = $("comparison-result").textContent;
+  if (!text) {
+    $("message").textContent = "Compare two Bitcoin snapshots first.";
+    return;
+  }
+  const url = URL.createObjectURL(
+    new Blob([text + "\n"], { type: "application/json" }),
+  );
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "bitcoin-snapshot-comparison.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+$("share-card").addEventListener("click", async () => {
+  if (!current) return;
+  const base = current;
+  $("share-card").disabled = true;
+  try {
+    const blob = await evidenceCardPng(base),
+      url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "positano-evidence-card.png";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    $("message").textContent =
+      "PNG evidence card downloaded. Share it with the full case JSON and report so others can reproduce the finding. Analyst notes are excluded.";
+  } catch (error) {
+    fail(error);
+  } finally {
+    $("share-card").disabled = false;
+  }
+});
 initLocalService({
   getCase: () => current,
   openCase: (data) => activate(data, ++generation),
 });
-show("bridge").catch(fail);
+const examples = [
+  "bitcoin",
+  "bridge",
+  "assets",
+  "trace",
+  "hop",
+  "multi",
+  "real",
+  "eth",
+  "sol",
+];
+window.addEventListener("hashchange", () => {
+  const key = location.hash.slice(1);
+  if (examples.includes(key)) show(key).catch(fail);
+});
+show(
+  examples.includes(location.hash.slice(1))
+    ? location.hash.slice(1)
+    : "bitcoin",
+).catch(fail);

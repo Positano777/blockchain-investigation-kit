@@ -14,6 +14,7 @@ import threading
 from urllib.parse import urlsplit
 import uuid
 from capture_assets import discover
+from bitcoin import capture as capture_bitcoin, txid as bitcoin_txid
 from kit import hex_id
 
 ROOT=Path(__file__).resolve().parent
@@ -75,8 +76,8 @@ class CaseStore:
 
 class InvestigationsServer(ThreadingHTTPServer):
     daemon_threads=True
-    def __init__(self,address,store,discovery=discover,converter=node_case):
-        self.store=store;self.discovery=discovery;self.converter=converter
+    def __init__(self,address,store,discovery=discover,converter=node_case,bitcoin_capture=capture_bitcoin):
+        self.store=store;self.discovery=discovery;self.converter=converter;self.bitcoin_capture=bitcoin_capture
         self.token=secrets.token_urlsafe(32);self.jobs={};self.lock=threading.Lock();self.busy=False
         super().__init__(address,Handler)
 
@@ -89,6 +90,17 @@ class InvestigationsServer(ThreadingHTTPServer):
         address=hex_id(data['address'],40)
         endpoint=os.environ.get('ETH_RPC_URL' if chain==1 else 'OP_RPC_URL')
         if not endpoint:raise ValueError('Configure server RPC environment')
+        return self.queue_job(lambda:self.converter(self.discovery(endpoint,chain,address,start,end,data['trace']),'assets'),
+                              f'Chain {chain}: {address[:10]} blocks {start}-{end}')
+
+    def bitcoin(self,data):
+        if not isinstance(data,dict) or set(data)!={'txid'}:raise ValueError('Bitcoin fields')
+        identifier=bitcoin_txid(data['txid'])
+        endpoint=os.environ.get('BTC_ESPLORA_URL','https://blockstream.info/api')
+        return self.queue_job(lambda:self.converter(self.bitcoin_capture(identifier,endpoint),'bitcoin'),
+                              f'Bitcoin: {identifier[:16]}')
+
+    def queue_job(self,operation,title):
         with self.lock:
             if self.busy:raise BlockingIOError('One expansion at a time')
             self.busy=True
@@ -96,15 +108,15 @@ class InvestigationsServer(ThreadingHTTPServer):
             identifier=uuid.uuid4().hex;self.jobs[identifier]={'id':identifier,'status':'running'}
         def work():
             try:
-                bundle=self.discovery(endpoint,chain,address,start,end,data['trace'])
-                case=self.converter(bundle,'assets')
-                saved=self.store.save(case,f'Chain {chain}: {address[:10]} blocks {start}-{end}','')
+                case=operation()
+                saved=self.store.save(case,title,'')
                 result={'id':identifier,'status':'succeeded','caseId':saved}
             except Exception:
                 result={'id':identifier,'status':'failed','message':'Expansion failed. Check provider access, supported evidence, or a narrower range. Provider details withheld.'}
             with self.lock:self.jobs[identifier]=result;self.busy=False
         threading.Thread(target=work,daemon=True).start()
         return identifier
+
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -175,6 +187,7 @@ class Handler(SimpleHTTPRequestHandler):
             elif patch and re.fullmatch('/api/cases/[0-9a-f]{32}',path):
                 if not isinstance(data,dict) or set(data)!={'title','note'}:raise ValueError()
                 identifier=path.rsplit('/',1)[1];self.server.store.annotate(identifier,data['title'],data['note']);self.reply(200,{'id':identifier})
+            elif not patch and path=='/api/bitcoin':self.reply(202,{'id':self.server.bitcoin(data)})
             elif not patch and path=='/api/expand':self.reply(202,{'id':self.server.expand(data)})
             else:self.reply(404,{'error':'Unknown local API route'})
         except BlockingIOError:self.reply(409,{'error':'An expansion is already running'})

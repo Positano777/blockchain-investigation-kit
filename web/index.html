@@ -250,6 +250,9 @@
         resize: vertical;
         width: 100%;
       }
+      .transaction-node {
+        fill: #b67416;
+      }
       #saved-cases {
         max-width: 100%;
       }
@@ -261,7 +264,7 @@
         <h1>Positano Investigations</h1>
         <small>Open evidence. Reusable cases.</small>
       </div>
-      <span class="badge" id="case-status">LOADING / v0.6</span>
+      <span class="badge" id="case-status">LOADING / v0.7</span>
     </header>
     <main>
       <p class="intro">
@@ -269,6 +272,9 @@
         workspace built for transparent blockchain research.
       </p>
       <div class="toolbar">
+        <button id="bitcoin" aria-pressed="false">
+          Bitcoin outpoint trail
+        </button>
         <button id="bridge" aria-pressed="false">Ethereum → Optimism</button>
         <button id="assets" aria-pressed="false">Asset movements</button>
         <button id="trace" aria-pressed="false">Synthetic trace lab</button>
@@ -289,6 +295,7 @@
             accept="application/json,.json" /></label
         ><a class="download" id="download" download>Download case JSON</a
         ><button id="report">Export full report</button
+        ><button id="share-card">Download evidence card</button
         ><a class="download" href="eth-case.gs" download
           >Sample ETH GraphSense file</a
         >
@@ -315,7 +322,24 @@
           Run python serve.py to enable saved cases and local expansion. This
           hosted/static viewer does not contact a local service.
         </p>
+        <label
+          >Bitcoin transaction ID
+          <input
+            id="bitcoin-txid"
+            maxlength="64"
+            spellcheck="false"
+            placeholder="64-character transaction ID"
+            style="width: 100%"
+          />
+        </label>
+        <p>
+          Select a spending record to follow that transaction. Capture runs only
+          in the local service; the static preview uses saved evidence.
+        </p>
         <div id="local-controls" hidden>
+          <button id="capture-bitcoin">
+            Capture selected Bitcoin transaction locally
+          </button>
           <div class="toolbar">
             <select id="saved-cases" aria-label="Saved cases">
               <option value="">Select a saved case</option></select
@@ -342,6 +366,31 @@
           </div>
         </div>
       </section>
+      <details class="coverage">
+        <summary>What changed? Compare Bitcoin snapshots</summary>
+        <p>
+          Open a Bitcoin case above, then select another case for the same
+          transaction. This compares reported spends and confirmation status
+          without merging evidence or assuming which file is newer.
+        </p>
+        <label
+          >Comparison case JSON
+          <input
+            id="compare-import"
+            type="file"
+            accept="application/json,.json"
+        /></label>
+        <button id="download-comparison">Download comparison</button>
+        <pre
+          id="comparison-result"
+          style="
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            max-height: 400px;
+            overflow: auto;
+          "
+        ></pre>
+      </details>
       <div class="filters">
         <label
           >Address, transaction, or relationship<input

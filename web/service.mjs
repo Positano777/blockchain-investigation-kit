@@ -97,11 +97,56 @@ export function initLocalService({ getCase, openCase }) {
     const id = $("saved-cases").value;
     if (id) load(id).catch((e) => status(e.message));
   });
-  $("run-local-hop").addEventListener("click", async () => {
+  async function run(path, data, message) {
     if (jobId) {
-      status("An expansion is already being followed.");
+      status("A capture is already being followed.");
       return;
     }
+    // Mark busy before awaiting the POST so double clicks cannot enqueue two jobs.
+    jobId = "pending";
+    $("run-local-hop").disabled = true;
+    $("capture-bitcoin").disabled = true;
+    try {
+      const job = await api(path, data);
+      jobId = job.id;
+      status(message);
+      for (let i = 0; i < 600; i++) {
+        const result = await api("/api/jobs/" + jobId);
+        if (result.status === "succeeded") {
+          await refresh();
+          $("saved-cases").value = result.caseId;
+          status(
+            "Capture saved locally. Choose Open saved case to inspect it. The current view stays open.",
+          );
+          return;
+        }
+        if (result.status === "failed") throw new Error(result.message);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+      throw new Error(
+        "Stopped polling after 20 minutes. The server job may still run; refresh saved cases later.",
+      );
+    } catch (error) {
+      status(error.message);
+    } finally {
+      jobId = null;
+      $("run-local-hop").disabled = false;
+      $("capture-bitcoin").disabled = false;
+    }
+  }
+  $("capture-bitcoin").addEventListener("click", () => {
+    const id = $("bitcoin-txid").value.trim();
+    if (!/^[0-9a-f]{64}$/.test(id)) {
+      status("Enter a lowercase 64-character Bitcoin transaction ID.");
+      return;
+    }
+    run(
+      "/api/bitcoin",
+      { txid: id },
+      "Bitcoin capture running locally: one transaction and its reported output spends, at most 23 requests. Evidence is saved as a new case.",
+    );
+  });
+  $("run-local-hop").addEventListener("click", () => {
     try {
       const d = getCase();
       let chainId, address, first;
@@ -115,43 +160,22 @@ export function initLocalService({ getCase, openCase }) {
         first = BigInt(d.assetEvidence.records[0].block.number) + 1n;
       } else
         throw new Error(
-          "Open a bridge case or an asset case containing a transaction first.",
+          "Open a bridge or asset case for five-block expansion. For Bitcoin use the transaction capture button.",
         );
       if (first + 4n > BigInt(Number.MAX_SAFE_INTEGER))
         throw new Error("Block number outside UI bounds");
-      const job = await api("/api/expand", {
-        chainId,
-        address,
-        fromBlock: Number(first),
-        toBlock: Number(first + 4n),
-        trace: false,
-      });
-      jobId = job.id;
-      $("run-local-hop").disabled = true;
-      status(
+      run(
+        "/api/expand",
+        {
+          chainId,
+          address,
+          fromBlock: Number(first),
+          toBlock: Number(first + 4n),
+          trace: false,
+        },
         "Expansion running locally: five blocks, at most ten direct-address transactions. The current view stays open.",
       );
-      for (let i = 0; i < 600; i++) {
-        const result = await api("/api/jobs/" + jobId);
-        if (result.status === "succeeded") {
-          jobId = null;
-          $("run-local-hop").disabled = false;
-          await refresh();
-          $("saved-cases").value = result.caseId;
-          status(
-            "Expansion saved locally. Choose Open saved case to inspect it; zero records do not establish no activity.",
-          );
-          return;
-        }
-        if (result.status === "failed") throw new Error(result.message);
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-      }
-      throw new Error(
-        "Stopped polling after 20 minutes. The server job may still be running; refresh saved cases later.",
-      );
     } catch (error) {
-      jobId = null;
-      $("run-local-hop").disabled = false;
       status(error.message);
     }
   });
@@ -160,7 +184,7 @@ export function initLocalService({ getCase, openCase }) {
       token = data.token;
       $("local-controls").hidden = false;
       status(
-        `Local service connected. Ethereum RPC: ${data.rpcConfigured["1"] ? "configured" : "not configured"}; Optimism RPC: ${data.rpcConfigured["10"] ? "configured" : "not configured"}. Provider URLs stay on the server.`,
+        `Local service connected. Ethereum RPC: ${data.rpcConfigured["1"] ? "configured" : "not configured"}; Optimism RPC: ${data.rpcConfigured["10"] ? "configured" : "not configured"}. Bitcoin capture: available (public Esplora default or configured server endpoint). Provider URLs stay on the server.`,
       );
       await refresh();
     })

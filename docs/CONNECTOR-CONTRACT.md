@@ -7,7 +7,7 @@ The service stores validated evidence cases without assuming that every chain us
 | Ethereum / OP asset evidence | Implemented, bounded | Receipt-event and supplied call-trace decoding; direct-address block scan |
 | Ethereum → OP Portal deposits | Implemented, narrow | One supported deposit version/route with deterministic destination hash |
 | Solana launch observations | Implemented, offline subset | Import of existing launch-evidence observations; no full Solana history |
-| Bitcoin UTXO investigations | Implemented, CLI-only bounded preview | One transaction, projected previous outputs, checked reported output spends; no browser import or recursive crawl |
+| Bitcoin UTXO investigations | Implemented, bounded | One transaction, projected previous outputs, checked reported output spends; browser graph/import/persistence and manual next-transaction capture; no recursive crawl |
 | Solana instructions and token history | Planned | Requires program/instruction/account-aware capture and coverage |
 | pump.fun lifecycle | Planned extension | Requires launch, curve, migration, liquidity, and disposal evidence; not just a token label |
 
@@ -24,4 +24,4 @@ The service can persist all case schemas currently accepted by the shared valida
 
 Analyst annotations stay outside evidence content and are not promoted into observed facts. Future clustering/change-address/bundle heuristics must carry their assumptions and supporting references. UTXO change detection, common-input ownership, timing correlations, or shared case membership cannot silently become identity links.
 
-New adapters need a public or explicitly synthetic fixture, negative/failure cases, declared data limits, a reproducible investigation example, license/provenance review for reused code, and a UI explanation of unsupported paths. Bitcoin currently has a standalone CLI evidence schema; browser validation, persistence, and interactive expansion still require integration. Planned rows are not advertised as working.
+New adapters need a public or explicitly synthetic fixture, negative/failure cases, declared data limits, a reproducible investigation example, license/provenance review for reused code, and a UI explanation of unsupported paths. Bitcoin now has shared offline reconstruction, browser validation, persistence, and manual next-transaction capture. Planned rows are not advertised as working.

@@ -1,3 +1,4 @@
+import { buildBitcoinCase, bitcoinEdges } from "./bitcoin.mjs";
 import { buildBridgeCase } from "./bridge.mjs";
 import { buildAssetCase } from "./movements.mjs";
 const hex = (v, n) =>
@@ -29,6 +30,14 @@ function keys(v, required, optional = []) {
   );
 }
 export function validateCase(d) {
+  if (d?.schema === "positano.bitcoin-investigation.v1") {
+    check(
+      typeof d.digest === "string" && /^sha256:[0-9a-f]{64}$/.test(d.digest),
+    );
+    const { digest, ...content } = d;
+    check(canonical(content) === canonical(buildBitcoinCase(d.evidence)));
+    return d;
+  }
   if (d?.schema === "positano.asset-case.v1") {
     keys(d, [
       "schema",
@@ -300,7 +309,7 @@ export function filterEdges(
   { query = "", kind = "", from = "", until = "" } = {},
 ) {
   const q = query.trim().toLowerCase();
-  return d.edges
+  return caseEdges(d)
     .filter(
       (e) =>
         (!kind || e.kind === kind) &&
@@ -329,4 +338,10 @@ export function formatEth(wei) {
   const v = BigInt(wei),
     f = (v % 10n ** 18n).toString().padStart(18, "0").replace(/0+$/, "");
   return v / 10n ** 18n + (f ? "." + f : "") + " ETH";
+}
+
+export function caseEdges(d) {
+  return d.schema === "positano.bitcoin-investigation.v1"
+    ? bitcoinEdges(d)
+    : d.edges;
 }

@@ -37,7 +37,7 @@ class Persistence(unittest.TestCase):
             self.assertEqual(store.list(),[])
 
     def test_all_schemas_validate_through_stdin(self):
-        for name in ['bridge','assets','trace','hop','multi','eth','sol','real']:
+        for name in ['bridge','assets','trace','hop','multi','eth','sol','real','bitcoin']:
             case=load(ROOT/f'web/{name}-case.json')
             self.assertEqual(node_case(case),case)
 
@@ -98,6 +98,31 @@ class LocalAPI(unittest.TestCase):
                 time.sleep(.01)
             self.assertEqual(job['status'],'succeeded');self.assertEqual(len(self.store.list()),1)
             self.assertEqual(recorded,['https://provider.invalid/not-a-real-credential'])
+
+    def test_bitcoin_job_persists_validated_case_and_hides_endpoint(self):
+        self.store.validator=node_case
+        calls=[]
+        def capture(identifier,endpoint):
+            calls.append((identifier,endpoint));return load(ROOT/'examples/bitcoin-utxo.mainnet.json')
+        self.server.bitcoin_capture=capture
+        identifier=load(ROOT/'web/bitcoin-case.json')['evidence']['transaction']['txid']
+        with patch.dict(os.environ,{'BTC_ESPLORA_URL':'https://provider.invalid/private-endpoint'}):
+            code,raw,_=self.request('/api/bitcoin',{'txid':identifier},headers=self.write_headers())
+            self.assertEqual(code,202);jobid=json.loads(raw)['id']
+            for _ in range(200):
+                job=self.server.jobs[jobid]
+                if job['status']!='running':break
+                time.sleep(.01)
+            self.assertEqual(job['status'],'succeeded')
+            case=self.store.get(job['caseId'])['case']
+            self.assertEqual(case,load(ROOT/'web/bitcoin-case.json'))
+            self.assertNotIn('private-endpoint',json.dumps(case))
+            self.assertEqual(calls,[(identifier,'https://provider.invalid/private-endpoint')])
+
+    def test_bitcoin_invalid_id_extra_endpoint_and_origin_rejected(self):
+        for data in [{'txid':'bad'},{'txid':'1'*64,'endpoint':'https://attacker.invalid'}]:
+            self.assertEqual(self.request('/api/bitcoin',data,headers=self.write_headers())[0],400)
+        self.assertEqual(self.request('/api/bitcoin',{'txid':'1'*64})[0],403)
 
     def test_bounds_and_extra_endpoint_fields_rejected(self):
         data={'chainId':10,'address':'0x'+'1'*40,'fromBlock':1,'toBlock':21,'trace':False}

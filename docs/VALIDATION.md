@@ -1,5 +1,13 @@
 # Validation record
 
+## v0.7 additions
+
+- Python: 59 tests. Node: 44 tests. Added Bitcoin case reconstruction/tampering checks, persisted real-schema Bitcoin jobs, HTTP field/origin restrictions, comparison disagreement cases, and card escaping/privacy checks.
+- Chrome: five Bitcoin relationships and three transaction nodes rendered; selected a reported spender; saved/reopened notes; rejected a tampered import while retaining the case; completed live Bitcoin capture to a saved case; exported full evidence report and 1200 × 630 PNG.
+- Chrome comparison: identical captures produce no changes; an offline constructed observation change is detected and exported with both digests. This is not a live reorganization/mempool demonstration.
+- Local/static boundary: static preview does not request local APIs and keeps capture controls hidden. Bitcoin and asset demo deep links work. Desktop and 390px mobile screenshots inspected; no overflow, console errors, or warnings.
+- No new packages installed. No full Solana history, pump.fun lifecycle, complete wallet history, chain consensus proof, or attribution is claimed.
+
 ## Bitcoin CLI preview additions
 
 - Python suite: 57 tests total; existing Node suite: 34 tests. New Bitcoin checks cover exact amounts/fees, duplicate/coinbase inputs, reference/script/status mismatches, confirmation ordering, caps/network rejection, endpoint/path restrictions, projected fields, and reproduction of saved mainnet JSON and Markdown.
